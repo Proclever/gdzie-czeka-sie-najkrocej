@@ -1,7 +1,9 @@
 """Tygodniowy snapshot kolejek NFZ (API „Terminy leczenia” v1.4).
 
-Iteruje po 16 oddziałach NFZ × 2 przypadkach (stabilny/pilny), stronicuje po 25
-rekordów, ponawia zapytania przy błędach 429/5xx i zapisuje:
+Iteruje po 16 oddziałach NFZ × 2 przypadkach (stabilny/pilny) i stronicuje wyniki.
+API przyjmuje najwyżej 10 zapytań na 10 sekund, więc klient trzyma równe tempo
+0,9 zapytania/s. Po HTTP 429 wszystkie wątki robią wspólną pauzę. Strony, których nie
+udało się pobrać, są ponawiane na końcu. Wynik trafia do plików:
 
   data/nfz/snapshots/RRRR-MM-DD.csv.gz  – fakty: snapshot × miejsce × świadczenie × przypadek
   data/nfz/miejsca.csv.gz               – wymiar miejsc (najświeższe atrybuty + lokalizacja)
@@ -10,8 +12,11 @@ rekordów, ponawia zapytania przy błędach 429/5xx i zapisuje:
   data/nfz/ostatni_przebieg.json        – statystyki ostatniego uruchomienia
 
 Przykłady:
-  python scripts/nfz_snapshot.py                       # pełny snapshot (ok. 20–40 min)
+  python scripts/nfz_snapshot.py                       # pełny snapshot: ok. 6 tys. zapytań, ok. 2 h
   python scripts/nfz_snapshot.py --oddzialy 07 --przypadki 1 --maks-stron 2 --bez-zapisu
+
+Snapshot zostaje zapisany także wtedy, gdy po dogrywce brakuje najwyżej 1% stron
+(--maks-braki). Brakujące strony są opisane w ostatni_przebieg.json.
 """
 
 from __future__ import annotations
@@ -22,7 +27,6 @@ import logging
 import sys
 import time
 from collections import Counter, defaultdict
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -31,16 +35,23 @@ from common import (  # noqa: E402
     NFZ_DIR,
     ODDZIALY_NFZ,
     ROOT,
-    SNAPSHOT_DIR,
     dzis_w_polsce,
     kandydaci_gminy,
-    klucz_tekstowy,
     odleglosc_km,
     wczytaj_csv,
     zapisz_csv,
     zdanie,
 )
-from nfz_api import API_V14, LIMIT_NA_STRONE, KlientNfz, splaszcz  # noqa: E402
+from nfz_api import (  # noqa: E402
+    API_V14,
+    LIMIT_NA_STRONE,
+    TEMPO_V14,
+    KlientNfz,
+    WynikPobierania,
+    pobierz_bloki,
+    splaszcz,
+    ustal_limit,
+)
 
 log = logging.getLogger("nfz")
 
@@ -148,43 +159,33 @@ class Lokalizator:
 # Pobieranie
 # ---------------------------------------------------------------------------
 def pobierz_wszystko(klient: KlientNfz, oddzialy: list[str], przypadki: list[int], data_snapshotu: str,
-                     watki: int, maks_stron: int | None) -> tuple[list[dict], dict, dict, Counter, list[str]]:
+                     watki: int, maks_stron: int | None, limit: int = LIMIT_NA_STRONE,
+                     ) -> tuple[list[dict], dict, dict, WynikPobierania]:
     fakty: dict[str, dict] = {}
     miejsca: dict[str, dict] = {}
     swiadczenia: dict[str, dict] = {}
     warianty_nazw: dict[str, Counter] = defaultdict(Counter)
-    liczniki: Counter = Counter()
-    bledy: list[str] = []
 
-    def zadanie(oddzial: str, przypadek: int) -> tuple[str, int, list[dict]]:
-        return oddzial, przypadek, list(klient.kolejki(przypadek, oddzial, LIMIT_NA_STRONE, maks_stron))
+    def przetworz(oddzial: str, przypadek: int, rekordy: list[dict]) -> None:
+        for r in rekordy:
+            fakt, miejsce, sw = splaszcz(r, data_snapshotu, oddzial)
+            klucz = fakt["IdKolejki"] or f"{fakt['MiejsceKey']}|{fakt['SwiadczenieKey']}|{fakt['Przypadek']}|{fakt['Znieczulenie']}"
+            fakty[klucz] = fakt  # przesunięcia stron w trakcie pobierania dają duplikaty – zostaje jeden
+            stare = miejsca.get(miejsce["MiejsceKey"])
+            if stare is None or (not stare.get("SzerokoscNFZ") and miejsce.get("SzerokoscNFZ")):
+                miejsca[miejsce["MiejsceKey"]] = miejsce
+            swiadczenia[sw["SwiadczenieKey"]] = sw
+            warianty_nazw[sw["SwiadczenieKlucz"]][sw["Swiadczenie"]] += 1
 
-    with ThreadPoolExecutor(max_workers=watki) as pula:
-        przyszle = [pula.submit(zadanie, o, c) for o in oddzialy for c in przypadki]
-        for f in as_completed(przyszle):
-            try:
-                oddzial, przypadek, rekordy = f.result()
-            except Exception as e:  # zbieramy błędy, na końcu decydujemy
-                bledy.append(str(e))
-                log.error("Błąd pobierania: %s", e)
-                continue
-            liczniki[f"{oddzial}/{przypadek}"] = len(rekordy)
-            for r in rekordy:
-                fakt, miejsce, sw = splaszcz(r, data_snapshotu, oddzial)
-                klucz = fakt["IdKolejki"] or f"{fakt['MiejsceKey']}|{fakt['SwiadczenieKey']}|{fakt['Przypadek']}|{fakt['Znieczulenie']}"
-                fakty[klucz] = fakt
-                stare = miejsca.get(miejsce["MiejsceKey"])
-                if stare is None or (not stare.get("SzerokoscNFZ") and miejsce.get("SzerokoscNFZ")):
-                    miejsca[miejsce["MiejsceKey"]] = miejsce
-                swiadczenia[sw["SwiadczenieKey"]] = sw
-                warianty_nazw[sw["SwiadczenieKlucz"]][sw["Swiadczenie"]] += 1
+    wynik = pobierz_bloki(klient, [(o, c) for o in oddzialy for c in przypadki], przetworz,
+                          watki=watki, limit=limit, maks_stron=maks_stron)
     # Nazwa do wyświetlania: wariant pisany normalnie (jeśli któryś oddział go podaje),
     # inaczej zamiana WIELKICH LITER na zdanie.
     for sw in swiadczenia.values():
         warianty = warianty_nazw[sw["SwiadczenieKlucz"]]
         mieszane = [(n, c) for n, c in warianty.items() if n != n.upper()]
         sw["Swiadczenie"] = max(mieszane, key=lambda x: x[1])[0] if mieszane else zdanie(sw["SwiadczenieKlucz"])
-    return list(fakty.values()), miejsca, swiadczenia, liczniki, bledy
+    return list(fakty.values()), miejsca, swiadczenia, wynik
 
 
 # ---------------------------------------------------------------------------
@@ -242,13 +243,18 @@ def main(argv: list[str] | None = None, klient: KlientNfz | None = None, root: P
     p.add_argument("--api", default=API_V14, help="adres zasobu /queues (domyślnie API v1.4)")
     p.add_argument("--oddzialy", default=",".join(ODDZIALY_NFZ), help="kody oddziałów NFZ 01–16, po przecinku")
     p.add_argument("--przypadki", default="1,2", help="1 = stabilny, 2 = pilny")
-    p.add_argument("--na-sekunde", type=float, default=5.0, help="limit zapytań na sekundę (łącznie)")
-    p.add_argument("--watki", type=int, default=4)
+    p.add_argument("--na-sekunde", type=float, default=TEMPO_V14,
+                   help="tempo zapytań łącznie dla wszystkich wątków (API v1.4 przyjmuje 10 zapytań na 10 s)")
+    p.add_argument("--watki", type=int, default=3)
+    p.add_argument("--limit", default="auto",
+                   help="rekordów na stronę: auto (sprawdza 100 i 50, inaczej 25) albo liczba")
+    p.add_argument("--maks-braki", type=float, default=0.01,
+                   help="zapisz snapshot, jeśli po dogrywce brakuje najwyżej takiego udziału stron (domyślnie 1%%)")
     p.add_argument("--maks-stron", type=int, default=None, help="tylko do testów")
     p.add_argument("--data", default=None, help="data snapshotu RRRR-MM-DD (domyślnie dziś w Polsce)")
     p.add_argument("--min-udzial", type=float, default=0.7,
                    help="przerwij, jeśli liczba wierszy spadła poniżej tego udziału poprzedniego snapshotu")
-    p.add_argument("--force", action="store_true", help="zapisz mimo błędów lub dużego spadku liczby wierszy")
+    p.add_argument("--force", action="store_true", help="zapisz mimo braków lub dużego spadku liczby wierszy")
     p.add_argument("--bez-zapisu", action="store_true", help="tylko pobierz i pokaż statystyki")
     a = p.parse_args(argv)
 
@@ -262,10 +268,14 @@ def main(argv: list[str] | None = None, klient: KlientNfz | None = None, root: P
 
     start = time.time()
     klient = klient or KlientNfz(baza=a.api, na_sekunde=a.na_sekunde)
-    fakty, miejsca, swiadczenia, liczniki, bledy = pobierz_wszystko(
-        klient, oddzialy, przypadki, data_snapshotu, a.watki, a.maks_stron)
+    limit = ustal_limit(klient) if str(a.limit).lower() == "auto" else int(a.limit)
+    fakty, miejsca, swiadczenia, wynik = pobierz_wszystko(
+        klient, oddzialy, przypadki, data_snapshotu, a.watki, a.maks_stron, limit)
     czas = time.time() - start
 
+    braki = wynik.brakujace
+    strony = wynik.strony_lacznie
+    udzial_brakow = len(braki) / strony if strony else (1.0 if braki else 0.0)
     z_pcus = sum(1 for f in fakty if f["PCUSDni"] is not None)
     w_cer = sum(1 for f in fakty if f["WCeR"] == "Y")
     nieodczytane = Counter(f["PCUS"] for f in fakty if f["PCUS"] and f["PCUSDni"] is None)
@@ -273,22 +283,44 @@ def main(argv: list[str] | None = None, klient: KlientNfz | None = None, root: P
         "data_snapshotu": data_snapshotu,
         "api": a.api,
         "czas_s": round(czas, 1),
+        "limit_na_strone": limit,
+        "strony": strony,
         "zapytania": klient.statystyki["zapytania"],
+        "http_429": klient.statystyki["http_429"],
         "ponowienia": klient.statystyki["ponowienia"],
+        "tempo_koncowe_zapytan_na_s": round(klient.ogranicznik.na_sekunde, 3),
         "wiersze": len(fakty),
         "wiersze_z_pcus": z_pcus,
         "wiersze_w_cer": w_cer,
         "miejsca": len(miejsca),
         "swiadczenia": len(swiadczenia),
-        "na_oddzial_i_przypadek": dict(sorted(liczniki.items())),
+        "na_oddzial_i_przypadek": dict(sorted(wynik.pobrane_wg_bloku.items())),
+        "rekordy_wg_api": dict(sorted(wynik.rekordy_wg_bloku.items())),
         "nieodczytane_pcus": dict(nieodczytane.most_common(20)),
-        "bledy": bledy,
+        "kompletny": not braki,
+        "brakujace_strony": len(braki),
+        "brakujace_strony_szczegoly": braki[:50],
+        "zapisany": False,
     }
-    log.info("Podsumowanie: %s", json.dumps({k: v for k, v in podsumowanie.items() if k != "na_oddzial_i_przypadek"}, ensure_ascii=False))
+    log.info("Podsumowanie: %s", json.dumps(
+        {k: v for k, v in podsumowanie.items()
+         if k not in ("na_oddzial_i_przypadek", "rekordy_wg_api", "brakujace_strony_szczegoly", "zapisany")},
+        ensure_ascii=False))
 
-    if bledy and not a.force:
-        log.error("Pobieranie niekompletne (%s błędów) – snapshot NIE został zapisany.", len(bledy))
-        return 1
+    def odrzuc(powod: str, kod: int) -> int:
+        log.error("%s – snapshot NIE został zapisany.", powod)
+        podsumowanie["powod_odrzucenia"] = powod
+        if not a.bez_zapisu:
+            zapisz_raport(nfz_dir, podsumowanie)
+        return kod
+
+    if (wynik.bloki_bez_danych or udzial_brakow > a.maks_braki) and not a.force:
+        bez_danych = f"; bloki bez danych: {', '.join(wynik.bloki_bez_danych)}" if wynik.bloki_bez_danych else ""
+        return odrzuc(f"Pobieranie niekompletne: brakuje {len(braki)} z {strony} stron "
+                      f"({100 * udzial_brakow:.1f}%, próg {100 * a.maks_braki:.1f}%){bez_danych}", 1)
+    if braki:
+        log.warning("Brakuje %s z %s stron (%.2f%%, próg %.1f%%) – zapisuję snapshot, braki opisuje ostatni_przebieg.json.",
+                    len(braki), strony, 100 * udzial_brakow, 100 * a.maks_braki)
     if a.bez_zapisu:
         print(json.dumps(podsumowanie, ensure_ascii=False, indent=2))
         return 0
@@ -298,9 +330,8 @@ def main(argv: list[str] | None = None, klient: KlientNfz | None = None, root: P
     if poprzednie and not a.force:
         ostatni = int(poprzednie[-1]["Wiersze"])
         if len(fakty) < a.min_udzial * ostatni:
-            log.error("Liczba wierszy spadła z %s do %s – podejrzenie niepełnych danych. Użyj --force, jeśli to celowe.",
-                      ostatni, len(fakty))
-            return 2
+            return odrzuc(f"Liczba wierszy spadła z {ostatni} do {len(fakty)} – podejrzenie niepełnych danych "
+                          "(użyj --force, jeśli to celowe)", 2)
 
     fakty.sort(key=lambda f: (f["Oddzial"], f["Przypadek"], f["SwiadczenieKey"], f["MiejsceKey"], f["IdKolejki"]))
     plik = snap_dir / f"{data_snapshotu}.csv.gz"
@@ -316,9 +347,17 @@ def main(argv: list[str] | None = None, klient: KlientNfz | None = None, root: P
     zrodla = Counter(w["ZrodloLokalizacji"] for w in m if w["OstatnioWidziane"] == data_snapshotu)
     podsumowanie["zrodla_lokalizacji"] = dict(zrodla)
     podsumowanie["miejsca_bez_powiatu"] = sum(1 for w in m if w["OstatnioWidziane"] == data_snapshotu and not w["TerytPowiat"])
-    (nfz_dir / "ostatni_przebieg.json").write_text(json.dumps(podsumowanie, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    podsumowanie["zapisany"] = True
+    zapisz_raport(nfz_dir, podsumowanie)
     log.info("Zapisano %s (%s wierszy). Lokalizacje: %s", plik.relative_to(root), len(fakty), dict(zrodla))
     return 0
+
+
+def zapisz_raport(nfz_dir: Path, podsumowanie: dict) -> None:
+    """ostatni_przebieg.json – diagnostyka ostatniego uruchomienia (także nieudanego)."""
+    nfz_dir.mkdir(parents=True, exist_ok=True)
+    (nfz_dir / "ostatni_przebieg.json").write_text(
+        json.dumps(podsumowanie, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

@@ -7,12 +7,12 @@ zweryfikowaną na żywych zapytaniach (październik 2026).
 from __future__ import annotations
 
 import copy
-import gzip
-import csv
 import json
+import math
 import shutil
 import sys
 import tempfile
+import threading
 import unittest
 from pathlib import Path
 
@@ -23,6 +23,7 @@ import common  # noqa: E402
 import gus_powiaty  # noqa: E402
 import nfz_api  # noqa: E402
 import nfz_snapshot  # noqa: E402
+import nfz_wspolrzedne_v13  # noqa: E402
 
 FIX = Path(__file__).resolve().parent / "fixtures"
 
@@ -60,6 +61,55 @@ class FakeSession:
         limit, strona = int(params["limit"]), int(params["page"])
         wycinek = rekordy[(strona - 1) * limit: strona * limit]
         return FakeResponse(200, {"meta": {"count": len(rekordy)}, "links": {}, "data": wycinek})
+
+
+class FakeZegar:
+    """Czas testowy: uśpienie przesuwa zegar zamiast naprawdę czekać."""
+
+    def __init__(self):
+        self.t = 1000.0
+        self.uspienia = []
+        self._lock = threading.Lock()
+
+    def __call__(self):
+        return self.t
+
+    def uspij(self, sekundy):
+        with self._lock:
+            self.uspienia.append(sekundy)
+            self.t += max(0.0, sekundy)
+
+
+class FakeSerwerZLimitem(FakeSession):
+    """Jak API v1.4: najwyżej `limit` zapytań w oknie `okno` s liczonym od pierwszego zapytania,
+    potem HTTP 429 z Retry-After (sekundy do końca okna, w górę)."""
+
+    def __init__(self, rekordy, zegar, limit=10, okno=10.0):
+        super().__init__(rekordy)
+        self.zegar, self.limit, self.okno = zegar, limit, okno
+        self.poczatek, self.w_oknie, self.odmowy = None, 0, 0
+        self._lock = threading.Lock()
+
+    def get(self, url, params=None, timeout=None, headers=None):
+        with self._lock:
+            t = self.zegar()
+            if self.poczatek is None or t >= self.poczatek + self.okno:
+                self.poczatek, self.w_oknie = t, 0
+            if self.w_oknie >= self.limit:
+                self.odmowy += 1
+                return FakeResponse(429, {"error": "too many"},
+                                    {"Retry-After": str(math.ceil(self.poczatek + self.okno - t))})
+            self.w_oknie += 1
+        return super().get(url, params, timeout, headers)
+
+
+def rekordy_testowe(n, przedrostek="r"):
+    return [{"id": f"{przedrostek}{i}", "attributes": {"case": 1, "benefit": "X"}} for i in range(n)]
+
+
+def klient_testowy(sesja, na_sekunde=1000.0, **kwargs):
+    zegar = FakeZegar()
+    return nfz_api.KlientNfz(sesja=sesja, na_sekunde=na_sekunde, zegar=zegar, uspij=zegar.uspij, **kwargs), zegar
 
 
 class TestPcus(unittest.TestCase):
@@ -165,24 +215,170 @@ class TestLokalizator(unittest.TestCase):
 
 class TestKlient(unittest.TestCase):
     def test_ponawianie_429_i_stronicowanie(self):
-        rekordy = [{"id": f"id{i}", "attributes": {"case": 1, "benefit": "X"}} for i in range(60)]
-        sesja = FakeSession({("07", 1): rekordy}, bledy_429=2)
-        uspienia = []
-        klient = nfz_api.KlientNfz(sesja=sesja, na_sekunde=1000, uspij=uspienia.append)
+        sesja = FakeSession({("07", 1): rekordy_testowe(60)}, bledy_429=2)
+        klient, zegar = klient_testowy(sesja)
         wynik = list(klient.kolejki(1, "07"))
         self.assertEqual(len(wynik), 60)
-        self.assertEqual(len(uspienia), 2)                 # dwa ponowienia po 429
+        self.assertEqual(klient.statystyki["http_429"], 2)
+        self.assertEqual(klient.statystyki["ponowienia"], 0)   # 429 nie zużywa prób na awarie
         strony = [c["page"] for c in sesja.wywolania]
-        self.assertEqual(strony, [1, 1, 1, 2, 3])          # 60 rekordów / 25 = 3 strony
+        self.assertEqual(strony, [1, 1, 1, 2, 3])              # 2 × 429, potem 60 rekordów / 25 = 3 strony
         self.assertTrue(all(c["limit"] == 25 for c in sesja.wywolania))
+        self.assertGreaterEqual(sum(zegar.uspienia), 2.0)      # Retry-After: 0 -> mimo to min. 1 s pauzy
 
     def test_blad_trwaly(self):
-        class Zawsze500(FakeSession):
+        class Zawsze503(FakeSession):
             def get(self, url, params=None, timeout=None, headers=None):
                 return FakeResponse(503, {})
-        klient = nfz_api.KlientNfz(sesja=Zawsze500({}), na_sekunde=1000, maks_prob=3, uspij=lambda s: None)
+        klient, _ = klient_testowy(Zawsze503({}), maks_prob=3)
         with self.assertRaises(nfz_api.BladApi):
             klient.pobierz({"case": 1, "province": "07", "page": 1, "limit": 25})
+        self.assertEqual(klient.statystyki["zapytania"], 3)
+
+    def test_dluga_seria_429_nie_przerywa_pobierania(self):
+        # stary klient poddawał się po 8 próbach; teraz 429 to tylko sygnał, żeby zwolnić
+        sesja = FakeSession({("07", 1): rekordy_testowe(10)}, bledy_429=20)
+        klient, _ = klient_testowy(sesja)
+        dane = klient.pobierz({"case": 1, "province": "07", "page": 1, "limit": 25})
+        self.assertEqual(len(dane["data"]), 10)
+        self.assertEqual(klient.statystyki["http_429"], 20)
+
+    def test_retry_after_jako_data_http(self):
+        odp = FakeResponse(429, {}, {"Retry-After": "Wed, 21 Oct 2015 07:28:00 GMT"})
+        self.assertEqual(nfz_api._retry_after(odp), 0.0)       # data z przeszłości -> bez czekania
+        self.assertEqual(nfz_api._retry_after(FakeResponse(429, {}, {"Retry-After": "8"})), 8.0)
+        self.assertIsNone(nfz_api._retry_after(FakeResponse(429, {}, {})))
+
+
+class TestOgranicznik(unittest.TestCase):
+    def test_rowne_odstepy(self):
+        z = FakeZegar()
+        o = nfz_api.Ogranicznik(2.0, zegar=z, uspij=z.uspij)
+        starty = []
+        for _ in range(5):
+            o.czekaj()
+            starty.append(z())
+        self.assertEqual([round(b - a, 6) for a, b in zip(starty, starty[1:])], [0.5] * 4)
+
+    def test_wspolna_pauza_i_jedno_zwolnienie_na_epizod(self):
+        z = FakeZegar()
+        o = nfz_api.Ogranicznik(1.0, zegar=z, uspij=z.uspij)
+        o.czekaj()
+        pauza, nowy = o.przy_429(8.0)
+        self.assertTrue(nowy)
+        self.assertEqual(pauza, 8.0)
+        _, nowy2 = o.przy_429(7.0)                 # 429 z drugiego wątku w tym samym epizodzie
+        self.assertFalse(nowy2)
+        self.assertAlmostEqual(o.odstep, 1.25)     # tempo spadło tylko raz
+        t0 = z()
+        o.czekaj()
+        self.assertGreaterEqual(z() - t0, 8.0)     # każdy wątek czeka do końca pauzy
+
+    def test_powrot_do_tempa_bazowego(self):
+        z = FakeZegar()
+        o = nfz_api.Ogranicznik(1.0, zegar=z, uspij=z.uspij, seria_do_przyspieszenia=10)
+        o.przy_429(None)
+        self.assertAlmostEqual(o.odstep, 1.25)
+        for _ in range(50):
+            o.sukces()
+        self.assertAlmostEqual(o.odstep, 1.0)      # nigdy szybciej niż tempo bazowe
+
+
+class TestPobieranieBlokow(unittest.TestCase):
+    def test_tempo_ponizej_limitu_api_bez_odmow(self):
+        z = FakeZegar()
+        serwer = FakeSerwerZLimitem({("07", 1): rekordy_testowe(500, "a"), ("07", 2): rekordy_testowe(260, "b")}, z)
+        klient = nfz_api.KlientNfz(sesja=serwer, na_sekunde=nfz_api.TEMPO_V14, zegar=z, uspij=z.uspij)
+        zebrane = []
+        wynik = nfz_api.pobierz_bloki(klient, [("07", 1), ("07", 2)], lambda o, c, r: zebrane.extend(r),
+                                      watki=1, limit=25)
+        self.assertEqual(len(zebrane), 760)
+        self.assertEqual(wynik.brakujace, [])
+        self.assertEqual(wynik.strony_lacznie, 20 + 11)
+        self.assertEqual(serwer.odmowy, 0)
+
+    def test_za_szybki_klient_dostosowuje_sie_i_nie_gubi_stron(self):
+        # tak wyglądał przebieg z 19.10.2026: 5 zapytań/s przy limicie 10 na 10 s
+        z = FakeZegar()
+        serwer = FakeSerwerZLimitem({("07", 1): rekordy_testowe(2000)}, z)
+        klient = nfz_api.KlientNfz(sesja=serwer, na_sekunde=5.0, zegar=z, uspij=z.uspij)
+        zebrane = []
+        t0 = z()
+        wynik = nfz_api.pobierz_bloki(klient, [("07", 1)], lambda o, c, r: zebrane.extend(r), watki=1, limit=25)
+        self.assertEqual(len(zebrane), 2000)
+        self.assertEqual(wynik.brakujace, [])
+        self.assertGreater(serwer.odmowy, 0)
+        self.assertLess(serwer.odmowy, 15)                        # kilka epizodów, nie setki
+        self.assertLessEqual(klient.ogranicznik.na_sekunde, 1.1)  # zjechał w okolice tego, co API przyjmuje
+        tempo = wynik.strony_pobrane / (z() - t0)
+        self.assertGreater(tempo, 0.7)                            # ...ale nie zwolnił przesadnie
+
+    def test_dogrywka_odzyskuje_strone_po_awariach(self):
+        class Kaprysny(FakeSession):
+            awarie = 0
+
+            def get(self, url, params=None, timeout=None, headers=None):
+                if int(params["page"]) == 3 and self.awarie < 10:  # więcej awarii niż maks_prob (8)
+                    self.awarie += 1
+                    return FakeResponse(503, {})
+                return super().get(url, params, timeout, headers)
+        klient, _ = klient_testowy(Kaprysny({("07", 1): rekordy_testowe(100)}))
+        zebrane = []
+        wynik = nfz_api.pobierz_bloki(klient, [("07", 1)], lambda o, c, r: zebrane.extend(r), watki=2, limit=25)
+        self.assertEqual(len(zebrane), 100)
+        self.assertEqual(wynik.brakujace, [])
+
+    def test_trwale_niedostepna_strona_trafia_do_brakow(self):
+        class Dziura(FakeSession):
+            def get(self, url, params=None, timeout=None, headers=None):
+                if int(params["page"]) == 2:
+                    return FakeResponse(503, {})
+                return super().get(url, params, timeout, headers)
+        klient, _ = klient_testowy(Dziura({("07", 1): rekordy_testowe(100)}))
+        zebrane = []
+        wynik = nfz_api.pobierz_bloki(klient, [("07", 1)], lambda o, c, r: zebrane.extend(r), watki=2, limit=25)
+        self.assertEqual(len(zebrane), 75)                        # pozostałe strony bloku są pobrane
+        self.assertEqual([(b["blok"], b["strona"]) for b in wynik.brakujace], [("07/1", 2)])
+        self.assertEqual(wynik.bloki_bez_danych, [])
+
+
+class TestLimitStrony(unittest.TestCase):
+    def test_wieksza_strona_gdy_api_ja_zwraca(self):
+        klient, _ = klient_testowy(FakeSession({("07", 1): rekordy_testowe(300)}))
+        self.assertEqual(nfz_api.ustal_limit(klient), 100)
+
+    def test_api_po_cichu_przycina_strone(self):
+        class Przycina(FakeSession):
+            def get(self, url, params=None, timeout=None, headers=None):
+                return super().get(url, {**params, "limit": min(25, int(params["limit"]))}, timeout, headers)
+        klient, _ = klient_testowy(Przycina({("07", 1): rekordy_testowe(300)}))
+        self.assertEqual(nfz_api.ustal_limit(klient), 25)
+
+    def test_api_odrzuca_duzy_limit(self):
+        class Odrzuca(FakeSession):
+            def get(self, url, params=None, timeout=None, headers=None):
+                if int(params["limit"]) > 25:
+                    return FakeResponse(400, {"errors": [{"title": "limit"}]})
+                return super().get(url, params, timeout, headers)
+        klient, _ = klient_testowy(Odrzuca({("07", 1): rekordy_testowe(300)}))
+        self.assertEqual(nfz_api.ustal_limit(klient), 25)
+
+
+class TestWspolrzedneV13(unittest.TestCase):
+    def test_tylko_przypadek_stabilny(self):
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            v14 = wczytaj_fixture("nfz_v14_rekordy.json")
+            sesja = FakeSession({("12", 1): [v14[2]], ("12", 2): [v14[2]]})
+            klient, _ = klient_testowy(sesja, dodatkowe_parametry={"api-version": "1.3"})
+            kod = nfz_wspolrzedne_v13.main(["--oddzialy", "12", "--limit", "25"], klient=klient, katalog=tmp)
+            self.assertEqual(kod, 0)
+            self.assertEqual({int(c["case"]) for c in sesja.wywolania}, {1})
+            wiersze = common.wczytaj_csv(tmp / "wspolrzedne_v13.csv.gz")
+            self.assertEqual(len(wiersze), 1)
+            self.assertAlmostEqual(float(wiersze[0]["Szerokosc"]), 50.3539, places=4)
+        finally:
+            shutil.rmtree(tmp)
 
 
 class TestSnapshotEndToEnd(unittest.TestCase):
@@ -198,9 +394,12 @@ class TestSnapshotEndToEnd(unittest.TestCase):
         shutil.rmtree(self.tmp)
 
     def uruchom(self, data, dodatkowe=()):
-        klient = nfz_api.KlientNfz(sesja=self.sesja, na_sekunde=1000)
-        argv = ["--oddzialy", "07,12", "--przypadki", "1,2", "--data", data, *dodatkowe]
+        klient, _ = klient_testowy(self.sesja)
+        argv = ["--oddzialy", "07,12", "--przypadki", "1,2", "--limit", "25", "--data", data, *dodatkowe]
         return nfz_snapshot.main(argv, klient=klient, root=self.tmp)
+
+    def raport(self):
+        return json.loads((self.tmp / "data/nfz/ostatni_przebieg.json").read_text(encoding="utf-8"))
 
     def czytaj(self, sciezka):
         return common.wczytaj_csv(self.tmp / sciezka)
@@ -248,6 +447,36 @@ class TestSnapshotEndToEnd(unittest.TestCase):
         self.uruchom("2026-10-19")
         b = (self.tmp / "data/nfz/snapshots/2026-10-19.csv.gz").read_bytes()
         self.assertEqual(a, b)
+
+    def test_brakujace_strony_a_prog_zapisu(self):
+        wzor = wczytaj_fixture("nfz_v14_rekordy.json")[0]
+        rekordy = []
+        for i in range(60):
+            r = copy.deepcopy(wzor)
+            r["id"] = f"q{i}"
+            rekordy.append(r)
+
+        class ZepsutaStrona(FakeSession):
+            def get(self, url, params=None, timeout=None, headers=None):
+                if (params["province"], int(params["case"]), int(params["page"])) == ("07", 1, 2):
+                    return FakeResponse(503, {})
+                return super().get(url, params, timeout, headers)
+
+        self.sesja = ZepsutaStrona({("07", 1): rekordy, ("12", 1): [], ("07", 2): [], ("12", 2): []})
+        # 1 z 6 stron po dogrywce nadal brakuje -> powyżej progu 1% -> brak zapisu, ale jest raport
+        self.assertEqual(self.uruchom("2026-10-19"), 1)
+        self.assertFalse((self.tmp / "data/nfz/snapshots/2026-10-19.csv.gz").exists())
+        raport = self.raport()
+        self.assertFalse(raport["zapisany"])
+        self.assertEqual(raport["brakujace_strony"], 1)
+        self.assertIn("brakuje 1 z 6 stron", raport["powod_odrzucenia"])
+        # przy wyższym progu snapshot jest zapisany z adnotacją
+        self.assertEqual(self.uruchom("2026-10-19", ["--maks-braki", "0.5"]), 0)
+        self.assertEqual(len(self.czytaj("data/nfz/snapshots/2026-10-19.csv.gz")), 35)  # 60 − 25 z brakującej strony
+        raport = self.raport()
+        self.assertTrue(raport["zapisany"])
+        self.assertFalse(raport["kompletny"])
+        self.assertEqual(raport["brakujace_strony_szczegoly"][0]["strona"], 2)
 
 
 class TestGus(unittest.TestCase):

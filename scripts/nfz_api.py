@@ -5,18 +5,25 @@ API v1.4 (od 10.07.2026): https://apinfz.nfz.gov.pl/app-itl-api-pcus/queues
   - dates.date-situation-as-at – data, na którą policzono PCUŚ
   - queue-in-cer – kolejka prowadzona w centralnej e-rejestracji (brak PCUŚ i statystyk)
   - współrzędne są w większości puste, część ma zamienioną szerokość z długością
+  - limit: 10 zapytań na 10 sekund. Zmierzony 19.10.2026 w GitHub Actions: po 10
+    zapytaniach serwer odpowiada HTTP 429 z nagłówkiem Retry-After (do 8 s)
 API v1.3 (nieaktualne, ale nadal dostępne): https://api.nfz.gov.pl/app-itl-api/queues
   - używane wyłącznie do uzupełnienia współrzędnych placówek
 """
 
 from __future__ import annotations
 
+import email.utils
 import logging
 import math
 import random
 import threading
 import time
-from typing import Callable, Iterator
+from collections import Counter
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from typing import Callable, Iterable, Iterator
 
 from common import (
     PRZYPADKI,
@@ -29,7 +36,10 @@ from common import (
 
 API_V14 = "https://apinfz.nfz.gov.pl/app-itl-api-pcus/queues"
 API_V13 = "https://api.nfz.gov.pl/app-itl-api/queues"
-LIMIT_NA_STRONE = 25  # maksimum dopuszczane przez API
+LIMIT_NA_STRONE = 25          # wielkość strony, którą API przyjmuje na pewno
+KANDYDACI_LIMITU = (100, 50)  # większe strony sprawdzane na starcie – mniej zapytań, jeśli API je zwraca
+TEMPO_V14 = 0.9               # zapytań na sekundę, czyli 9 na 10 s – tuż poniżej limitu API
+TEMPO_V13 = 1.8
 
 log = logging.getLogger("nfz")
 
@@ -39,37 +49,112 @@ class BladApi(RuntimeError):
 
 
 class Ogranicznik:
-    """Wspólny dla wątków limit liczby zapytań na sekundę."""
+    """Wspólne dla wszystkich wątków tempo zapytań.
 
-    def __init__(self, na_sekunde: float) -> None:
-        self.odstep = 1.0 / max(na_sekunde, 0.1)
+    * Zapytania są rozłożone równo w czasie, co najmniej `odstep` sekund między kolejnymi.
+    * Po HTTP 429 wszystkie wątki czekają tyle, ile każe serwer (Retry-After),
+      a tempo spada o 20%, raz na epizod, a nie osobno w każdym wątku.
+    * Po długiej serii udanych zapytań tempo stopniowo wraca do bazowego, ale nigdy go nie przekracza.
+    """
+
+    def __init__(self, na_sekunde: float, zegar: Callable[[], float] = time.monotonic,
+                 uspij: Callable[[float], None] = time.sleep, maks_odstep: float = 6.0,
+                 seria_do_przyspieszenia: int = 300) -> None:
+        self.odstep_bazowy = 1.0 / max(na_sekunde, 0.01)
+        self.odstep = self.odstep_bazowy
+        self.maks_odstep = max(maks_odstep, self.odstep_bazowy)
+        self.seria_do_przyspieszenia = seria_do_przyspieszenia
+        self.zegar = zegar
+        self.uspij = uspij
+        self.epizody_429 = 0
         self._lock = threading.Lock()
-        self._nastepny = 0.0
+        self._nastepny = float("-inf")
+        self._pauza_do = float("-inf")
+        self._seria = 0
+
+    @property
+    def na_sekunde(self) -> float:
+        return 1.0 / self.odstep
 
     def czekaj(self) -> None:
+        """Blokuje wątek do chwili, w której wolno wysłać kolejne zapytanie."""
+        while True:
+            with self._lock:
+                start = max(self.zegar(), self._nastepny, self._pauza_do)
+                self._nastepny = start + self.odstep
+            opoznienie = start - self.zegar()
+            if opoznienie > 0:
+                self.uspij(opoznienie)
+            with self._lock:
+                if self.zegar() >= self._pauza_do:
+                    return
+            # W trakcie czekania inny wątek dostał 429, więc ustawiamy się w kolejce po pauzie.
+
+    def przy_429(self, retry_after: float | None, domyslna: float = 10.0) -> tuple[float, bool]:
+        """Ogłasza wspólną pauzę. Zwraca (sekundy do końca pauzy, czy to nowy epizod)."""
         with self._lock:
-            teraz = time.monotonic()
-            start = max(teraz, self._nastepny)
-            self._nastepny = start + self.odstep
-        opoznienie = start - time.monotonic()
-        if opoznienie > 0:
-            time.sleep(opoznienie)
+            teraz = self.zegar()
+            pauza = domyslna if retry_after is None else retry_after
+            pauza = min(max(pauza, 1.0), 300.0)
+            nowy = teraz >= self._pauza_do
+            if nowy:
+                self.odstep = min(self.odstep * 1.25, self.maks_odstep)
+                self.epizody_429 += 1
+            self._pauza_do = max(self._pauza_do, teraz + pauza)
+            self._seria = 0
+            return self._pauza_do - teraz, nowy
+
+    def wstrzymaj(self, sekundy: float) -> None:
+        with self._lock:
+            self._pauza_do = max(self._pauza_do, self.zegar() + sekundy)
+
+    def zwolnij(self, mnoznik: float) -> None:
+        with self._lock:
+            self.odstep = min(self.odstep * mnoznik, self.maks_odstep)
+            self._seria = 0
+
+    def sukces(self) -> None:
+        with self._lock:
+            self._seria += 1
+            if self._seria >= self.seria_do_przyspieszenia and self.odstep > self.odstep_bazowy:
+                self.odstep = max(self.odstep / 1.1, self.odstep_bazowy)
+                self._seria = 0
+
+
+def _retry_after(odpowiedz) -> float | None:
+    """Wartość nagłówka Retry-After w sekundach (liczba albo data HTTP)."""
+    naglowki = getattr(odpowiedz, "headers", None) or {}
+    wartosc = naglowki.get("Retry-After")
+    if wartosc in (None, ""):
+        return None
+    try:
+        return float(wartosc)
+    except (TypeError, ValueError):
+        pass
+    try:
+        kiedy = email.utils.parsedate_to_datetime(str(wartosc))
+        return max(0.0, (kiedy - datetime.now(timezone.utc)).total_seconds())
+    except (TypeError, ValueError, IndexError):
+        return None
 
 
 class KlientNfz:
-    """Pobiera strony z API z ponawianiem (429/5xx, błędy sieci) i wykładniczym backoffem."""
+    """Pobiera strony z API: wspólne tempo dla wątków, wspólna pauza po HTTP 429,
+    ponawianie błędów 5xx i błędów sieci z wykładniczym odstępem."""
 
-    KODY_DO_PONOWIENIA = {429, 500, 502, 503, 504}
+    KODY_DO_PONOWIENIA = {500, 502, 503, 504}
 
     def __init__(
         self,
         baza: str = API_V14,
-        na_sekunde: float = 5.0,
+        na_sekunde: float = TEMPO_V14,
         maks_prob: int = 8,
+        maks_prob_429: int = 40,
         timeout: float = 60.0,
         sesja=None,
         dodatkowe_parametry: dict | None = None,
         uspij: Callable[[float], None] = time.sleep,
+        zegar: Callable[[], float] = time.monotonic,
     ) -> None:
         if sesja is None:
             import requests  # zależność tylko przy prawdziwym pobieraniu
@@ -77,63 +162,75 @@ class KlientNfz:
             sesja = requests.Session()
             sesja.headers.update({
                 "Accept": "application/json",
-                "User-Agent": "gdzie-czeka-sie-najkrocej/1.0 (projekt portfolio; snapshot tygodniowy)",
+                "User-Agent": "gdzie-czeka-sie-najkrocej/1.1 (projekt portfolio; snapshot tygodniowy)",
             })
         self.baza = baza
         self.sesja = sesja
-        self.ogranicznik = Ogranicznik(na_sekunde)
+        self.ogranicznik = Ogranicznik(na_sekunde, zegar=zegar, uspij=uspij)
         self.maks_prob = maks_prob
+        self.maks_prob_429 = maks_prob_429
         self.timeout = timeout
         self.dodatkowe = dodatkowe_parametry or {}
         self.uspij = uspij
-        self.statystyki = {"zapytania": 0, "ponowienia": 0}
+        self.zegar = zegar
+        self.statystyki = {"zapytania": 0, "ponowienia": 0, "http_429": 0}
         self._lock = threading.Lock()
 
     def _licz(self, klucz: str) -> None:
         with self._lock:
             self.statystyki[klucz] += 1
 
-    def pobierz(self, parametry: dict) -> dict:
+    def pobierz(self, parametry: dict, maks_prob: int | None = None) -> dict:
         params = {"format": "json", **self.dodatkowe, **parametry}
-        ostatni_blad = ""
-        for proba in range(1, self.maks_prob + 1):
+        maks_prob = maks_prob or self.maks_prob
+        proby = proby_429 = 0
+        while True:
             self.ogranicznik.czekaj()
             self._licz("zapytania")
+            odpowiedz = None
+            status = None
             try:
-                r = self.sesja.get(self.baza, params=params, timeout=self.timeout)
+                odpowiedz = self.sesja.get(self.baza, params=params, timeout=self.timeout)
             except Exception as e:  # błąd sieci / timeout
-                ostatni_blad = f"{type(e).__name__}: {e}"
-                status = None
+                blad = f"{type(e).__name__}: {e}"
             else:
-                status = r.status_code
+                status = odpowiedz.status_code
                 if status == 200:
                     try:
-                        return r.json()
+                        dane = odpowiedz.json()
                     except ValueError as e:
-                        ostatni_blad = f"niepoprawny JSON: {e}"
-                elif status in self.KODY_DO_PONOWIENIA:
-                    ostatni_blad = f"HTTP {status}"
+                        blad = f"niepoprawny JSON: {e}"
+                    else:
+                        self.ogranicznik.sukces()
+                        return dane
+                elif status == 429 or status in self.KODY_DO_PONOWIENIA:
+                    blad = f"HTTP {status}"
                 else:
-                    raise BladApi(f"HTTP {status} dla {params}: {getattr(r, 'text', '')[:300]}")
-            if proba == self.maks_prob:
-                break
-            self._licz("ponowienia")
-            czekanie = min(300.0, 2.0 ** proba) + random.uniform(0, 1.5)
-            retry_after = None
+                    raise BladApi(f"HTTP {status} dla {params}: {getattr(odpowiedz, 'text', '')[:300]}")
+
             if status == 429:
-                try:
-                    retry_after = float(r.headers.get("Retry-After", ""))
-                except (TypeError, ValueError):
-                    retry_after = None
-            if retry_after:
-                czekanie = max(czekanie, retry_after)
-            log.warning("Ponawiam (%s/%s) za %.1f s: %s %s", proba, self.maks_prob, czekanie, ostatni_blad, params)
+                # Limit zapytań to nie awaria: czekamy wspólnie, zwalniamy i próbujemy dalej.
+                proby_429 += 1
+                self._licz("http_429")
+                if proby_429 >= self.maks_prob_429:
+                    raise BladApi(f"Nie udało się pobrać {params}: {proby_429} razy z rzędu HTTP 429")
+                pauza, nowy = self.ogranicznik.przy_429(_retry_after(odpowiedz))
+                if nowy:
+                    log.warning("Limit zapytań API (HTTP 429): wspólna pauza %.0f s, dalej %.2f zapytania/s",
+                                pauza, self.ogranicznik.na_sekunde)
+                continue
+
+            proby += 1
+            if proby >= maks_prob:
+                raise BladApi(f"Nie udało się pobrać {params} po {maks_prob} próbach: {blad}")
+            self._licz("ponowienia")
+            czekanie = min(300.0, 2.0 ** proby) + random.uniform(0, 1.5)
+            log.warning("Ponawiam (%s/%s) za %.1f s: %s %s", proby, maks_prob, czekanie, blad, params)
             self.uspij(czekanie)
-        raise BladApi(f"Nie udało się pobrać {params} po {self.maks_prob} próbach: {ostatni_blad}")
 
     def kolejki(self, przypadek: int, oddzial: str, limit: int = LIMIT_NA_STRONE,
                 maks_stron: int | None = None) -> Iterator[dict]:
-        """Iteruje po wszystkich rekordach dla pary (przypadek, oddział NFZ)."""
+        """Iteruje po kolei po wszystkich rekordach pary (przypadek, oddział NFZ). Do użytku doraźnego."""
         bazowe = {"case": przypadek, "province": oddzial, "limit": limit}
         pierwsza = self.pobierz({**bazowe, "page": 1})
         liczba = int((pierwsza.get("meta") or {}).get("count") or 0)
@@ -149,6 +246,146 @@ class KlientNfz:
                 log.warning("Pusta strona %s (oddział %s, przypadek %s) – kończę wcześniej", strona, oddzial, przypadek)
                 break
             yield from rekordy
+
+
+# ---------------------------------------------------------------------------
+# Pobieranie całych zestawów (oddział × przypadek)
+# ---------------------------------------------------------------------------
+def ustal_limit(klient: KlientNfz, kandydaci: Iterable[int] = KANDYDACI_LIMITU, oddzial: str = "07",
+                przypadek: int = 1) -> int:
+    """Największa strona, którą API naprawdę zwraca. Mniej stron oznacza mniej zapytań.
+
+    API może odrzucić duży limit (błąd 4xx) albo po cichu przyciąć stronę do 25 rekordów.
+    W obu przypadkach zostajemy przy bezpiecznych 25."""
+    for limit in kandydaci:
+        try:
+            dane = klient.pobierz({"case": przypadek, "province": oddzial, "limit": limit, "page": 1}, maks_prob=2)
+        except BladApi as e:
+            log.info("Strona po %s rekordów niedostępna: %s", limit, e)
+            continue
+        liczba = int((dane.get("meta") or {}).get("count") or 0)
+        zwrocone = len(dane.get("data") or [])
+        if zwrocone > LIMIT_NA_STRONE and zwrocone == min(limit, liczba):
+            log.info("API zwraca do %s rekordów na stronę – używam tej wielkości strony.", limit)
+            return limit
+        log.info("Przy limit=%s API zwróciło %s z %s rekordów – sprawdzam mniejszą stronę.", limit, zwrocone, liczba)
+    log.info("Używam stron po %s rekordów.", LIMIT_NA_STRONE)
+    return LIMIT_NA_STRONE
+
+
+@dataclass
+class WynikPobierania:
+    limit: int
+    rekordy_wg_bloku: dict = field(default_factory=dict)        # "07/1" -> meta.count z pierwszej strony
+    strony_wg_bloku: dict = field(default_factory=dict)         # "07/1" -> liczba stron
+    pobrane_wg_bloku: Counter = field(default_factory=Counter)  # "07/1" -> rekordy faktycznie pobrane
+    strony_pobrane: int = 0
+    brakujace: list = field(default_factory=list)               # [{"blok", "strona", "blad"}]
+    czas_s: float = 0.0
+
+    @property
+    def strony_lacznie(self) -> int:
+        return sum(self.strony_wg_bloku.values())
+
+    @property
+    def bloki_bez_danych(self) -> list[str]:
+        return sorted({b["blok"] for b in self.brakujace if b["strona"] == 1})
+
+
+def pobierz_bloki(
+    klient: KlientNfz,
+    bloki: list[tuple[str, int]],
+    przetworz: Callable[[str, int, list[dict]], None],
+    watki: int = 3,
+    limit: int = LIMIT_NA_STRONE,
+    maks_stron: int | None = None,
+    pauzy_dogrywki: tuple[float, ...] = (60.0, 300.0),
+) -> WynikPobierania:
+    """Pobiera wszystkie strony dla par (oddział, przypadek).
+
+    Bloki idą po kolei, więc stronicowanie jednego bloku trwa krótko. Strony 2..N bloku
+    pobierają wątki równolegle, ale we wspólnym tempie klienta. Nieudana strona nie przerywa
+    bloku: trafia do dogrywki na końcu, po pauzie i w wolniejszym tempie.
+    `przetworz(oddzial, przypadek, rekordy)` jest wywoływane w wątku głównym."""
+    wynik = WynikPobierania(limit=limit)
+    zegar = klient.zegar
+    start = zegar()
+
+    def zapytanie(oddzial: str, przypadek: int, strona: int) -> dict:
+        return klient.pobierz({"case": przypadek, "province": oddzial, "limit": limit, "page": strona})
+
+    def obsluz(oddzial: str, przypadek: int, dane: dict) -> None:
+        rekordy = dane.get("data") or []
+        wynik.strony_pobrane += 1
+        wynik.pobrane_wg_bloku[f"{oddzial}/{przypadek}"] += len(rekordy)
+        przetworz(oddzial, przypadek, rekordy)
+
+    def pobierz_blok(pula: ThreadPoolExecutor, oddzial: str, przypadek: int) -> list[tuple[str, int, int, str]]:
+        blok = f"{oddzial}/{przypadek}"
+        try:
+            pierwsza = zapytanie(oddzial, przypadek, 1)
+        except BladApi as e:
+            log.error("Blok %s: nie udało się pobrać pierwszej strony: %s", blok, e)
+            return [(oddzial, przypadek, 1, str(e))]
+        liczba = int((pierwsza.get("meta") or {}).get("count") or 0)
+        stron = max(1, math.ceil(liczba / limit))
+        if maks_stron:
+            stron = min(stron, maks_stron)
+        wynik.rekordy_wg_bloku[blok] = liczba
+        wynik.strony_wg_bloku[blok] = stron
+        obsluz(oddzial, przypadek, pierwsza)
+        nieudane = []
+        przyszle = {pula.submit(zapytanie, oddzial, przypadek, s): s for s in range(2, stron + 1)}
+        for f in as_completed(przyszle):
+            strona = przyszle[f]
+            try:
+                dane = f.result()
+            except BladApi as e:
+                nieudane.append((oddzial, przypadek, strona, str(e)))
+                log.warning("Blok %s, strona %s: %s – ponowię na końcu.", blok, strona, e)
+                continue
+            obsluz(oddzial, przypadek, dane)
+        return nieudane
+
+    nieudane: list[tuple[str, int, int, str]] = []
+    with ThreadPoolExecutor(max_workers=max(1, watki)) as pula:
+        for nr, (oddzial, przypadek) in enumerate(bloki, 1):
+            blok = f"{oddzial}/{przypadek}"
+            t0, z0 = zegar(), klient.statystyki["zapytania"]
+            nieudane += pobierz_blok(pula, oddzial, przypadek)
+            dt = zegar() - t0
+            tempo = f"{(klient.statystyki['zapytania'] - z0) / dt:.2f}" if dt >= 1 else "–"
+            log.info("Blok %s/%s (oddział %s, przypadek %s): %s rekordów, %s stron, %.0f s, tempo %s zapytania/s, "
+                     "HTTP 429 dotąd: %s", nr, len(bloki), oddzial, przypadek, wynik.rekordy_wg_bloku.get(blok, "?"),
+                     wynik.strony_wg_bloku.get(blok, "?"), dt, tempo, klient.statystyki["http_429"])
+        for runda, pauza in enumerate(pauzy_dogrywki, 1):
+            if not nieudane:
+                break
+            log.warning("Dogrywka %s: %s stron do ponowienia – wspólna pauza %.0f s, potem wolniejsze tempo.",
+                        runda, len(nieudane), pauza)
+            klient.ogranicznik.wstrzymaj(pauza)
+            klient.ogranicznik.zwolnij(1.5)
+            do_ponowienia, nieudane = nieudane, []
+            for oddzial, przypadek, strona, _ in do_ponowienia:
+                if strona == 1:
+                    nieudane += pobierz_blok(pula, oddzial, przypadek)
+                    continue
+                try:
+                    dane = zapytanie(oddzial, przypadek, strona)
+                except BladApi as e:
+                    nieudane.append((oddzial, przypadek, strona, str(e)))
+                    continue
+                obsluz(oddzial, przypadek, dane)
+            if not nieudane:
+                log.info("Dogrywka %s: wszystkie strony pobrane.", runda)
+
+    wynik.brakujace = [{"blok": f"{o}/{c}", "strona": s, "blad": b} for o, c, s, b in nieudane]
+    wynik.czas_s = round(zegar() - start, 1)
+    if not maks_stron:
+        for blok, liczba in wynik.rekordy_wg_bloku.items():
+            if liczba and wynik.pobrane_wg_bloku[blok] < 0.98 * liczba:
+                log.warning("Blok %s: pobrano %s z %s rekordów.", blok, wynik.pobrane_wg_bloku[blok], liczba)
+    return wynik
 
 
 # ---------------------------------------------------------------------------

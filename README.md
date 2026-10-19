@@ -33,12 +33,13 @@ Plan z pliku `założenia.md` powstał przy założeniu, że API zwraca **pierws
 ```
 .github/workflows/snapshot-nfz.yml   cotygodniowy snapshot (cron) + uruchomienie ręczne
 scripts/
-  nfz_api.py                 klient API (limit zapytań, ponawianie 429/5xx) i spłaszczanie JSON
-  nfz_snapshot.py            16 oddziałów × 2 przypadki, stronicowanie po 25 rekordów → snapshot
+  nfz_api.py                 klient API (wspólne tempo, pauza po 429, dogrywka) i spłaszczanie JSON
+  nfz_snapshot.py            16 oddziałów × 2 przypadki, stronicowanie → snapshot
   nfz_wspolrzedne_v13.py     współrzędne placówek z API v1.3
   gus_powiaty.py             GUS BDL: ludność, ludność 65+, przeciętne wynagrodzenie
   geo_build.py               granice powiatów (PRG) → TopoJSON + środki gmin
   ustaw_repo.py              wpisuje adres Twojego repozytorium w projekcie Power BI
+  zapisz_dane.sh             commit i push folderu data/ (krok workflow)
   common.py                  wspólne funkcje (TERYT, PCUŚ, CSV)
 tests/                       testy jednostkowe i end-to-end na odpowiedziach o strukturze API
 data/
@@ -66,7 +67,7 @@ powerbi/
    python scripts/ustaw_repo.py TWOJ-LOGIN/gdzie-czeka-sie-najkrocej
    ```
    Skrypt ustawia parametry Power Query, adres mapy powiatów i linki. Bez Pythona: w Power BI *Przekształć dane → Parametry* oraz Format mapy → *Ustawienia mapy → Adres URL*. Wypchnij zmianę na GitHuba.
-3. **Zbierz pierwszy snapshot:** zakładka *Actions* → „Snapshot kolejek NFZ” → *Run workflow* (zaznacz „Odśwież też dane GUS”). Pełny przebieg trwa ok. 30–60 minut. Wynik sprawdzisz w `data/nfz/ostatni_przebieg.json`. Kolejne uruchomienia odbywają się automatycznie w poniedziałki rano.
+3. **Zbierz pierwszy snapshot:** zakładka *Actions* → „Snapshot kolejek NFZ” → *Run workflow* (zaznacz „Odśwież też dane GUS”). API NFZ v1.4 przyjmuje najwyżej 10 zapytań na 10 sekund, więc pierwszy przebieg trwa do ok. 2,5 godziny, a cotygodniowy ok. 2 godzin. Wynik sprawdzisz w `data/nfz/ostatni_przebieg.json`. Kolejne uruchomienia odbywają się automatycznie w poniedziałki rano.
    - Lokalnie zamiast Actions: `pip install -r requirements.txt`, potem `python scripts/gus_powiaty.py`, `python scripts/nfz_wspolrzedne_v13.py`, `python scripts/nfz_snapshot.py` i wypchnięcie folderu `data/`.
 4. **Otwórz `powerbi/GdzieNajkrocej.pbip`** i kliknij *Odśwież*. Przy pytaniu o dostęp do `https://raw.githubusercontent.com` wybierz *Anonimowy*.
 5. **Sprawdź mapę na stronie „Mapa dostępności”.** Jeśli powiaty się nie rysują, wybierz w formacie mapy *Ustawienia mapy → Typ mapy: mapa niestandardowa* i wskaż plik `data/geo/powiaty.topojson`, a następnie zapisz projekt. Mapa zostanie wtedy osadzona w raporcie i nie będzie zależna od GitHuba.
@@ -116,4 +117,5 @@ python scripts/geo_build.py          # wymaga: pip install shapely, Node.js (map
 
 - PCUŚ to prognoza NFZ, a nie gwarantowany termin. Wartości powyżej 30 dni NFZ podaje w miesiącach i tygodniach, więc dokładność wynosi około tygodnia.
 - Oczekujący są przypisani do powiatu placówki. Duże miasta obsługują też pacjentów z okolicy, co zawyża ich wskaźniki na 10 tys. mieszkańców.
+- API NFZ v1.4 ma limit 10 zapytań na 10 sekund, a pełny snapshot to ok. 6 tys. zapytań. Skrypt trzyma równe tempo 0,9 zapytania na sekundę. Po odpowiedzi HTTP 429 wszystkie wątki robią wspólną pauzę, a strony, których nie udało się pobrać, są ponawiane na końcu. Snapshot jest zapisywany, gdy brakuje najwyżej 1% stron. Braki opisuje `data/nfz/ostatni_przebieg.json`.
 - Snapshoty przyrastają o kilka MB tygodniowo. Po roku warto rozważyć archiwizację starszych plików albo odświeżanie przyrostowe.
