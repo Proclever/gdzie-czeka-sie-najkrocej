@@ -2,7 +2,7 @@ name: Snapshot kolejek NFZ
 
 on:
   schedule:
-    # poniedziałki 04:17 UTC (6:17 czasu letniego w Polsce); placówki raportują dane co tydzień
+    # poniedziałki 04:17 UTC (6:17 czasu letniego, 5:17 zimowego w Polsce); placówki raportują dane co tydzień
     - cron: "17 4 * * 1"
   workflow_dispatch:
     inputs:
@@ -25,7 +25,8 @@ concurrency:
 jobs:
   snapshot:
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    # API NFZ v1.4 przyjmuje 10 zapytań na 10 s, więc snapshot trwa ok. 2 h (w 1. tygodniu miesiąca ok. 2,5 h)
+    timeout-minutes: 345
     steps:
       - uses: actions/checkout@v5
 
@@ -60,14 +61,8 @@ jobs:
       - name: Snapshot NFZ (API v1.4)
         run: python scripts/nfz_snapshot.py
 
+      # Zapisuje dane także po błędzie albo przerwaniu, żeby nie przepadły GUS i współrzędne.
       - name: Zapis danych w repozytorium
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data
-          if git diff --cached --quiet; then
-            echo "Brak zmian w danych."
-            exit 0
-          fi
-          git commit -m "Snapshot NFZ $(TZ=Europe/Warsaw date +%F)"
-          git push
+        if: ${{ always() }}
+        run: bash scripts/zapisz_dane.sh
+
