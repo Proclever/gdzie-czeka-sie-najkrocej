@@ -1,5 +1,5 @@
 /// Login (lub organizacja) właściciela repozytorium GitHub z danymi.
-expression GitHubWlasciciel = "TWOJ-LOGIN" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+expression GitHubWlasciciel = "Proclever" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: 490c6b0b-05a2-5864-8457-0da229001222
 	queryGroup: Parametry
 

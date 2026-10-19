@@ -114,7 +114,7 @@
             "mapUrl": {
               "expr": {
                 "Literal": {
-                  "Value": "'https://raw.githubusercontent.com/TWOJ-LOGIN/gdzie-czeka-sie-najkrocej/main/data/geo/powiaty.topojson'"
+                  "Value": "'https://raw.githubusercontent.com/Proclever/gdzie-czeka-sie-najkrocej/main/data/geo/powiaty.topojson'"
                 }
               }
             },

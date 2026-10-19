@@ -2,7 +2,7 @@
 
 Raport Power BI pokazujący dostępność leczenia w ramach NFZ w 380 powiatach: gdzie kolejki są najkrótsze, gdzie popyt przerasta podaż i gdzie brakuje placówek. Dane zbiera co tydzień GitHub Actions z publicznego API NFZ „Terminy leczenia”, a raport czyta je bezpośrednio z tego repozytorium. Dzięki temu odświeżanie w usłudze Power BI działa bez bramy, a strona „Publikuj w sieci Web” jest zawsze aktualna.
 
-Link do raportu: _(wstaw po opublikowaniu)_ · Kod i dane: https://github.com/TWOJ-LOGIN/gdzie-czeka-sie-najkrocej
+Link do raportu: _(wstaw po opublikowaniu)_ · Kod i dane: https://github.com/Proclever/gdzie-czeka-sie-najkrocej
 
 ```mermaid
 flowchart LR
