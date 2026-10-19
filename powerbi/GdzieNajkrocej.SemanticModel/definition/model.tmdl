@@ -1,0 +1,30 @@
+model Model
+	culture: pl-PL
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: pl-PL
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+queryGroup Parametry
+
+	annotation PBI_QueryGroupOrder = 0
+
+queryGroup Dane
+
+	annotation PBI_QueryGroupOrder = 1
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_QueryOrder = ["GitHubWlasciciel","GitHubRepozytorium","GitHubGalaz","FactKolejki","DimSwiadczenie","DimPlacowka","DimPowiat","DimData","ParamStart"]
+
+ref table FactKolejki
+ref table DimSwiadczenie
+ref table DimPlacowka
+ref table DimPowiat
+ref table DimData
+ref table ParamStart
+ref table ParamPromien
+ref table ParamMetryka
+ref table Miary

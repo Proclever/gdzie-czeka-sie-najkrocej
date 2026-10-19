@@ -1,0 +1,335 @@
+/// Fakty: snapshot × miejsce × świadczenie × przypadek (API NFZ v1.4).
+table FactKolejki
+	lineageTag: 7faf20b7-46c2-594d-b117-e3e7deddfb6d
+
+	/// Data tygodniowego snapshotu.
+	column DataSnapshotu
+		dataType: dateTime
+		formatString: dd.mm.yyyy
+		lineageTag: d4ad4b5a-ac55-5436-b8e3-21002fd03f42
+		summarizeBy: none
+		sourceColumn: DataSnapshotu
+
+		annotation SummarizationSetBy = Automatic
+
+	column MiejsceKey
+		dataType: string
+		isHidden
+		lineageTag: 2ce01666-c152-58dc-8498-8836a322d85d
+		summarizeBy: none
+		sourceColumn: MiejsceKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column SwiadczenieKey
+		dataType: string
+		isHidden
+		lineageTag: 461a0412-8caf-5f10-8806-eee5d53d3163
+		summarizeBy: none
+		sourceColumn: SwiadczenieKey
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Kategoria medyczna: Stabilny lub Pilny.
+	column Przypadek
+		dataType: string
+		lineageTag: 504cbe6f-fc98-5871-a523-e2265a56580d
+		summarizeBy: none
+		sourceColumn: Przypadek
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Kod oddziału wojewódzkiego NFZ (01–16).
+	column Oddzial
+		dataType: string
+		isHidden
+		lineageTag: 1b2b6d29-bcde-5808-9ad2-781defcfde16
+		summarizeBy: none
+		sourceColumn: Oddzial
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Rekord zbiorczy: świadczeniodawca udziela świadczenia w wielu miejscach.
+	column WieleMiejsc
+		dataType: boolean
+		isHidden
+		lineageTag: c760e917-3f47-57c8-938a-61c3c4d99529
+		summarizeBy: none
+		sourceColumn: WieleMiejsc
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Kolejka w centralnej e-rejestracji (brak PCUŚ w API).
+	column WCeR
+		dataType: boolean
+		isHidden
+		lineageTag: f1ddab01-b20a-5d86-9760-b7c2d6dffb93
+		summarizeBy: none
+		sourceColumn: WCeR
+
+		annotation SummarizationSetBy = Automatic
+
+	column Znieczulenie
+		dataType: string
+		isHidden
+		lineageTag: 8301576d-aef5-5c30-9da8-21e6fc964b6f
+		summarizeBy: none
+		sourceColumn: Znieczulenie
+
+		annotation SummarizationSetBy = Automatic
+
+	column PrzedzialWieku
+		dataType: string
+		isHidden
+		lineageTag: 8e8a3f2a-c180-5702-8ce4-ead5d7df74b5
+		summarizeBy: none
+		sourceColumn: PrzedzialWieku
+
+		annotation SummarizationSetBy = Automatic
+
+	column Oczekujacy
+		dataType: int64
+		isHidden
+		lineageTag: a4eae9ad-5cc7-55a2-bb5f-7de93597c67e
+		summarizeBy: sum
+		sourceColumn: Oczekujacy
+
+		annotation SummarizationSetBy = Automatic
+
+	column Skresleni
+		dataType: int64
+		isHidden
+		lineageTag: 3f60f698-65ba-58c1-af13-86459561d7eb
+		summarizeBy: sum
+		sourceColumn: Skresleni
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Średni czas oczekiwania deklarowany przez placówkę (dni); puste, gdy w miesiącu nikogo nie obsłużono.
+	column SredniCzasDni
+		dataType: int64
+		isHidden
+		lineageTag: ed9aac88-7e4f-5884-9a67-15f569d77c96
+		summarizeBy: none
+		sourceColumn: SredniCzasDni
+
+		annotation SummarizationSetBy = Automatic
+
+	column OkresStatystyk
+		dataType: dateTime
+		isHidden
+		formatString: yyyy-mm
+		lineageTag: 17bb5b43-fb4a-51f7-9449-c19330c93790
+		summarizeBy: none
+		sourceColumn: OkresStatystyk
+
+		annotation SummarizationSetBy = Automatic
+
+	/// PCUŚ w brzmieniu NFZ.
+	column PCUS
+		dataType: string
+		isHidden
+		lineageTag: 995ce672-cd6f-5c0e-9d6c-d26c9af91b21
+		summarizeBy: none
+		sourceColumn: PCUS
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Prognozowany czas oczekiwania (PCUŚ) w dniach; miesiąc = 30 dni, tydzień = 7 dni.
+	column PCUSDni
+		dataType: int64
+		isHidden
+		lineageTag: ca947378-9181-5c11-89e5-7d19308f6aa6
+		summarizeBy: none
+		sourceColumn: PCUSDni
+
+		annotation SummarizationSetBy = Automatic
+
+	column PCUSStanNa
+		dataType: dateTime
+		isHidden
+		formatString: dd.mm.yyyy
+		lineageTag: b7a1112e-da10-5b96-93ea-560aea401808
+		summarizeBy: none
+		sourceColumn: PCUSStanNa
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Pierwszy wolny termin – NFZ przestał go publikować 1.07.2026.
+	column PierwszyTermin
+		dataType: dateTime
+		isHidden
+		formatString: dd.mm.yyyy
+		lineageTag: 4a878fda-7646-5167-93f7-93a43a50bb11
+		summarizeBy: none
+		sourceColumn: PierwszyTermin
+
+		annotation SummarizationSetBy = Automatic
+
+	column PrognozaNFZDni
+		dataType: int64
+		isHidden
+		lineageTag: 79f79820-cb8e-5f38-b6f4-7ae1fa6ae3fe
+		summarizeBy: none
+		sourceColumn: PrognozaNFZDni
+
+		annotation SummarizationSetBy = Automatic
+
+	column CzasRozladowaniaDni
+		dataType: double
+		isHidden
+		formatString: #,0
+		lineageTag: aa374ce8-f188-52e0-98a8-89649b5abe6a
+		summarizeBy: none
+		sourceColumn: CzasRozladowaniaDni
+
+		annotation SummarizationSetBy = Automatic
+
+	column BrakPCUS
+		dataType: boolean
+		isHidden
+		lineageTag: a84662b8-12d2-5ba1-b633-1112dde19bc9
+		summarizeBy: none
+		sourceColumn: BrakPCUS
+
+		annotation SummarizationSetBy = Automatic
+
+	column DaneNieaktualne
+		dataType: boolean
+		isHidden
+		lineageTag: 6aafa8f1-38f4-5677-a962-a3bbaefeba76
+		summarizeBy: none
+		sourceColumn: DaneNieaktualne
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Przedział prognozowanego czasu oczekiwania.
+	column PrzedzialPCUS
+		dataType: string
+		lineageTag: 295a5713-a1a1-5aa9-a7e4-40c5cf115f4a
+		summarizeBy: none
+		sourceColumn: PrzedzialPCUS
+		sortByColumn: PrzedzialPCUSSort
+
+		annotation SummarizationSetBy = Automatic
+
+	column PrzedzialPCUSSort
+		dataType: int64
+		isHidden
+		lineageTag: 40bffce6-cdad-5133-80b3-73977343d9da
+		summarizeBy: none
+		sourceColumn: PrzedzialPCUSSort
+
+		annotation SummarizationSetBy = Automatic
+
+	partition FactKolejki = m
+		mode: import
+		queryGroup: Dane
+		source =
+				let
+				    Prefiks = GitHubWlasciciel & "/" & GitHubRepozytorium & "/" & GitHubGalaz & "/",
+				    Pobierz = (sciezka as text) as nullable binary =>
+				        let
+				            Odpowiedz = Web.Contents(
+				                "https://raw.githubusercontent.com",
+				                [RelativePath = Prefiks & sciezka, ManualStatusHandling = {404}]
+				            ),
+				            Status = Value.Metadata(Odpowiedz)[Response.Status],
+				            Tresc =
+				                if Status = 404 then null
+				                else if Text.EndsWith(sciezka, ".gz") then Binary.Decompress(Odpowiedz, Compression.GZip)
+				                else Odpowiedz
+				        in
+				            Tresc,
+				    CzytajCsv = (sciezka as text, kolumny as list) as table =>
+				        let
+				            Plik = Pobierz(sciezka),
+				            Surowa =
+				                if Plik = null then #table(kolumny, {})
+				                else Table.PromoteHeaders(
+				                    Csv.Document(Plik, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				                    [PromoteAllScalars = true]
+				                )
+				        in
+				            Table.SelectColumns(Surowa, kolumny, MissingField.UseNull),
+				    KolumnyFaktu = {
+				        "DataSnapshotu", "MiejsceKey", "SwiadczenieKey", "Przypadek", "Oddzial", "WieleMiejsc", "WCeR",
+				        "Znieczulenie", "PrzedzialWieku", "Oczekujacy", "Skresleni", "SredniCzasDni", "OkresStatystyk",
+				        "PCUS", "PCUSDni", "PCUSStanNa", "PierwszyTermin", "PrognozaNFZDni"
+				    },
+				    Manifest = CzytajCsv("data/nfz/manifest.csv", {"DataSnapshotu", "Plik"}),
+				    Pliki = List.Select(Manifest[Plik], each _ <> null and _ <> ""),
+				    Snapshoty = List.Transform(Pliki, each CzytajCsv(_, KolumnyFaktu)),
+				    Polaczone = Table.Combine({#table(KolumnyFaktu, {})} & Snapshoty),
+				    BezPustych = Table.ReplaceValue(
+				        Polaczone, "", null, Replacer.ReplaceValue,
+				        {"Znieczulenie", "PrzedzialWieku", "Oczekujacy", "Skresleni", "SredniCzasDni", "OkresStatystyk",
+				         "PCUS", "PCUSDni", "PCUSStanNa", "PierwszyTermin", "PrognozaNFZDni"}
+				    ),
+				    Typy = Table.TransformColumnTypes(
+				        BezPustych,
+				        {
+				            {"DataSnapshotu", type date}, {"MiejsceKey", type text}, {"SwiadczenieKey", type text},
+				            {"Przypadek", type text}, {"Oddzial", type text}, {"WieleMiejsc", type text}, {"WCeR", type text},
+				            {"Znieczulenie", type text}, {"PrzedzialWieku", type text}, {"Oczekujacy", Int64.Type},
+				            {"Skresleni", Int64.Type}, {"SredniCzasDni", Int64.Type}, {"OkresStatystyk", type text},
+				            {"PCUS", type text}, {"PCUSDni", Int64.Type}, {"PCUSStanNa", type date},
+				            {"PierwszyTermin", type date}, {"PrognozaNFZDni", Int64.Type}
+				        },
+				        "en-US"
+				    ),
+				    Flagi = Table.TransformColumns(
+				        Typy,
+				        {
+				            {"WieleMiejsc", each _ = "Y", type logical},
+				            {"WCeR", each _ = "Y", type logical},
+				            {"Znieczulenie", each if _ = "Y" then "Tak" else if _ = "N" then "Nie" else null, type text},
+				            {"OkresStatystyk", each try #date(Number.From(Text.Start(_, 4)), Number.From(Text.End(_, 2)), 1) otherwise null, type date}
+				        }
+				    ),
+				    SredniWazny = Table.AddColumn(
+				        Flagi, "SredniCzasDniWazny",
+				        each if [SredniCzasDni] = null or ([SredniCzasDni] = 0 and ([Skresleni] = null or [Skresleni] = 0)) then null else [SredniCzasDni],
+				        Int64.Type
+				    ),
+				    Sredni = Table.RenameColumns(Table.RemoveColumns(SredniWazny, {"SredniCzasDni"}), {{"SredniCzasDniWazny", "SredniCzasDni"}}),
+				    Rozladowanie = Table.AddColumn(
+				        Sredni, "CzasRozladowaniaDni",
+				        each if [Skresleni] <> null and [Skresleni] > 0 and [Oczekujacy] <> null then Number.Round([Oczekujacy] / [Skresleni] * 30, 1) else null,
+				        type number
+				    ),
+				    BrakPCUS = Table.AddColumn(Rozladowanie, "BrakPCUS", each [PCUSDni] = null, type logical),
+				    Nieaktualne = Table.AddColumn(
+				        BrakPCUS, "DaneNieaktualne",
+				        each
+				            (if [PCUSStanNa] <> null then Duration.Days([DataSnapshotu] - [PCUSStanNa]) > 45 else false)
+				            or (if [OkresStatystyk] <> null then [OkresStatystyk] < Date.AddMonths(Date.StartOfMonth([DataSnapshotu]), -2) else false),
+				        type logical
+				    ),
+				    Przedzialy = {"0–7 dni", "8–14 dni", "15–30 dni", "31–60 dni", "61–90 dni", "91–180 dni", "181–365 dni", "ponad rok", "brak PCUŚ"},
+				    Przedzial = Table.AddColumn(
+				        Nieaktualne, "PrzedzialPCUS",
+				        each
+				            if [PCUSDni] = null then "brak PCUŚ"
+				            else if [PCUSDni] <= 7 then "0–7 dni"
+				            else if [PCUSDni] <= 14 then "8–14 dni"
+				            else if [PCUSDni] <= 30 then "15–30 dni"
+				            else if [PCUSDni] <= 60 then "31–60 dni"
+				            else if [PCUSDni] <= 90 then "61–90 dni"
+				            else if [PCUSDni] <= 180 then "91–180 dni"
+				            else if [PCUSDni] <= 365 then "181–365 dni"
+				            else "ponad rok",
+				        type text
+				    ),
+				    PrzedzialSort = Table.AddColumn(Przedzial, "PrzedzialPCUSSort", each List.PositionOf(Przedzialy, [PrzedzialPCUS]) + 1, Int64.Type),
+				    Wynik = Table.SelectColumns(
+				        PrzedzialSort,
+				        {"DataSnapshotu", "MiejsceKey", "SwiadczenieKey", "Przypadek", "Oddzial", "WieleMiejsc", "WCeR",
+				         "Znieczulenie", "PrzedzialWieku", "Oczekujacy", "Skresleni", "SredniCzasDni", "OkresStatystyk",
+				         "PCUS", "PCUSDni", "PCUSStanNa", "PierwszyTermin", "PrognozaNFZDni", "CzasRozladowaniaDni",
+				         "BrakPCUS", "DaneNieaktualne", "PrzedzialPCUS", "PrzedzialPCUSSort"}
+				    )
+				in
+				    Wynik
+
+	annotation PBI_ResultType = Table

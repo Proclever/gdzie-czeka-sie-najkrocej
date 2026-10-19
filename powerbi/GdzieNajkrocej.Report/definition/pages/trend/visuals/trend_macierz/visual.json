@@ -1,0 +1,184 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "name": "trend_macierz",
+  "position": {
+    "x": 828,
+    "y": 162,
+    "z": 1800,
+    "height": 542,
+    "width": 436,
+    "tabOrder": 700
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimPowiat"
+                    }
+                  },
+                  "Property": "Województwo"
+                }
+              },
+              "queryRef": "DimPowiat.Województwo",
+              "nativeQueryRef": "Województwo",
+              "displayName": "Województwo",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Miary"
+                    }
+                  },
+                  "Property": "Mediana PCUŚ (aktualnie)"
+                }
+              },
+              "queryRef": "Miary.Mediana PCUŚ (aktualnie)",
+              "nativeQueryRef": "Mediana PCUŚ (aktualnie)",
+              "displayName": "Teraz (dni)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Miary"
+                    }
+                  },
+                  "Property": "Mediana PCUŚ (4 tyg. temu)"
+                }
+              },
+              "queryRef": "Miary.Mediana PCUŚ (4 tyg. temu)",
+              "nativeQueryRef": "Mediana PCUŚ (4 tyg. temu)",
+              "displayName": "4 tyg. temu"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Miary"
+                    }
+                  },
+                  "Property": "Zmiana m/m (dni)"
+                }
+              },
+              "queryRef": "Miary.Zmiana m/m (dni)",
+              "nativeQueryRef": "Zmiana m/m (dni)",
+              "displayName": "Zmiana m/m"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Miary"
+                  }
+                },
+                "Property": "Zmiana m/m (dni)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Zmiana mediany PCUŚ m/m wg województw'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Porównanie z najbliższym snapshotem sprzed ≥ 4 tygodni'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

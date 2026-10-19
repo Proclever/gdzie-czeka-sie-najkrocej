@@ -1,0 +1,102 @@
+/// Miejscowości startowe (środek = średnia współrzędnych placówek). Tabela rozłączna.
+table ParamStart
+	lineageTag: 5bebfae0-ff5c-5542-a455-71f1cb87aa36
+
+	column 'Miejscowość'
+		dataType: string
+		lineageTag: 7b757693-cffb-50b9-b2ae-5b5b1fb469db
+		summarizeBy: none
+		sourceColumn: Miejscowość
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Szerokość'
+		dataType: double
+		isHidden
+		formatString: 0.00000
+		lineageTag: 937b88b9-0cd2-5a4f-a10b-f5c3af18b72d
+		summarizeBy: none
+		sourceColumn: Szerokość
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Długość'
+		dataType: double
+		isHidden
+		formatString: 0.00000
+		lineageTag: a150f652-8ab9-5d6b-8ea1-11aa543c6420
+		summarizeBy: none
+		sourceColumn: Długość
+
+		annotation SummarizationSetBy = Automatic
+
+	column LiczbaPlacowek
+		dataType: int64
+		isHidden
+		lineageTag: 6bda6c6a-60b4-56c3-9169-602bf43eae05
+		summarizeBy: sum
+		sourceColumn: LiczbaPlacowek
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ParamStart = m
+		mode: import
+		queryGroup: Dane
+		source =
+				let
+				    Prefiks = GitHubWlasciciel & "/" & GitHubRepozytorium & "/" & GitHubGalaz & "/",
+				    Pobierz = (sciezka as text) as nullable binary =>
+				        let
+				            Odpowiedz = Web.Contents(
+				                "https://raw.githubusercontent.com",
+				                [RelativePath = Prefiks & sciezka, ManualStatusHandling = {404}]
+				            ),
+				            Status = Value.Metadata(Odpowiedz)[Response.Status],
+				            Tresc =
+				                if Status = 404 then null
+				                else if Text.EndsWith(sciezka, ".gz") then Binary.Decompress(Odpowiedz, Compression.GZip)
+				                else Odpowiedz
+				        in
+				            Tresc,
+				    CzytajCsv = (sciezka as text, kolumny as list) as table =>
+				        let
+				            Plik = Pobierz(sciezka),
+				            Surowa =
+				                if Plik = null then #table(kolumny, {})
+				                else Table.PromoteHeaders(
+				                    Csv.Document(Plik, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				                    [PromoteAllScalars = true]
+				                )
+				        in
+				            Table.SelectColumns(Surowa, kolumny, MissingField.UseNull),
+				    Miejsca = CzytajCsv("data/nfz/miejsca.csv.gz", {"Miejscowosc", "TerytPowiat", "Szerokosc", "Dlugosc"}),
+				    BezPustych = Table.ReplaceValue(Miejsca, "", null, Replacer.ReplaceValue, {"Szerokosc", "Dlugosc", "TerytPowiat", "Miejscowosc"}),
+				    Typy = Table.TransformColumnTypes(BezPustych, {{"Szerokosc", type number}, {"Dlugosc", type number}}, "en-US"),
+				    ZeWspolrzednymi = Table.SelectRows(Typy, each [Szerokosc] <> null and [Dlugosc] <> null and [Miejscowosc] <> null),
+				    Grupy = Table.Group(
+				        ZeWspolrzednymi, {"Miejscowosc", "TerytPowiat"},
+				        {
+				            {"Szerokosc", each List.Average([Szerokosc]), type number},
+				            {"Dlugosc", each List.Average([Dlugosc]), type number},
+				            {"LiczbaPlacowek", each Table.RowCount(_), Int64.Type}
+				        }
+				    ),
+				    Powiaty = CzytajCsv("data/geo/powiaty.csv", {"TerytPowiat", "Powiat"}),
+				    ZPowiatem = Table.ExpandTableColumn(
+				        Table.NestedJoin(Grupy, {"TerytPowiat"}, Powiaty, {"TerytPowiat"}, "P", JoinKind.LeftOuter),
+				        "P", {"Powiat"}
+				    ),
+				    Etykieta = Table.AddColumn(
+				        ZPowiatem, "Miejscowosc z powiatem",
+				        each Text.Proper([Miejscowosc]) & (if [Powiat] = null then "" else " (" & [Powiat] & ")"),
+				        type text
+				    ),
+				    Unikalne = Table.Distinct(Etykieta, {"Miejscowosc z powiatem"}),
+				    Wynik = Table.RenameColumns(
+				        Table.Sort(Table.SelectColumns(Unikalne, {"Miejscowosc z powiatem", "Szerokosc", "Dlugosc", "LiczbaPlacowek"}), {{"Miejscowosc z powiatem", Order.Ascending}}),
+				        {{"Miejscowosc z powiatem", "Miejscowość"}, {"Szerokosc", "Szerokość"}, {"Dlugosc", "Długość"}}
+				    )
+				in
+				    Wynik
+
+	annotation PBI_ResultType = Table

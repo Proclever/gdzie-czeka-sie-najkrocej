@@ -1,0 +1,236 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "name": "powiat_placowki",
+  "position": {
+    "x": 16,
+    "y": 196,
+    "z": 2000,
+    "height": 508,
+    "width": 820,
+    "tabOrder": 900
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimPlacowka"
+                    }
+                  },
+                  "Property": "Placówka"
+                }
+              },
+              "queryRef": "DimPlacowka.Placówka",
+              "nativeQueryRef": "Placówka",
+              "displayName": "Placówka"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimSwiadczenie"
+                    }
+                  },
+                  "Property": "Świadczenie"
+                }
+              },
+              "queryRef": "DimSwiadczenie.Świadczenie",
+              "nativeQueryRef": "Świadczenie",
+              "displayName": "Świadczenie"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactKolejki"
+                    }
+                  },
+                  "Property": "Przypadek"
+                }
+              },
+              "queryRef": "FactKolejki.Przypadek",
+              "nativeQueryRef": "Przypadek",
+              "displayName": "Przypadek"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Miary"
+                    }
+                  },
+                  "Property": "PCUŚ wg NFZ"
+                }
+              },
+              "queryRef": "Miary.PCUŚ wg NFZ",
+              "nativeQueryRef": "PCUŚ wg NFZ",
+              "displayName": "PCUŚ wg NFZ"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Miary"
+                    }
+                  },
+                  "Property": "PCUŚ placówki (dni)"
+                }
+              },
+              "queryRef": "Miary.PCUŚ placówki (dni)",
+              "nativeQueryRef": "PCUŚ placówki (dni)",
+              "displayName": "PCUŚ (dni)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Miary"
+                    }
+                  },
+                  "Property": "Oczekujący (aktualnie)"
+                }
+              },
+              "queryRef": "Miary.Oczekujący (aktualnie)",
+              "nativeQueryRef": "Oczekujący (aktualnie)",
+              "displayName": "Oczekujący"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Miary"
+                  }
+                },
+                "Property": "PCUŚ placówki (dni)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": false
+      }
+    },
+    "objects": {
+      "columnHeaders": [
+        {
+          "properties": {
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "values": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "9D"
+                }
+              }
+            },
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "grid": [
+        {
+          "properties": {
+            "gridVertical": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "rowPadding": {
+              "expr": {
+                "Literal": {
+                  "Value": "3D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Placówki i świadczenia w powiecie'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Najnowszy snapshot; sortowanie od najdłuższego PCUŚ'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

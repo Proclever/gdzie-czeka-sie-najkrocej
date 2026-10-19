@@ -1,0 +1,147 @@
+{
+ "ludnosc": [
+  {
+   "id": "011212001000",
+   "name": "Powiat bocheński",
+   "values": [
+    {
+     "year": "2024",
+     "val": 106985,
+     "attrId": 1
+    },
+    {
+     "year": "2025",
+     "val": 106926,
+     "attrId": 1
+    }
+   ]
+  },
+  {
+   "id": "011212006000",
+   "name": "Powiat krakowski",
+   "values": [
+    {
+     "year": "2024",
+     "val": 304278,
+     "attrId": 1
+    },
+    {
+     "year": "2025",
+     "val": 304885,
+     "attrId": 1
+    }
+   ]
+  },
+  {
+   "id": "011212099000",
+   "name": "Powiat historyczny",
+   "values": [
+    {
+     "year": "1999",
+     "val": 1000,
+     "attrId": 1
+    }
+   ]
+  }
+ ],
+ "l65_69": [
+  {
+   "id": "011212001000",
+   "name": "Powiat bocheński",
+   "values": [
+    {
+     "year": "2024",
+     "val": 6000,
+     "attrId": 1
+    },
+    {
+     "year": "2025",
+     "val": 6100,
+     "attrId": 1
+    }
+   ]
+  },
+  {
+   "id": "011212006000",
+   "name": "Powiat krakowski",
+   "values": [
+    {
+     "year": "2025",
+     "val": 17000,
+     "attrId": 1
+    }
+   ]
+  }
+ ],
+ "l70plus": [
+  {
+   "id": "011212001000",
+   "name": "Powiat bocheński",
+   "values": [
+    {
+     "year": "2024",
+     "val": 13000,
+     "attrId": 1
+    },
+    {
+     "year": "2025",
+     "val": 13200,
+     "attrId": 1
+    }
+   ]
+  },
+  {
+   "id": "011212006000",
+   "name": "Powiat krakowski",
+   "values": [
+    {
+     "year": "2025",
+     "val": 36000,
+     "attrId": 1
+    }
+   ]
+  }
+ ],
+ "wynagrodzenie": [
+  {
+   "id": "011212001000",
+   "name": "Powiat bocheński",
+   "values": [
+    {
+     "year": "2023",
+     "val": 6500.1,
+     "attrId": 1
+    },
+    {
+     "year": "2024",
+     "val": 7123.45,
+     "attrId": 1
+    }
+   ]
+  },
+  {
+   "id": "011212006000",
+   "name": "Powiat krakowski",
+   "values": [
+    {
+     "year": "2024",
+     "val": 8100,
+     "attrId": 1
+    }
+   ]
+  }
+ ],
+ "wynagrodzenie_pl100": [
+  {
+   "id": "011212001000",
+   "name": "Powiat bocheński",
+   "values": [
+    {
+     "year": "2024",
+     "val": 84.2,
+     "attrId": 1
+    }
+   ]
+  }
+ ]
+}

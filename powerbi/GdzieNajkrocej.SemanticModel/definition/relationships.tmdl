@@ -1,0 +1,15 @@
+relationship 900340eb-ef9b-53f6-80b3-833d59364d24
+	fromColumn: FactKolejki.DataSnapshotu
+	toColumn: DimData.Data
+
+relationship 5bc75e35-8b96-51d0-8b11-c1f346635656
+	fromColumn: FactKolejki.MiejsceKey
+	toColumn: DimPlacowka.MiejsceKey
+
+relationship 8707d07e-4242-5d37-9bf0-16b72a818e23
+	fromColumn: FactKolejki.SwiadczenieKey
+	toColumn: DimSwiadczenie.SwiadczenieKey
+
+relationship b693acdc-8390-525b-add5-667264414fa5
+	fromColumn: DimPlacowka.TerytPowiat
+	toColumn: DimPowiat.TerytPowiat

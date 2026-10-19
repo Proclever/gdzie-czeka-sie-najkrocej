@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Gdzie w Polsce czeka się najkrócej"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "a6f2fc2e-b470-5229-8b14-b3a6da459968"
+  }
+}

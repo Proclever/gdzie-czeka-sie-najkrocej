@@ -1,0 +1,24 @@
+/// Parametr „what-if”: promień wyszukiwania placówek (5–200 km).
+table ParamPromien
+	lineageTag: c8d9bc33-f572-51a1-a305-3dad0df2334d
+
+	measure 'Promień (km)' = SELECTEDVALUE ( ParamPromien[Promień], 50 )
+		formatString: 0
+		displayFolder: 3. Dla pacjenta
+		lineageTag: 38ce4b3a-2058-55e2-a4d1-c44a89fd0b50
+
+	column Promień
+		formatString: 0
+		lineageTag: 51dd363b-ccc1-5af8-a0b6-070c3ce8375f
+		summarizeBy: none
+		sourceColumn: [Value]
+
+		extendedProperty ParameterMetadata = {"version":0}
+
+		annotation SummarizationSetBy = User
+
+	partition ParamPromien = calculated
+		mode: import
+		source = GENERATESERIES ( 5, 200, 5 )
+
+	annotation PBI_Id = b53e4ced79e35e57ab43dfaabfb7a2b5

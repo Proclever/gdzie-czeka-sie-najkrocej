@@ -1,0 +1,48 @@
+/// Parametr pól: przełącznik metryki na mapie i w rankingu.
+table ParamMetryka
+	lineageTag: b02c0d71-08d9-5bd4-85f8-a50908b3d9aa
+
+	column Metryka
+		lineageTag: 8e1eb264-47d0-5e71-ba62-b7c1d77c98fd
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Metryka kolejność'
+
+		relatedColumnDetails
+			groupByColumn: 'Metryka pola'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Metryka pola'
+		isHidden
+		lineageTag: b7b7e5b4-ddf4-5336-9392-6796b45a11fa
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Metryka kolejność'
+
+		extendedProperty ParameterMetadata = {"version":3,"kind":2}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Metryka kolejność'
+		isHidden
+		formatString: 0
+		lineageTag: 344371c0-421e-5b64-a4a2-7a83c47f597c
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ParamMetryka = calculated
+		mode: import
+		source =
+				{
+				    ( "Prognozowany czas oczekiwania – mediana (dni)", NAMEOF ( 'Miary'[Mediana PCUŚ (aktualnie)] ), 0 ),
+				    ( "Prognozowany czas – 90. percentyl (dni)", NAMEOF ( 'Miary'[P90 PCUŚ (aktualnie)] ), 1 ),
+				    ( "Średni czas oczekiwania wg placówek (dni)", NAMEOF ( 'Miary'[Mediana średniego czasu (aktualnie)] ), 2 ),
+				    ( "Czas rozładowania kolejki (dni)", NAMEOF ( 'Miary'[Czas rozładowania kolejki (aktualnie)] ), 3 ),
+				    ( "Oczekujący na 10 tys. osób 65+", NAMEOF ( 'Miary'[Oczekujący na 10 tys. 65+] ), 4 ),
+				    ( "Placówki na 100 tys. mieszkańców", NAMEOF ( 'Miary'[Placówki na 100 tys.] ), 5 )
+				}
+
+	annotation PBI_Id = 48186eb3371e58cb9fd8d8346e3c0a11

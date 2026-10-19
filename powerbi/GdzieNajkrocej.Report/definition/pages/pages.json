@@ -1,0 +1,14 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pagesMetadata/1.0.0/schema.json",
+  "pageOrder": [
+    "podsumowanie",
+    "mapa",
+    "pacjent",
+    "decydent",
+    "inwestor",
+    "trend",
+    "o_danych",
+    "powiat"
+  ],
+  "activePageName": "podsumowanie"
+}

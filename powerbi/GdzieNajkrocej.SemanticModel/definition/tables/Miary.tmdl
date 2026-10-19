@@ -1,0 +1,616 @@
+/// Tabela miar (bez danych).
+table Miary
+	lineageTag: b9338e0a-2142-589a-81d7-c704ec3125fc
+
+	/// Data najnowszego snapshotu w całym modelu (niezależnie od filtrów).
+	measure 'Data ostatniego snapshotu' = CALCULATE ( MAX ( FactKolejki[DataSnapshotu] ), REMOVEFILTERS () )
+		formatString: dd.mm.yyyy
+		displayFolder: 1. Czas oczekiwania
+		lineageTag: 6c400139-f0b1-50ea-902c-a9f1103f3ad1
+
+	/// Mediana prognozowanego czasu oczekiwania (PCUŚ, dni) w bieżącym kontekście – używana na stronie Trend.
+	measure 'Mediana PCUŚ (dni)' = MEDIAN ( FactKolejki[PCUSDni] )
+		formatString: #,0
+		displayFolder: 1. Czas oczekiwania
+		lineageTag: 0dbebdf6-3a2f-5771-b231-9720bc850983
+
+	/// Średnia PCUŚ w bieżącym kontekście – tylko do porównania z medianą (strona O danych).
+	measure 'Średnia PCUŚ (dni)' = AVERAGE ( FactKolejki[PCUSDni] )
+		formatString: #,0
+		displayFolder: 1. Czas oczekiwania
+		lineageTag: 74bb2fb4-dd89-5ec8-91f6-17bd9626f923
+
+	/// 90. percentyl PCUŚ w bieżącym kontekście.
+	measure 'P90 PCUŚ (dni)' =
+			VAR _t = FILTER ( FactKolejki, NOT ISBLANK ( FactKolejki[PCUSDni] ) )
+			RETURN
+			    IF ( NOT ISEMPTY ( _t ), PERCENTILEX.INC ( _t, FactKolejki[PCUSDni], 0.9 ) )
+		formatString: #,0
+		displayFolder: 1. Czas oczekiwania
+		lineageTag: 8db4d3e4-c14b-5ce7-9d40-db04e3ab767a
+
+	/// Mediana PCUŚ w najnowszym snapshocie. Domyślna miara czasu oczekiwania w raporcie.
+	measure 'Mediana PCUŚ (aktualnie)' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			RETURN
+			    CALCULATE (
+			        [Mediana PCUŚ (dni)],
+			        FactKolejki[DataSnapshotu] = _ostatni,
+			        REMOVEFILTERS ( DimData )
+			    )
+		formatString: #,0
+		displayFolder: 1. Czas oczekiwania
+		lineageTag: 05a8a79a-1787-5f93-af71-22ba4f5f4ae1
+
+	/// Średnia PCUŚ w najnowszym snapshocie.
+	measure 'Średnia PCUŚ (aktualnie)' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			RETURN
+			    CALCULATE (
+			        [Średnia PCUŚ (dni)],
+			        FactKolejki[DataSnapshotu] = _ostatni,
+			        REMOVEFILTERS ( DimData )
+			    )
+		formatString: #,0
+		displayFolder: 1. Czas oczekiwania
+		lineageTag: 799bd722-353b-5df2-8dc7-61ac44b13911
+
+	/// Mediana PCUŚ tylko dla pozycji z co najmniej 10 kolejkami z prognozą (eliminuje pojedyncze placówki ze skrajnymi wartościami).
+	measure 'Mediana PCUŚ (min. 10 kolejek)' = IF ( [Liczba kolejek z PCUŚ (aktualnie)] >= 10, [Mediana PCUŚ (aktualnie)] )
+		formatString: #,0
+		displayFolder: 1. Czas oczekiwania
+		lineageTag: a340e8b7-97cc-5d27-85df-cb0b16438789
+
+	/// 90. percentyl PCUŚ w najnowszym snapshocie.
+	measure 'P90 PCUŚ (aktualnie)' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			RETURN
+			    CALCULATE (
+			        [P90 PCUŚ (dni)],
+			        FactKolejki[DataSnapshotu] = _ostatni,
+			        REMOVEFILTERS ( DimData )
+			    )
+		formatString: #,0
+		displayFolder: 1. Czas oczekiwania
+		lineageTag: 2fb0b2c5-d897-5fce-ae81-0950b4ab4e13
+
+	/// Mediana średniego czasu oczekiwania deklarowanego przez placówki za ostatni miesiąc (bez rekordów bez obsłużonych pacjentów).
+	measure 'Mediana średniego czasu (dni)' = MEDIAN ( FactKolejki[SredniCzasDni] )
+		formatString: #,0
+		displayFolder: 1. Czas oczekiwania
+		lineageTag: 5f560bb2-e059-51b2-bc97-6f5737d0f71c
+
+	/// Mediana deklarowanego średniego czasu oczekiwania w najnowszym snapshocie.
+	measure 'Mediana średniego czasu (aktualnie)' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			RETURN
+			    CALCULATE (
+			        [Mediana średniego czasu (dni)],
+			        FactKolejki[DataSnapshotu] = _ostatni,
+			        REMOVEFILTERS ( DimData )
+			    )
+		formatString: #,0
+		displayFolder: 1. Czas oczekiwania
+		lineageTag: 4abe277b-d88a-59b4-ae83-17e1daa7e700
+
+	/// Szacunek: ile dni zajęłoby obsłużenie wszystkich oczekujących przy obecnym miesięcznym tempie (oczekujący ÷ skreśleni po udzieleniu świadczenia × 30).
+	measure 'Czas rozładowania kolejki (dni)' = DIVIDE ( SUM ( FactKolejki[Oczekujacy] ), SUM ( FactKolejki[Skresleni] ) ) * 30
+		formatString: #,0
+		displayFolder: 1. Czas oczekiwania
+		lineageTag: 64cdc082-81d1-5266-8f6b-a757082e418f
+
+	/// Czas rozładowania kolejki w najnowszym snapshocie.
+	measure 'Czas rozładowania kolejki (aktualnie)' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			RETURN
+			    CALCULATE (
+			        [Czas rozładowania kolejki (dni)],
+			        FactKolejki[DataSnapshotu] = _ostatni,
+			        REMOVEFILTERS ( DimData )
+			    )
+		formatString: #,0
+		displayFolder: 1. Czas oczekiwania
+		lineageTag: d8206cdc-5c35-5b0b-a736-a340334dc8c9
+
+	/// Liczba oczekujących na koniec miesiąca (dane placówek) w najnowszym snapshocie.
+	measure 'Oczekujący (aktualnie)' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			RETURN
+			    CALCULATE (
+			        SUM ( FactKolejki[Oczekujacy] ),
+			        FactKolejki[DataSnapshotu] = _ostatni,
+			        REMOVEFILTERS ( DimData )
+			    )
+		formatString: #,0
+		displayFolder: 2. Popyt i dostępność
+		lineageTag: 0a0f6687-4b52-5723-8f30-d0415ad024bd
+
+	/// Liczba osób skreślonych z listy po udzieleniu świadczenia w ostatnim miesiącu.
+	measure 'Skreśleni (aktualnie)' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			RETURN
+			    CALCULATE (
+			        SUM ( FactKolejki[Skresleni] ),
+			        FactKolejki[DataSnapshotu] = _ostatni,
+			        REMOVEFILTERS ( DimData )
+			    )
+		formatString: #,0
+		displayFolder: 2. Popyt i dostępność
+		lineageTag: cb6323f7-6c08-5f30-a0e9-90a2f8ebf97d
+
+	/// Liczba rekordów (miejsce × świadczenie × przypadek) w najnowszym snapshocie.
+	measure 'Liczba kolejek (aktualnie)' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			RETURN
+			    CALCULATE (
+			        COUNTROWS ( FactKolejki ),
+			        FactKolejki[DataSnapshotu] = _ostatni,
+			        REMOVEFILTERS ( DimData )
+			    )
+		formatString: #,0
+		displayFolder: 2. Popyt i dostępność
+		lineageTag: 4ea59a19-045d-5638-9329-1e285c22ba69
+
+	/// Liczba kolejek z prognozowanym czasem oczekiwania w najnowszym snapshocie.
+	measure 'Liczba kolejek z PCUŚ (aktualnie)' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			RETURN
+			    CALCULATE (
+			        COUNTROWS ( FactKolejki ),
+			        FactKolejki[DataSnapshotu] = _ostatni,
+			        REMOVEFILTERS ( DimData ),
+			        FactKolejki[BrakPCUS] = FALSE ()
+			    )
+		formatString: #,0
+		displayFolder: 2. Popyt i dostępność
+		lineageTag: 652d3017-72c8-5d23-a118-3d2e7678a8b0
+
+	/// Liczba miejsc udzielania świadczeń w najnowszym snapshocie (bez rekordów zbiorczych „wiele miejsc”). Zero zamiast pustej wartości, żeby powiaty bez placówek były widoczne.
+	measure 'Liczba placówek' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			RETURN
+			    COALESCE (
+			        CALCULATE (
+			            DISTINCTCOUNT ( FactKolejki[MiejsceKey] ),
+			            FactKolejki[DataSnapshotu] = _ostatni,
+			            FactKolejki[WieleMiejsc] = FALSE (),
+			            REMOVEFILTERS ( DimData )
+			        ),
+			        0
+			    )
+		formatString: #,0
+		displayFolder: 2. Popyt i dostępność
+		lineageTag: 17fa22f1-36b2-5d36-8174-ecd8c1ed81d1
+
+	/// Oczekujący w placówkach z danego obszaru na 10 tys. mieszkańców w wieku 65+ (GUS BDL).
+	measure 'Oczekujący na 10 tys. 65+' = DIVIDE ( [Oczekujący (aktualnie)], SUM ( DimPowiat[Ludność 65+] ) ) * 10000
+		formatString: #,0.0
+		displayFolder: 2. Popyt i dostępność
+		lineageTag: 6bfd3e8a-729f-5fc9-b5b5-6f61f74457de
+
+	/// Liczba placówek na 100 tys. mieszkańców (GUS BDL).
+	measure 'Placówki na 100 tys.' = DIVIDE ( [Liczba placówek], SUM ( DimPowiat[Ludność] ) ) * 100000
+		formatString: #,0.0
+		displayFolder: 2. Popyt i dostępność
+		lineageTag: 1aa33602-aa3f-5da3-8afe-e52b06ed3fe7
+
+	/// Ludność ogółem (GUS BDL, najnowszy dostępny rok).
+	measure 'Ludność (suma)' = SUM ( DimPowiat[Ludność] )
+		formatString: #,0
+		displayFolder: 2. Popyt i dostępność
+		lineageTag: 1e57e9e7-ae9d-5c84-8cf9-21003729e24a
+
+	/// Ludność w wieku 65 lat i więcej (GUS BDL).
+	measure 'Ludność 65+ (suma)' = SUM ( DimPowiat[Ludność 65+] )
+		formatString: #,0
+		displayFolder: 2. Popyt i dostępność
+		lineageTag: 07c2d0b7-d72f-5804-a147-b613dcc075d7
+
+	/// Przeciętne miesięczne wynagrodzenie brutto (GUS BDL); dla kilku powiatów – średnia nieważona.
+	measure 'Wynagrodzenie (średnie)' = AVERAGE ( DimPowiat[Przeciętne wynagrodzenie] )
+		formatString: #,0 "zł"
+		displayFolder: 2. Popyt i dostępność
+		lineageTag: 5a565d5f-ee10-5520-9048-ffc084172236
+
+	/// Szerokość geograficzna punktu startowego (domyślnie centrum Warszawy).
+	measure 'Start: szerokość' = IF ( HASONEVALUE ( ParamStart[Miejscowość] ), SELECTEDVALUE ( ParamStart[Szerokość] ), 52.2297 )
+		formatString: 0.0000
+		displayFolder: 3. Dla pacjenta
+		lineageTag: 43494e96-6077-5351-9a42-e1acf5cd23c4
+
+	/// Długość geograficzna punktu startowego (domyślnie centrum Warszawy).
+	measure 'Start: długość' = IF ( HASONEVALUE ( ParamStart[Miejscowość] ), SELECTEDVALUE ( ParamStart[Długość] ), 21.0122 )
+		formatString: 0.0000
+		displayFolder: 3. Dla pacjenta
+		lineageTag: 261ab4a2-bf8e-5d83-8b29-5731768bd376
+
+	/// Opis punktu startowego.
+	measure 'Start: miejscowość' = IF ( HASONEVALUE ( ParamStart[Miejscowość] ), SELECTEDVALUE ( ParamStart[Miejscowość] ), "Warszawa (domyślnie)" )
+		displayFolder: 3. Dla pacjenta
+		lineageTag: dc008cdd-b942-5b1a-bab2-5dc223b2f2a9
+
+	/// Odległość w linii prostej (wzór haversine) od punktu startowego do placówki, liczona tylko dla placówek z kolejką w bieżącym wyborze.
+	measure 'Odległość (km)' =
+			VAR _lat2 = SELECTEDVALUE ( DimPlacowka[Szerokość] )
+			VAR _lon2 = SELECTEDVALUE ( DimPlacowka[Długość] )
+			RETURN
+			    IF (
+			        NOT ISBLANK ( _lat2 ) && NOT ISBLANK ( _lon2 ) && [Liczba kolejek (aktualnie)] > 0,
+			        VAR _p1 = RADIANS ( [Start: szerokość] )
+			        VAR _p2 = RADIANS ( _lat2 )
+			        VAR _dl = RADIANS ( _lon2 - [Start: długość] )
+			        VAR _a = SIN ( ( _p2 - _p1 ) / 2 ) ^ 2 + COS ( _p1 ) * COS ( _p2 ) * SIN ( _dl / 2 ) ^ 2
+			        RETURN 6371 * 2 * ASIN ( SQRT ( _a ) )
+			    )
+		formatString: #,0.0
+		displayFolder: 3. Dla pacjenta
+		lineageTag: d45dc12f-ad55-57a9-9248-8fe7084fc043
+
+	/// 1, gdy placówka leży w wybranym promieniu (filtr wizualizacji = 1).
+	measure 'W promieniu' =
+			VAR _d = [Odległość (km)]
+			RETURN
+			    IF ( NOT ISBLANK ( _d ) && _d <= [Promień (km)], 1, 0 )
+		formatString: 0
+		displayFolder: 3. Dla pacjenta
+		lineageTag: c30fe58e-5354-58f0-bd2c-b93748a4b9a3
+
+	/// 1, gdy placówka leży w promieniu i ma prognozowany czas oczekiwania (filtr tabeli dla pacjenta).
+	measure 'W promieniu (z PCUŚ)' = IF ( [W promieniu] = 1 && NOT ISBLANK ( [PCUŚ placówki (dni)] ), 1, 0 )
+		formatString: 0
+		displayFolder: 3. Dla pacjenta
+		lineageTag: afc0955f-3daa-5ff0-9e59-6aafd5208ee5
+
+	/// Najkrótszy prognozowany czas oczekiwania w placówce dla bieżącego wyboru świadczenia i przypadku.
+	measure 'PCUŚ placówki (dni)' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			RETURN
+			    CALCULATE (
+			        MIN ( FactKolejki[PCUSDni] ),
+			        FactKolejki[DataSnapshotu] = _ostatni,
+			        REMOVEFILTERS ( DimData )
+			    )
+		formatString: #,0
+		displayFolder: 3. Dla pacjenta
+		lineageTag: 600b4b24-68c6-551c-86d6-5436c3e5934e
+
+	/// PCUŚ w oryginalnym brzmieniu NFZ, np. „1 mies. 3 tyg.”.
+	measure 'PCUŚ wg NFZ' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			VAR _min =
+			    CALCULATE ( MIN ( FactKolejki[PCUSDni] ), FactKolejki[DataSnapshotu] = _ostatni, REMOVEFILTERS ( DimData ) )
+			RETURN
+			    IF (
+			        NOT ISBLANK ( _min ),
+			        CALCULATE (
+			            MIN ( FactKolejki[PCUS] ),
+			            FactKolejki[DataSnapshotu] = _ostatni,
+			            FactKolejki[PCUSDni] = _min,
+			            REMOVEFILTERS ( DimData )
+			        )
+			    )
+		displayFolder: 3. Dla pacjenta
+		lineageTag: c164c7b4-3af3-544c-b75a-331c53a7f6af
+
+	/// Liczba placówek z kolejką na wybrane świadczenie w zadanym promieniu.
+	measure 'Placówki w promieniu' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			VAR _r = [Promień (km)]
+			VAR _lat1 = RADIANS ( [Start: szerokość] )
+			VAR _lon1 = [Start: długość]
+			VAR _miejsca =
+			    CALCULATETABLE (
+			        SUMMARIZE ( FactKolejki, DimPlacowka[MiejsceKey], DimPlacowka[Szerokość], DimPlacowka[Długość] ),
+			        FactKolejki[DataSnapshotu] = _ostatni,
+			        REMOVEFILTERS ( DimData )
+			    )
+			VAR _odl =
+			    ADDCOLUMNS (
+			        FILTER ( _miejsca, NOT ISBLANK ( DimPlacowka[Szerokość] ) ),
+			        "@km",
+			            VAR _p2 = RADIANS ( DimPlacowka[Szerokość] )
+			            VAR _dl = RADIANS ( DimPlacowka[Długość] - _lon1 )
+			            VAR _a = SIN ( ( _p2 - _lat1 ) / 2 ) ^ 2 + COS ( _lat1 ) * COS ( _p2 ) * SIN ( _dl / 2 ) ^ 2
+			            RETURN 6371 * 2 * ASIN ( SQRT ( _a ) )
+			    )
+			RETURN
+			    COUNTROWS ( FILTER ( _odl, [@km] <= _r ) ) + 0
+		formatString: #,0
+		displayFolder: 3. Dla pacjenta
+		lineageTag: 54c55448-9310-52e2-b5c1-2383305b3517
+
+	/// Najkrótszy prognozowany czas oczekiwania wśród placówek w zadanym promieniu.
+	measure 'Najkrótszy PCUŚ w promieniu (dni)' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			VAR _r = [Promień (km)]
+			VAR _lat1 = RADIANS ( [Start: szerokość] )
+			VAR _lon1 = [Start: długość]
+			VAR _miejsca =
+			    CALCULATETABLE (
+			        SUMMARIZE ( FactKolejki, DimPlacowka[MiejsceKey], DimPlacowka[Szerokość], DimPlacowka[Długość] ),
+			        FactKolejki[DataSnapshotu] = _ostatni,
+			        REMOVEFILTERS ( DimData )
+			    )
+			VAR _odl =
+			    ADDCOLUMNS (
+			        FILTER ( _miejsca, NOT ISBLANK ( DimPlacowka[Szerokość] ) ),
+			        "@km",
+			            VAR _p2 = RADIANS ( DimPlacowka[Szerokość] )
+			            VAR _dl = RADIANS ( DimPlacowka[Długość] - _lon1 )
+			            VAR _a = SIN ( ( _p2 - _lat1 ) / 2 ) ^ 2 + COS ( _lat1 ) * COS ( _p2 ) * SIN ( _dl / 2 ) ^ 2
+			            RETURN 6371 * 2 * ASIN ( SQRT ( _a ) )
+			    )
+			RETURN
+			    MINX (
+			        FILTER ( _odl, [@km] <= _r ),
+			        CALCULATE (
+			            MIN ( FactKolejki[PCUSDni] ),
+			            FactKolejki[DataSnapshotu] = _ostatni,
+			            REMOVEFILTERS ( DimData )
+			        )
+			    )
+		formatString: #,0
+		displayFolder: 3. Dla pacjenta
+		lineageTag: a565310d-1bcb-5ce2-9117-1be9e8a27374
+
+	/// Nazwa placówki (do podpowiedzi na mapie; maks. 3 nazwy w jednym punkcie).
+	measure 'Nazwa placówki' =
+			VAR _z = FILTER ( VALUES ( DimPlacowka[Placówka] ), [Liczba kolejek (aktualnie)] > 0 )
+			RETURN
+			    CONCATENATEX ( TOPN ( 3, _z, DimPlacowka[Placówka], ASC ), DimPlacowka[Placówka], "; " )
+		displayFolder: 3. Dla pacjenta
+		lineageTag: 384b03ad-8589-5ff9-896f-47c179fec2dc
+
+	/// Średnia rang percentylowych (0–1): długie kolejki × duży popyt (oczekujący na 10 tys. 65+) × siła nabywcza (wynagrodzenie). Liczony wśród powiatów z danymi dla wybranej specjalizacji.
+	measure 'Indeks luki' =
+			VAR _dni = [Mediana PCUŚ (aktualnie)]
+			VAR _powiaty =
+			    FILTER (
+			        ALLSELECTED ( DimPowiat[Powiat], DimPowiat[Województwo] ),
+			        NOT ISBLANK ( DimPowiat[Powiat] ) && NOT ISBLANK ( [Mediana PCUŚ (aktualnie)] )
+			    )
+			VAR _n = COUNTROWS ( _powiaty )
+			RETURN
+			    IF (
+			        NOT ISBLANK ( _dni ) && _n > 1,
+			        VAR _rDni = RANKX ( _powiaty, [Mediana PCUŚ (aktualnie)], _dni, ASC )
+			        VAR _popyt = [Oczekujący na 10 tys. 65+]
+			        VAR _rPop = RANKX ( _powiaty, [Oczekujący na 10 tys. 65+], _popyt, ASC )
+			        VAR _placa = CALCULATE ( AVERAGE ( DimPowiat[Przeciętne wynagrodzenie] ) )
+			        VAR _rSila = RANKX ( _powiaty, CALCULATE ( AVERAGE ( DimPowiat[Przeciętne wynagrodzenie] ) ), _placa, ASC )
+			        RETURN DIVIDE ( _rDni + _rPop + _rSila, 3 * _n )
+			    )
+		formatString: 0.00
+		displayFolder: 4. Decydent i inwestor
+		lineageTag: 86a450da-6838-5972-bea1-f9c86c9760ba
+
+	/// Mediana wskaźnika wśród widocznych powiatów – linia podziału ćwiartek na wykresie punktowym.
+	measure 'Mediana powiatów: oczekujący na 10 tys. 65+' =
+			MEDIANX (
+			    FILTER ( ALLSELECTED ( DimPowiat[Powiat] ), NOT ISBLANK ( DimPowiat[Powiat] ) && NOT ISBLANK ( [Oczekujący na 10 tys. 65+] ) ),
+			    [Oczekujący na 10 tys. 65+]
+			)
+		formatString: #,0.0
+		displayFolder: 4. Decydent i inwestor
+		lineageTag: a38456c7-2d01-5d1e-b022-8c7b8d26d22d
+
+	/// Mediana PCUŚ wśród widocznych powiatów – linia podziału ćwiartek na wykresie punktowym.
+	measure 'Mediana powiatów: PCUŚ' =
+			MEDIANX (
+			    FILTER ( ALLSELECTED ( DimPowiat[Powiat] ), NOT ISBLANK ( DimPowiat[Powiat] ) && NOT ISBLANK ( [Mediana PCUŚ (aktualnie)] ) ),
+			    [Mediana PCUŚ (aktualnie)]
+			)
+		formatString: #,0
+		displayFolder: 4. Decydent i inwestor
+		lineageTag: 4cd30ea8-b2fb-5445-bbd9-821a5b8c00f8
+
+	/// „Pustynie”: liczba powiatów bez żadnej placówki dla bieżącego wyboru świadczenia.
+	measure 'Powiaty bez placówki' = COUNTROWS ( FILTER ( DISTINCT ( DimPowiat[TerytPowiat] ), NOT ISBLANK ( DimPowiat[TerytPowiat] ) && [Liczba placówek] = 0 ) ) + 0
+		formatString: #,0
+		displayFolder: 4. Decydent i inwestor
+		lineageTag: b886fff5-df4d-5030-9df3-e6497d84f9b7
+
+	/// Nazwa powiatu na stronie szczegółów.
+	measure 'Wybrany powiat' = SELECTEDVALUE ( DimPowiat[Powiat], "Wybierz powiat: prawy klik na powiecie → Przejdź do szczegółów" )
+		displayFolder: 4. Decydent i inwestor
+		lineageTag: f40edfa5-d5a1-5a01-9914-fb536c9043d8
+
+	/// Mediana PCUŚ w snapshocie sprzed co najmniej 4 tygodni.
+	measure 'Mediana PCUŚ (4 tyg. temu)' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			VAR _wczesniej =
+			    CALCULATE ( MAX ( FactKolejki[DataSnapshotu] ), FactKolejki[DataSnapshotu] <= _ostatni - 28, REMOVEFILTERS () )
+			RETURN
+			    IF (
+			        NOT ISBLANK ( _wczesniej ),
+			        CALCULATE ( [Mediana PCUŚ (dni)], FactKolejki[DataSnapshotu] = _wczesniej, REMOVEFILTERS ( DimData ) )
+			    )
+		formatString: #,0
+		displayFolder: 5. Trend
+		lineageTag: abe7e653-ea4f-5d31-b510-42831567160d
+
+	/// Zmiana mediany PCUŚ względem snapshotu sprzed 4 tygodni (dni).
+	measure 'Zmiana m/m (dni)' =
+			VAR _teraz = [Mediana PCUŚ (aktualnie)]
+			VAR _wczesniej = [Mediana PCUŚ (4 tyg. temu)]
+			RETURN
+			    IF ( NOT ISBLANK ( _teraz ) && NOT ISBLANK ( _wczesniej ), _teraz - _wczesniej )
+		formatString: +#,0;-#,0;0
+		displayFolder: 5. Trend
+		lineageTag: 719a09e6-894c-50bd-9ede-76d4c5f696d2
+
+	/// Liczba tygodniowych snapshotów w modelu.
+	measure 'Liczba snapshotów' = CALCULATE ( DISTINCTCOUNT ( FactKolejki[DataSnapshotu] ), REMOVEFILTERS () )
+		formatString: #,0
+		displayFolder: 5. Trend
+		lineageTag: b1bf8aa5-538b-5a3e-a14b-5fdc328fc98c
+
+	/// Data pierwszego snapshotu.
+	measure 'Pierwszy snapshot' = CALCULATE ( MIN ( FactKolejki[DataSnapshotu] ), REMOVEFILTERS () )
+		formatString: dd.mm.yyyy
+		displayFolder: 5. Trend
+		lineageTag: 27f485c6-83b1-599a-8cbe-8f1856c992fb
+
+	/// Świadczenie z najdłuższą medianą PCUŚ (min. 10 kolejek z prognozą).
+	measure 'Wniosek: najdłuższa kolejka' =
+			VAR _kandydaci =
+			    FILTER (
+			        ALLSELECTED ( DimSwiadczenie[Świadczenie] ),
+			        NOT ISBLANK ( DimSwiadczenie[Świadczenie] ) && [Liczba kolejek z PCUŚ (aktualnie)] >= 10
+			    )
+			VAR _top = TOPN ( 1, _kandydaci, [Mediana PCUŚ (aktualnie)], DESC )
+			VAR _dni = MAXX ( _top, [Mediana PCUŚ (aktualnie)] )
+			RETURN
+			    IF (
+			        ISBLANK ( _dni ),
+			        "Za mało danych dla wybranych filtrów",
+			        CONCATENATEX ( _top, DimSwiadczenie[Świadczenie], ", " ) & " – mediana " & FORMAT ( _dni, "0" ) & " dni"
+			    )
+		displayFolder: 6. Wnioski i tytuły
+		lineageTag: f8baeb9e-340c-57bf-ae1e-848ff9b7f4b2
+
+	/// Powiat z najdłuższą medianą PCUŚ (min. 5 kolejek z prognozą).
+	measure 'Wniosek: powiat z najdłuższą kolejką' =
+			VAR _kandydaci =
+			    FILTER (
+			        ALLSELECTED ( DimPowiat[Powiat] ),
+			        NOT ISBLANK ( DimPowiat[Powiat] ) && [Liczba kolejek z PCUŚ (aktualnie)] >= 5
+			    )
+			VAR _top = TOPN ( 1, _kandydaci, [Mediana PCUŚ (aktualnie)], DESC )
+			VAR _dni = MAXX ( _top, [Mediana PCUŚ (aktualnie)] )
+			RETURN
+			    IF (
+			        ISBLANK ( _dni ),
+			        "Za mało danych dla wybranych filtrów",
+			        CONCATENATEX ( _top, DimPowiat[Powiat], ", " ) & " – mediana " & FORMAT ( _dni, "0" ) & " dni"
+			    )
+		displayFolder: 6. Wnioski i tytuły
+		lineageTag: 93ef0cc1-23a3-51d2-afed-68bf571c59af
+
+	/// Świadczenie z największą zmianą mediany PCUŚ względem snapshotu sprzed 4 tygodni.
+	measure 'Wniosek: największa zmiana' =
+			VAR _kandydaci =
+			    FILTER (
+			        ALLSELECTED ( DimSwiadczenie[Świadczenie] ),
+			        NOT ISBLANK ( DimSwiadczenie[Świadczenie] )
+			            && [Liczba kolejek z PCUŚ (aktualnie)] >= 10
+			            && NOT ISBLANK ( [Zmiana m/m (dni)] )
+			    )
+			VAR _top = TOPN ( 1, _kandydaci, ABS ( [Zmiana m/m (dni)] ), DESC )
+			VAR _zmiana = MAXX ( _top, [Zmiana m/m (dni)] )
+			RETURN
+			    IF (
+			        ISBLANK ( _zmiana ),
+			        "Trend pojawi się po zebraniu snapshotów z co najmniej 4 tygodni",
+			        CONCATENATEX ( _top, DimSwiadczenie[Świadczenie], ", " ) & ": "
+			            & IF ( _zmiana > 0, "+", "" ) & FORMAT ( _zmiana, "0" ) & " dni m/m"
+			    )
+		displayFolder: 6. Wnioski i tytuły
+		lineageTag: 1efd6364-2bed-57d3-bfa6-1b71a0552427
+
+	/// Opis aktualności danych do nagłówków stron.
+	measure 'Stan danych' =
+			VAR _data = [Data ostatniego snapshotu]
+			RETURN
+			    IF (
+			        ISBLANK ( _data ),
+			        "Brak danych – uruchom workflow „Snapshot kolejek NFZ” w GitHub Actions i odśwież raport",
+			        "Dane NFZ: snapshot z " & FORMAT ( _data, "dd.mm.yyyy" ) & " · liczba snapshotów: " & FORMAT ( [Liczba snapshotów], "0" )
+			    )
+		displayFolder: 6. Wnioski i tytuły
+		lineageTag: a45311c6-10b9-5915-944d-c1219fc563b6
+
+	/// Dynamiczny tytuł mapy zależny od wybranej metryki (SUMMARIZE z kolumną pól – wymóg klucza złożonego parametru pól).
+	measure 'Tytuł mapy' =
+			VAR _wybrane = SUMMARIZE ( ParamMetryka, ParamMetryka[Metryka], ParamMetryka[Metryka pola] )
+			RETURN
+			    "Mapa powiatów: "
+			        & IF ( COUNTROWS ( _wybrane ) = 1, MAXX ( _wybrane, ParamMetryka[Metryka] ), "wybierz metrykę" )
+		displayFolder: 6. Wnioski i tytuły
+		lineageTag: b4bc2392-59fb-5185-80c8-3bb681f4adf5
+
+	/// Udział kolejek bez prognozowanego czasu oczekiwania (m.in. kolejki w centralnej e-rejestracji).
+	measure '% kolejek bez PCUŚ' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			RETURN
+			    DIVIDE (
+			        CALCULATE ( COUNTROWS ( FactKolejki ), FactKolejki[DataSnapshotu] = _ostatni, FactKolejki[BrakPCUS] = TRUE (), REMOVEFILTERS ( DimData ) ),
+			        [Liczba kolejek (aktualnie)]
+			    )
+		formatString: 0.0%
+		displayFolder: 7. Jakość danych
+		lineageTag: 6956a861-dcbf-5671-8038-6982fab65b47
+
+	/// Udział kolejek prowadzonych w centralnej e-rejestracji (API nie podaje dla nich PCUŚ ani statystyk).
+	measure '% kolejek w e-rejestracji' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			RETURN
+			    DIVIDE (
+			        CALCULATE ( COUNTROWS ( FactKolejki ), FactKolejki[DataSnapshotu] = _ostatni, FactKolejki[WCeR] = TRUE (), REMOVEFILTERS ( DimData ) ),
+			        [Liczba kolejek (aktualnie)]
+			    )
+		formatString: 0.0%
+		displayFolder: 7. Jakość danych
+		lineageTag: daa5b6c1-d9b2-5b82-99c2-2ffa8df90b96
+
+	/// PCUŚ starszy niż 45 dni od snapshotu lub statystyki placówki starsze niż 2 miesiące.
+	measure '% kolejek z nieaktualnymi danymi' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			RETURN
+			    DIVIDE (
+			        CALCULATE ( COUNTROWS ( FactKolejki ), FactKolejki[DataSnapshotu] = _ostatni, FactKolejki[DaneNieaktualne] = TRUE (), REMOVEFILTERS ( DimData ) ),
+			        [Liczba kolejek (aktualnie)]
+			    )
+		formatString: 0.0%
+		displayFolder: 7. Jakość danych
+		lineageTag: c759ac0d-64e0-5b45-ac05-2a51031fa072
+
+	/// Od 1.07.2026 NFZ nie publikuje pierwszego wolnego terminu – miara dokumentuje tę zmianę.
+	measure '% kolejek z pierwszym wolnym terminem' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			RETURN
+			    DIVIDE (
+			        CALCULATE (
+			            COUNTROWS ( FactKolejki ),
+			            FactKolejki[DataSnapshotu] = _ostatni,
+			            KEEPFILTERS ( FILTER ( ALL ( FactKolejki[PierwszyTermin] ), NOT ISBLANK ( FactKolejki[PierwszyTermin] ) ) ),
+			            REMOVEFILTERS ( DimData )
+			        ),
+			        [Liczba kolejek (aktualnie)]
+			    ) + 0
+		formatString: 0.0%
+		displayFolder: 7. Jakość danych
+		lineageTag: a6189e19-4fea-544a-9081-236211cad4e1
+
+	/// Placówki, których położenie przyjęto jako środek gminy/powiatu (brak współrzędnych w API NFZ).
+	measure '% placówek z przybliżoną lokalizacją' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			RETURN
+			    DIVIDE (
+			        CALCULATE ( DISTINCTCOUNT ( FactKolejki[MiejsceKey] ), FactKolejki[DataSnapshotu] = _ostatni, DimPlacowka[LokalizacjaDokladna] = FALSE (), REMOVEFILTERS ( DimData ) ),
+			        CALCULATE ( DISTINCTCOUNT ( FactKolejki[MiejsceKey] ), FactKolejki[DataSnapshotu] = _ostatni, REMOVEFILTERS ( DimData ) )
+			    )
+		formatString: 0.0%
+		displayFolder: 7. Jakość danych
+		lineageTag: 47ac9eed-c2c9-5736-ac5b-4f0d973678e3
+
+	/// Powiaty bez danych o ludności (uruchom krok GUS w workflow).
+	measure 'Powiaty bez danych GUS' = COUNTROWS ( FILTER ( ALLNOBLANKROW ( DimPowiat ), ISBLANK ( DimPowiat[Ludność] ) ) ) + 0
+		formatString: #,0
+		displayFolder: 7. Jakość danych
+		lineageTag: 4a1a044f-fd05-5326-b9f1-fcef749b26dc
+
+	column Value
+		isHidden
+		lineageTag: 3e50a489-0d35-5090-9df6-835348f178bb
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Value]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Miary = calculated
+		mode: import
+		source = {1}
+
+	annotation PBI_Id = 55e18dc4213750a6a20cfb18e10c5489

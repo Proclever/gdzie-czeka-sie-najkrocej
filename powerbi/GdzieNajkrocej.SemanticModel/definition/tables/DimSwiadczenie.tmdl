@@ -1,0 +1,126 @@
+/// Świadczenia NFZ z kategorią wyznaczoną z początku nazwy.
+table DimSwiadczenie
+	lineageTag: 340b0204-b060-529f-b45e-0957ef2a5473
+
+	column SwiadczenieKey
+		dataType: string
+		isHidden
+		isKey
+		lineageTag: ef4ab7fe-32da-5d6d-945e-842700d37dd4
+		summarizeBy: none
+		sourceColumn: SwiadczenieKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Świadczenie'
+		dataType: string
+		lineageTag: 4ba8be11-309e-54a0-88a1-fa6ba3603505
+		summarizeBy: none
+		sourceColumn: Świadczenie
+
+		annotation SummarizationSetBy = Automatic
+
+	column Kategoria
+		dataType: string
+		lineageTag: 3338a77c-6ca1-5f0a-957c-bc3aea9421dd
+		summarizeBy: none
+		sourceColumn: Kategoria
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Dla dzieci'
+		dataType: string
+		lineageTag: 85254226-ba2f-5412-b4cd-65d56259777f
+		summarizeBy: none
+		sourceColumn: Dla dzieci
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimSwiadczenie = m
+		mode: import
+		queryGroup: Dane
+		source =
+				let
+				    Prefiks = GitHubWlasciciel & "/" & GitHubRepozytorium & "/" & GitHubGalaz & "/",
+				    Pobierz = (sciezka as text) as nullable binary =>
+				        let
+				            Odpowiedz = Web.Contents(
+				                "https://raw.githubusercontent.com",
+				                [RelativePath = Prefiks & sciezka, ManualStatusHandling = {404}]
+				            ),
+				            Status = Value.Metadata(Odpowiedz)[Response.Status],
+				            Tresc =
+				                if Status = 404 then null
+				                else if Text.EndsWith(sciezka, ".gz") then Binary.Decompress(Odpowiedz, Compression.GZip)
+				                else Odpowiedz
+				        in
+				            Tresc,
+				    CzytajCsv = (sciezka as text, kolumny as list) as table =>
+				        let
+				            Plik = Pobierz(sciezka),
+				            Surowa =
+				                if Plik = null then #table(kolumny, {})
+				                else Table.PromoteHeaders(
+				                    Csv.Document(Plik, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				                    [PromoteAllScalars = true]
+				                )
+				        in
+				            Table.SelectColumns(Surowa, kolumny, MissingField.UseNull),
+				    Zrodlo = Table.Distinct(
+				        CzytajCsv("data/nfz/swiadczenia.csv", {"SwiadczenieKey", "Swiadczenie", "SwiadczenieKlucz", "DlaDzieci"}),
+				        {"SwiadczenieKey"}
+				    ),
+				    Reguly = {
+				        {"start", "PORADNIA STOMATOLOG", "Stomatologia"},
+				        {"start", "LECZENIE PROTETYCZNE", "Stomatologia"},
+				        {"start", "LECZENIE ORTODONTYCZNE", "Stomatologia"},
+				        {"start", "PORADNIA", "Poradnia specjalistyczna"},
+				        {"start", "ŚWIADCZENIA Z ZAKRESU", "Poradnia specjalistyczna"},
+				        {"start", "ODDZIAŁ DZIENNY", "Oddział dzienny"},
+				        {"start", "DZIENNY ODDZIAŁ", "Oddział dzienny"},
+				        {"zawiera", "REHABILITAC", "Rehabilitacja"},
+				        {"start", "FIZJOTERAPIA", "Rehabilitacja"},
+				        {"zawiera", "PIELĘGNACYJNO", "Opieka długoterminowa"},
+				        {"zawiera", "OPIEKUŃCZO", "Opieka długoterminowa"},
+				        {"start", "PIELĘGNIARSKA", "Opieka długoterminowa"},
+				        {"zawiera", "HOSPICJUM", "Opieka paliatywna"},
+				        {"zawiera", "PALIATYWN", "Opieka paliatywna"},
+				        {"start", "ODDZIAŁ", "Oddział szpitalny"},
+				        {"start", "PRACOWNIA", "Diagnostyka"},
+				        {"start", "TOMOGRAFIA", "Diagnostyka"},
+				        {"start", "REZONANS", "Diagnostyka"},
+				        {"start", "KOLONOSKOPIA", "Diagnostyka"},
+				        {"start", "GASTROSKOPIA", "Diagnostyka"},
+				        {"start", "BADANI", "Diagnostyka"},
+				        {"start", "ENDOPROTEZOPLASTYKA", "Zabiegi i operacje"},
+				        {"start", "OPERACJ", "Zabiegi i operacje"},
+				        {"start", "ZABIEG", "Zabiegi i operacje"},
+				        {"start", "USUNIĘCIE", "Zabiegi i operacje"},
+				        {"start", "ARTROSKOPIA", "Zabiegi i operacje"},
+				        {"start", "PROGRAM", "Program lekowy"},
+				        {"start", "LECZENIE", "Leczenie"},
+				        {"start", "OŚRODEK", "Ośrodki i zespoły"},
+				        {"start", "CENTRUM", "Ośrodki i zespoły"},
+				        {"start", "ZESPÓŁ", "Ośrodki i zespoły"},
+				        {"start", "ZAKŁAD", "Ośrodki i zespoły"}
+				    },
+				    Kategoria = (nazwa as nullable text) as text =>
+				        let
+				            Tekst = if nazwa = null then "" else Text.Upper(Text.Trim(nazwa)),
+				            Pasujace = List.Select(
+				                Reguly,
+				                (r) => if r{0} = "start" then Text.StartsWith(Tekst, r{1}) else Text.Contains(Tekst, r{1})
+				            )
+				        in
+				            if List.IsEmpty(Pasujace) then "Inne" else Pasujace{0}{2},
+				    ZKategoria = Table.AddColumn(Zrodlo, "Kategoria", each Kategoria([SwiadczenieKlucz]), type text),
+				    Dzieci = Table.ReplaceValue(ZKategoria, "", "Nie", Replacer.ReplaceValue, {"DlaDzieci"}),
+				    Typy = Table.TransformColumnTypes(Dzieci, {{"SwiadczenieKey", type text}, {"Swiadczenie", type text}, {"DlaDzieci", type text}}),
+				    Wynik = Table.RenameColumns(
+				        Table.SelectColumns(Typy, {"SwiadczenieKey", "Swiadczenie", "Kategoria", "DlaDzieci"}),
+				        {{"Swiadczenie", "Świadczenie"}, {"DlaDzieci", "Dla dzieci"}}
+				    )
+				in
+				    Wynik
+
+	annotation PBI_ResultType = Table

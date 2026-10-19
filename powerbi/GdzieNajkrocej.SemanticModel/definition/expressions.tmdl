@@ -1,0 +1,26 @@
+/// Login (lub organizacja) właściciela repozytorium GitHub z danymi.
+expression GitHubWlasciciel = "TWOJ-LOGIN" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 490c6b0b-05a2-5864-8457-0da229001222
+	queryGroup: Parametry
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+/// Nazwa repozytorium GitHub z danymi.
+expression GitHubRepozytorium = "gdzie-czeka-sie-najkrocej" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 5567e9b2-759f-5248-a6f0-d9d114280ea6
+	queryGroup: Parametry
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+/// Gałąź repozytorium, z której raport czyta pliki.
+expression GitHubGalaz = "main" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 508b8e7a-0370-5c17-876d-c5ce4eae2402
+	queryGroup: Parametry
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text

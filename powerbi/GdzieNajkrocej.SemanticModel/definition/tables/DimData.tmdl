@@ -1,0 +1,82 @@
+/// Kalendarz (tabela dat).
+table DimData
+	lineageTag: baa82854-b464-528e-86e5-fceef060152a
+	dataCategory: Time
+
+	column Data
+		dataType: dateTime
+		isKey
+		formatString: dd.mm.yyyy
+		lineageTag: c214cf0e-79bb-533d-94f6-2340bd0ad8ce
+		summarizeBy: none
+		sourceColumn: Data
+
+		annotation SummarizationSetBy = Automatic
+
+	column Rok
+		dataType: int64
+		formatString: 0
+		lineageTag: a5ea0955-4077-57df-aa20-3b859f44be5b
+		summarizeBy: none
+		sourceColumn: Rok
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Miesiąc'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 7789d8ec-a940-5497-92db-fdba9a1639cc
+		summarizeBy: none
+		sourceColumn: Miesiąc
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Nazwa miesiąca'
+		dataType: string
+		lineageTag: d2c97f09-9b23-5ea4-97c4-b4d1b67abfdb
+		summarizeBy: none
+		sourceColumn: Nazwa miesiąca
+		sortByColumn: 'Miesiąc'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Rok-miesiąc'
+		dataType: string
+		lineageTag: 39659a78-e23a-5c94-9931-cc3e81507b20
+		summarizeBy: none
+		sourceColumn: Rok-miesiąc
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Początek tygodnia'
+		dataType: dateTime
+		formatString: dd.mm.yyyy
+		lineageTag: 2fd26ac4-05e4-514a-b6d9-479d04cdb926
+		summarizeBy: none
+		sourceColumn: Początek tygodnia
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimData = m
+		mode: import
+		queryGroup: Dane
+		source =
+				let
+				    Start = #date(2026, 1, 1),
+				    Koniec = Date.EndOfYear(Date.AddYears(DateTime.Date(DateTime.LocalNow()), 1)),
+				    Daty = List.Dates(Start, Duration.Days(Koniec - Start) + 1, #duration(1, 0, 0, 0)),
+				    Tabela = Table.FromColumns({Daty}, type table [Data = date]),
+				    Rok = Table.AddColumn(Tabela, "Rok", each Date.Year([Data]), Int64.Type),
+				    NrMiesiaca = Table.AddColumn(Rok, "Miesiąc", each Date.Month([Data]), Int64.Type),
+				    NazwaMiesiaca = Table.AddColumn(NrMiesiaca, "Nazwa miesiąca", each Date.MonthName([Data], "pl-PL"), type text),
+				    RokMiesiac = Table.AddColumn(
+				        NazwaMiesiaca, "Rok-miesiąc",
+				        each Text.From(Date.Year([Data])) & "-" & Text.PadStart(Text.From(Date.Month([Data])), 2, "0"),
+				        type text
+				    ),
+				    Tydzien = Table.AddColumn(RokMiesiac, "Początek tygodnia", each Date.StartOfWeek([Data], Day.Monday), type date)
+				in
+				    Tydzien
+
+	annotation PBI_ResultType = Table

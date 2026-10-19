@@ -1,0 +1,381 @@
+TerytPowiat,NazwaPowiatu,Powiat,TerytWojewodztwa,Wojewodztwo,TypPowiatu,KluczMapy,SzerokoscSrodka,DlugoscSrodka
+0201,bolesławiecki,pow. bolesławiecki,02,dolnośląskie,powiat ziemski,PL0201,51.33701,15.53708
+0202,dzierżoniowski,pow. dzierżoniowski,02,dolnośląskie,powiat ziemski,PL0202,50.73705,16.70157
+0203,głogowski,pow. głogowski,02,dolnośląskie,powiat ziemski,PL0203,51.67592,16.07709
+0204,górowski,pow. górowski,02,dolnośląskie,powiat ziemski,PL0204,51.63134,16.5542
+0205,jaworski,pow. jaworski,02,dolnośląskie,powiat ziemski,PL0205,51.01929,16.1542
+0206,karkonoski,pow. karkonoski,02,dolnośląskie,powiat ziemski,PL0206,50.87445,15.55577
+0207,kamiennogórski,pow. kamiennogórski,02,dolnośląskie,powiat ziemski,PL0207,50.7548,16.00104
+0208,kłodzki,pow. kłodzki,02,dolnośląskie,powiat ziemski,PL0208,50.37291,16.61361
+0209,legnicki,pow. legnicki,02,dolnośląskie,powiat ziemski,PL0209,51.23473,16.14278
+0210,lubański,pow. lubański,02,dolnośląskie,powiat ziemski,PL0210,51.07641,15.27954
+0211,lubiński,pow. lubiński,02,dolnośląskie,powiat ziemski,PL0211,51.42088,16.28141
+0212,lwówecki,pow. lwówecki,02,dolnośląskie,powiat ziemski,PL0212,51.02549,15.52953
+0213,milicki,pow. milicki,02,dolnośląskie,powiat ziemski,PL0213,51.51766,17.31826
+0214,oleśnicki,pow. oleśnicki,02,dolnośląskie,powiat ziemski,PL0214,51.26409,17.50885
+0215,oławski,pow. oławski,02,dolnośląskie,powiat ziemski,PL0215,50.95903,17.30718
+0216,polkowicki,pow. polkowicki,02,dolnośląskie,powiat ziemski,PL0216,51.50724,15.99426
+0217,strzeliński,pow. strzeliński,02,dolnośląskie,powiat ziemski,PL0217,50.7735,17.0923
+0218,średzki,pow. średzki (dolnośląskie),02,dolnośląskie,powiat ziemski,PL0218,51.13157,16.62201
+0219,świdnicki,pow. świdnicki (dolnośląskie),02,dolnośląskie,powiat ziemski,PL0219,50.89375,16.43829
+0220,trzebnicki,pow. trzebnicki,02,dolnośląskie,powiat ziemski,PL0220,51.37311,16.99822
+0221,wałbrzyski,pow. wałbrzyski,02,dolnośląskie,powiat ziemski,PL0221,50.75655,16.16821
+0222,wołowski,pow. wołowski,02,dolnośląskie,powiat ziemski,PL0222,51.37167,16.61721
+0223,wrocławski,pow. wrocławski,02,dolnośląskie,powiat ziemski,PL0223,51.02068,16.97437
+0224,ząbkowicki,pow. ząbkowicki,02,dolnośląskie,powiat ziemski,PL0224,50.57212,16.87867
+0225,zgorzelecki,pow. zgorzelecki,02,dolnośląskie,powiat ziemski,PL0225,51.19384,15.09037
+0226,złotoryjski,pow. złotoryjski,02,dolnośląskie,powiat ziemski,PL0226,51.10354,15.8786
+0261,m. Jelenia Góra,m. Jelenia Góra,02,dolnośląskie,miasto na prawach powiatu,PL0261,50.87087,15.70806
+0262,m. Legnica,m. Legnica,02,dolnośląskie,miasto na prawach powiatu,PL0262,51.20177,16.16745
+0264,m. Wrocław,m. Wrocław,02,dolnośląskie,miasto na prawach powiatu,PL0264,51.12772,16.99591
+0265,m. Wałbrzych,m. Wałbrzych,02,dolnośląskie,miasto na prawach powiatu,PL0265,50.78642,16.29012
+0401,aleksandrowski,pow. aleksandrowski,04,kujawsko-pomorskie,powiat ziemski,PL0401,52.79802,18.73227
+0402,brodnicki,pow. brodnicki,04,kujawsko-pomorskie,powiat ziemski,PL0402,53.26171,19.42828
+0403,bydgoski,pow. bydgoski,04,kujawsko-pomorskie,powiat ziemski,PL0403,53.19181,18.01442
+0404,chełmiński,pow. chełmiński,04,kujawsko-pomorskie,powiat ziemski,PL0404,53.30115,18.51703
+0405,golubsko-dobrzyński,pow. golubsko-dobrzyński,04,kujawsko-pomorskie,powiat ziemski,PL0405,53.10287,19.0305
+0406,grudziądzki,pow. grudziądzki,04,kujawsko-pomorskie,powiat ziemski,PL0406,53.47771,18.95623
+0407,inowrocławski,pow. inowrocławski,04,kujawsko-pomorskie,powiat ziemski,PL0407,52.7944,18.29925
+0408,lipnowski,pow. lipnowski,04,kujawsko-pomorskie,powiat ziemski,PL0408,52.81463,19.23821
+0409,mogileński,pow. mogileński,04,kujawsko-pomorskie,powiat ziemski,PL0409,52.63804,18.07178
+0410,nakielski,pow. nakielski,04,kujawsko-pomorskie,powiat ziemski,PL0410,53.08672,17.57926
+0411,radziejowski,pow. radziejowski,04,kujawsko-pomorskie,powiat ziemski,PL0411,52.58486,18.60934
+0412,rypiński,pow. rypiński,04,kujawsko-pomorskie,powiat ziemski,PL0412,53.04782,19.41613
+0413,sępoleński,pow. sępoleński,04,kujawsko-pomorskie,powiat ziemski,PL0413,53.4228,17.52772
+0414,świecki,pow. świecki,04,kujawsko-pomorskie,powiat ziemski,PL0414,53.51155,18.40176
+0415,toruński,pow. toruński,04,kujawsko-pomorskie,powiat ziemski,PL0415,53.04595,18.79456
+0416,tucholski,pow. tucholski,04,kujawsko-pomorskie,powiat ziemski,PL0416,53.58452,17.95359
+0417,wąbrzeski,pow. wąbrzeski,04,kujawsko-pomorskie,powiat ziemski,PL0417,53.27908,18.93441
+0418,włocławski,pow. włocławski,04,kujawsko-pomorskie,powiat ziemski,PL0418,52.52611,19.03033
+0419,żniński,pow. żniński,04,kujawsko-pomorskie,powiat ziemski,PL0419,52.82281,17.75392
+0461,m. Bydgoszcz,m. Bydgoszcz,04,kujawsko-pomorskie,miasto na prawach powiatu,PL0461,53.13127,18.05277
+0462,m. Grudziądz,m. Grudziądz,04,kujawsko-pomorskie,miasto na prawach powiatu,PL0462,53.47222,18.77357
+0463,m. Toruń,m. Toruń,04,kujawsko-pomorskie,miasto na prawach powiatu,PL0463,53.0212,18.61878
+0464,m. Włocławek,m. Włocławek,04,kujawsko-pomorskie,miasto na prawach powiatu,PL0464,52.66087,19.05715
+0601,bialski,pow. bialski,06,lubelskie,powiat ziemski,PL0601,51.97425,23.21005
+0602,biłgorajski,pow. biłgorajski,06,lubelskie,powiat ziemski,PL0602,50.51021,22.78681
+0603,chełmski,pow. chełmski,06,lubelskie,powiat ziemski,PL0603,51.1222,23.25526
+0604,hrubieszowski,pow. hrubieszowski,06,lubelskie,powiat ziemski,PL0604,50.73958,23.8767
+0605,janowski,pow. janowski,06,lubelskie,powiat ziemski,PL0605,50.72662,22.43113
+0606,krasnostawski,pow. krasnostawski,06,lubelskie,powiat ziemski,PL0606,50.96065,23.09935
+0607,kraśnicki,pow. kraśnicki,06,lubelskie,powiat ziemski,PL0607,50.91531,22.14326
+0608,lubartowski,pow. lubartowski,06,lubelskie,powiat ziemski,PL0608,51.51449,22.55994
+0609,lubelski,pow. lubelski,06,lubelskie,powiat ziemski,PL0609,51.13822,22.49308
+0610,łęczyński,pow. łęczyński,06,lubelskie,powiat ziemski,PL0610,51.30938,22.96712
+0611,łukowski,pow. łukowski,06,lubelskie,powiat ziemski,PL0611,51.87438,22.23398
+0612,opolski,pow. opolski (lubelskie),06,lubelskie,powiat ziemski,PL0612,51.13903,21.9796
+0613,parczewski,pow. parczewski,06,lubelskie,powiat ziemski,PL0613,51.61985,23.00352
+0614,puławski,pow. puławski,06,lubelskie,powiat ziemski,PL0614,51.41446,22.05521
+0615,radzyński,pow. radzyński,06,lubelskie,powiat ziemski,PL0615,51.7937,22.6797
+0616,rycki,pow. rycki,06,lubelskie,powiat ziemski,PL0616,51.64711,21.95212
+0617,świdnicki,pow. świdnicki (lubelskie),06,lubelskie,powiat ziemski,PL0617,51.13535,22.83945
+0618,tomaszowski,pow. tomaszowski (lubelskie),06,lubelskie,powiat ziemski,PL0618,50.47372,23.55378
+0619,włodawski,pow. włodawski,06,lubelskie,powiat ziemski,PL0619,51.49638,23.4077
+0620,zamojski,pow. zamojski,06,lubelskie,powiat ziemski,PL0620,50.69045,23.2062
+0661,m. Biała Podlaska,m. Biała Podlaska,06,lubelskie,miasto na prawach powiatu,PL0661,52.03,23.14193
+0662,m. Chełm,m. Chełm,06,lubelskie,miasto na prawach powiatu,PL0662,51.13627,23.48564
+0663,m. Lublin,m. Lublin,06,lubelskie,miasto na prawach powiatu,PL0663,51.22579,22.55657
+0664,m. Zamość,m. Zamość,06,lubelskie,miasto na prawach powiatu,PL0664,50.72106,23.2584
+0801,gorzowski,pow. gorzowski,08,lubuskie,powiat ziemski,PL0801,52.7327,15.11761
+0802,krośnieński,pow. krośnieński (lubuskie),08,lubuskie,powiat ziemski,PL0802,52.02287,14.99527
+0803,międzyrzecki,pow. międzyrzecki,08,lubuskie,powiat ziemski,PL0803,52.50951,15.60681
+0804,nowosolski,pow. nowosolski,08,lubuskie,powiat ziemski,PL0804,51.80123,15.7467
+0805,słubicki,pow. słubicki,08,lubuskie,powiat ziemski,PL0805,52.35564,14.76813
+0806,strzelecko-drezdenecki,pow. strzelecko-drezdenecki,08,lubuskie,powiat ziemski,PL0806,52.88827,15.70944
+0807,sulęciński,pow. sulęciński,08,lubuskie,powiat ziemski,PL0807,52.4452,15.07341
+0808,świebodziński,pow. świebodziński,08,lubuskie,powiat ziemski,PL0808,52.24661,15.48739
+0809,zielonogórski,pow. zielonogórski,08,lubuskie,powiat ziemski,PL0809,51.97595,15.77121
+0810,żagański,pow. żagański,08,lubuskie,powiat ziemski,PL0810,51.58665,15.42049
+0811,żarski,pow. żarski,08,lubuskie,powiat ziemski,PL0811,51.67508,14.96121
+0812,wschowski,pow. wschowski,08,lubuskie,powiat ziemski,PL0812,51.83079,16.15439
+0861,m. Gorzów Wielkopolski,m. Gorzów Wielkopolski,08,lubuskie,miasto na prawach powiatu,PL0861,52.7314,15.21977
+0862,m. Zielona Góra,m. Zielona Góra,08,lubuskie,miasto na prawach powiatu,PL0862,51.92676,15.531
+1001,bełchatowski,pow. bełchatowski,10,łódzkie,powiat ziemski,PL1001,51.36001,19.24736
+1002,kutnowski,pow. kutnowski,10,łódzkie,powiat ziemski,PL1002,52.24234,19.39067
+1003,łaski,pow. łaski,10,łódzkie,powiat ziemski,PL1003,51.53528,19.06119
+1004,łęczycki,pow. łęczycki,10,łódzkie,powiat ziemski,PL1004,52.09403,19.18015
+1005,łowicki,pow. łowicki,10,łódzkie,powiat ziemski,PL1005,52.11342,19.8655
+1006,łódzki wschodni,pow. łódzki wschodni,10,łódzkie,powiat ziemski,PL1006,51.68052,19.65509
+1007,opoczyński,pow. opoczyński,10,łódzkie,powiat ziemski,PL1007,51.38182,20.22963
+1008,pabianicki,pow. pabianicki,10,łódzkie,powiat ziemski,PL1008,51.67159,19.27981
+1009,pajęczański,pow. pajęczański,10,łódzkie,powiat ziemski,PL1009,51.15343,19.03062
+1010,piotrkowski,pow. piotrkowski,10,łódzkie,powiat ziemski,PL1010,51.3555,19.73227
+1011,poddębicki,pow. poddębicki,10,łódzkie,powiat ziemski,PL1011,51.89121,18.90396
+1012,radomszczański,pow. radomszczański,10,łódzkie,powiat ziemski,PL1012,51.0575,19.62007
+1013,rawski,pow. rawski,10,łódzkie,powiat ziemski,PL1013,51.76493,20.40002
+1014,sieradzki,pow. sieradzki,10,łódzkie,powiat ziemski,PL1014,51.58548,18.60038
+1015,skierniewicki,pow. skierniewicki,10,łódzkie,powiat ziemski,PL1015,51.92202,20.14811
+1016,tomaszowski,pow. tomaszowski (łódzkie),10,łódzkie,powiat ziemski,PL1016,51.60179,20.04984
+1017,wieluński,pow. wieluński,10,łódzkie,powiat ziemski,PL1017,51.23217,18.62338
+1018,wieruszowski,pow. wieruszowski,10,łódzkie,powiat ziemski,PL1018,51.3034,18.28929
+1019,zduńskowolski,pow. zduńskowolski,10,łódzkie,powiat ziemski,PL1019,51.63862,18.94049
+1020,zgierski,pow. zgierski,10,łódzkie,powiat ziemski,PL1020,51.92496,19.42618
+1021,brzeziński,pow. brzeziński,10,łódzkie,powiat ziemski,PL1021,51.83578,19.8139
+1061,m. Łódź,m. Łódź,10,łódzkie,miasto na prawach powiatu,PL1061,51.76645,19.4803
+1062,m. Piotrków Trybunalski,m. Piotrków Trybunalski,10,łódzkie,miasto na prawach powiatu,PL1062,51.4148,19.70576
+1063,m. Skierniewice,m. Skierniewice,10,łódzkie,miasto na prawach powiatu,PL1063,51.95972,20.15593
+1201,bocheński,pow. bocheński,12,małopolskie,powiat ziemski,PL1201,49.94839,20.43479
+1202,brzeski,pow. brzeski (małopolskie),12,małopolskie,powiat ziemski,PL1202,49.98437,20.65022
+1203,chrzanowski,pow. chrzanowski,12,małopolskie,powiat ziemski,PL1203,50.11383,19.44276
+1204,dąbrowski,pow. dąbrowski,12,małopolskie,powiat ziemski,PL1204,50.23195,21.00728
+1205,gorlicki,pow. gorlicki,12,małopolskie,powiat ziemski,PL1205,49.59935,21.17468
+1206,krakowski,pow. krakowski,12,małopolskie,powiat ziemski,PL1206,50.128,19.86177
+1207,limanowski,pow. limanowski,12,małopolskie,powiat ziemski,PL1207,49.67869,20.2855
+1208,miechowski,pow. miechowski,12,małopolskie,powiat ziemski,PL1208,50.39075,20.06951
+1209,myślenicki,pow. myślenicki,12,małopolskie,powiat ziemski,PL1209,49.80602,19.9742
+1210,nowosądecki,pow. nowosądecki,12,małopolskie,powiat ziemski,PL1210,49.55387,20.76864
+1211,nowotarski,pow. nowotarski,12,małopolskie,powiat ziemski,PL1211,49.48018,20.01996
+1212,olkuski,pow. olkuski,12,małopolskie,powiat ziemski,PL1212,50.32189,19.63436
+1213,oświęcimski,pow. oświęcimski,12,małopolskie,powiat ziemski,PL1213,49.98139,19.27783
+1214,proszowicki,pow. proszowicki,12,małopolskie,powiat ziemski,PL1214,50.20215,20.33541
+1215,suski,pow. suski,12,małopolskie,powiat ziemski,PL1215,49.69125,19.64791
+1216,tarnowski,pow. tarnowski,12,małopolskie,powiat ziemski,PL1216,49.94758,20.96744
+1217,tatrzański,pow. tatrzański,12,małopolskie,powiat ziemski,PL1217,49.29808,19.98319
+1218,wadowicki,pow. wadowicki,12,małopolskie,powiat ziemski,PL1218,49.88245,19.5279
+1219,wielicki,pow. wielicki,12,małopolskie,powiat ziemski,PL1219,49.97893,20.19396
+1261,m. Kraków,m. Kraków,12,małopolskie,miasto na prawach powiatu,PL1261,50.05322,19.985
+1262,m. Nowy Sącz,m. Nowy Sącz,12,małopolskie,miasto na prawach powiatu,PL1262,49.60748,20.70456
+1263,m. Tarnów,m. Tarnów,12,małopolskie,miasto na prawach powiatu,PL1263,50.02443,20.97323
+1401,białobrzeski,pow. białobrzeski,14,mazowieckie,powiat ziemski,PL1401,51.62119,20.95393
+1402,ciechanowski,pow. ciechanowski,14,mazowieckie,powiat ziemski,PL1402,52.85796,20.60653
+1403,garwoliński,pow. garwoliński,14,mazowieckie,powiat ziemski,PL1403,51.82572,21.64801
+1404,gostyniński,pow. gostyniński,14,mazowieckie,powiat ziemski,PL1404,52.37815,19.57113
+1405,grodziski,pow. grodziski (mazowieckie),14,mazowieckie,powiat ziemski,PL1405,52.0827,20.59455
+1406,grójecki,pow. grójecki,14,mazowieckie,powiat ziemski,PL1406,51.78839,20.85148
+1407,kozienicki,pow. kozienicki,14,mazowieckie,powiat ziemski,PL1407,51.6224,21.4628
+1408,legionowski,pow. legionowski,14,mazowieckie,powiat ziemski,PL1408,52.44815,20.95985
+1409,lipski,pow. lipski,14,mazowieckie,powiat ziemski,PL1409,51.15609,21.58185
+1410,łosicki,pow. łosicki,14,mazowieckie,powiat ziemski,PL1410,52.22481,22.84072
+1411,makowski,pow. makowski,14,mazowieckie,powiat ziemski,PL1411,52.92449,21.20352
+1412,miński,pow. miński,14,mazowieckie,powiat ziemski,PL1412,52.1824,21.66028
+1413,mławski,pow. mławski,14,mazowieckie,powiat ziemski,PL1413,53.05149,20.3636
+1414,nowodworski,pow. nowodworski (mazowieckie),14,mazowieckie,powiat ziemski,PL1414,52.4585,20.67709
+1415,ostrołęcki,pow. ostrołęcki,14,mazowieckie,powiat ziemski,PL1415,53.16193,21.50058
+1416,ostrowski,pow. ostrowski (mazowieckie),14,mazowieckie,powiat ziemski,PL1416,52.78226,22.00972
+1417,otwocki,pow. otwocki,14,mazowieckie,powiat ziemski,PL1417,52.0492,21.36357
+1418,piaseczyński,pow. piaseczyński,14,mazowieckie,powiat ziemski,PL1418,52.01126,21.01916
+1419,płocki,pow. płocki,14,mazowieckie,powiat ziemski,PL1419,52.55003,19.83963
+1420,płoński,pow. płoński,14,mazowieckie,powiat ziemski,PL1420,52.6275,20.35435
+1421,pruszkowski,pow. pruszkowski,14,mazowieckie,powiat ziemski,PL1421,52.12427,20.80599
+1422,przasnyski,pow. przasnyski,14,mazowieckie,powiat ziemski,PL1422,53.13886,20.91382
+1423,przysuski,pow. przysuski,14,mazowieckie,powiat ziemski,PL1423,51.41624,20.63333
+1424,pułtuski,pow. pułtuski,14,mazowieckie,powiat ziemski,PL1424,52.6767,21.04213
+1425,radomski,pow. radomski,14,mazowieckie,powiat ziemski,PL1425,51.33555,21.19203
+1426,siedlecki,pow. siedlecki,14,mazowieckie,powiat ziemski,PL1426,52.1918,22.45335
+1427,sierpecki,pow. sierpecki,14,mazowieckie,powiat ziemski,PL1427,52.82921,19.69467
+1428,sochaczewski,pow. sochaczewski,14,mazowieckie,powiat ziemski,PL1428,52.26737,20.21293
+1429,sokołowski,pow. sokołowski,14,mazowieckie,powiat ziemski,PL1429,52.49137,22.28354
+1430,szydłowiecki,pow. szydłowiecki,14,mazowieckie,powiat ziemski,PL1430,51.24561,20.87154
+1432,warszawski zachodni,pow. warszawski zachodni,14,mazowieckie,powiat ziemski,PL1432,52.26425,20.65769
+1433,węgrowski,pow. węgrowski,14,mazowieckie,powiat ziemski,PL1433,52.45973,21.88935
+1434,wołomiński,pow. wołomiński,14,mazowieckie,powiat ziemski,PL1434,52.40403,21.3687
+1435,wyszkowski,pow. wyszkowski,14,mazowieckie,powiat ziemski,PL1435,52.6465,21.46752
+1436,zwoleński,pow. zwoleński,14,mazowieckie,powiat ziemski,PL1436,51.34716,21.60048
+1437,żuromiński,pow. żuromiński,14,mazowieckie,powiat ziemski,PL1437,53.02919,19.90602
+1438,żyrardowski,pow. żyrardowski,14,mazowieckie,powiat ziemski,PL1438,52.00249,20.43062
+1461,m. Ostrołęka,m. Ostrołęka,14,mazowieckie,miasto na prawach powiatu,PL1461,53.08213,21.59493
+1462,m. Płock,m. Płock,14,mazowieckie,miasto na prawach powiatu,PL1462,52.53743,19.70161
+1463,m. Radom,m. Radom,14,mazowieckie,miasto na prawach powiatu,PL1463,51.40617,21.15652
+1464,m. Siedlce,m. Siedlce,14,mazowieckie,miasto na prawach powiatu,PL1464,52.1651,22.27109
+1465,m. Warszawa,m. Warszawa,14,mazowieckie,miasto na prawach powiatu,PL1465,52.22928,21.04775
+1601,brzeski,pow. brzeski (opolskie),16,opolskie,powiat ziemski,PL1601,50.79177,17.47846
+1602,głubczycki,pow. głubczycki,16,opolskie,powiat ziemski,PL1602,50.13598,17.85975
+1603,kędzierzyńsko-kozielski,pow. kędzierzyńsko-kozielski,16,opolskie,powiat ziemski,PL1603,50.28642,18.15857
+1604,kluczborski,pow. kluczborski,16,opolskie,powiat ziemski,PL1604,50.99837,18.16969
+1605,krapkowicki,pow. krapkowicki,16,opolskie,powiat ziemski,PL1605,50.45772,17.96562
+1606,namysłowski,pow. namysłowski,16,opolskie,powiat ziemski,PL1606,51.03308,17.75884
+1607,nyski,pow. nyski,16,opolskie,powiat ziemski,PL1607,50.47647,17.34706
+1608,oleski,pow. oleski,16,opolskie,powiat ziemski,PL1608,50.90964,18.46211
+1609,opolski,pow. opolski (opolskie),16,opolskie,powiat ziemski,PL1609,50.7355,18.08658
+1610,prudnicki,pow. prudnicki,16,opolskie,powiat ziemski,PL1610,50.36796,17.70387
+1611,strzelecki,pow. strzelecki,16,opolskie,powiat ziemski,PL1611,50.53844,18.3195
+1661,m. Opole,m. Opole,16,opolskie,miasto na prawach powiatu,PL1661,50.67923,17.91761
+1801,bieszczadzki,pow. bieszczadzki,18,podkarpackie,powiat ziemski,PL1801,49.31849,22.62372
+1802,brzozowski,pow. brzozowski,18,podkarpackie,powiat ziemski,PL1802,49.71845,22.07294
+1803,dębicki,pow. dębicki,18,podkarpackie,powiat ziemski,PL1803,50.01176,21.35245
+1804,jarosławski,pow. jarosławski,18,podkarpackie,powiat ziemski,PL1804,50.0061,22.76328
+1805,jasielski,pow. jasielski,18,podkarpackie,powiat ziemski,PL1805,49.65138,21.46563
+1806,kolbuszowski,pow. kolbuszowski,18,podkarpackie,powiat ziemski,PL1806,50.29727,21.79648
+1807,krośnieński,pow. krośnieński (podkarpackie),18,podkarpackie,powiat ziemski,PL1807,49.57977,21.76395
+1808,leżajski,pow. leżajski,18,podkarpackie,powiat ziemski,PL1808,50.26883,22.41891
+1809,lubaczowski,pow. lubaczowski,18,podkarpackie,powiat ziemski,PL1809,50.20748,23.1652
+1810,łańcucki,pow. łańcucki,18,podkarpackie,powiat ziemski,PL1810,50.09256,22.25737
+1811,mielecki,pow. mielecki,18,podkarpackie,powiat ziemski,PL1811,50.29184,21.39079
+1812,niżański,pow. niżański,18,podkarpackie,powiat ziemski,PL1812,50.47043,22.28173
+1813,przemyski,pow. przemyski,18,podkarpackie,powiat ziemski,PL1813,49.76789,22.62951
+1814,przeworski,pow. przeworski,18,podkarpackie,powiat ziemski,PL1814,50.0939,22.53836
+1815,ropczycko-sędziszowski,pow. ropczycko-sędziszowski,18,podkarpackie,powiat ziemski,PL1815,50.04848,21.64397
+1816,rzeszowski,pow. rzeszowski,18,podkarpackie,powiat ziemski,PL1816,50.05765,21.86083
+1817,sanocki,pow. sanocki,18,podkarpackie,powiat ziemski,PL1817,49.45989,22.13662
+1818,stalowowolski,pow. stalowowolski,18,podkarpackie,powiat ziemski,PL1818,50.61979,22.03189
+1819,strzyżowski,pow. strzyżowski,18,podkarpackie,powiat ziemski,PL1819,49.87031,21.75623
+1820,tarnobrzeski,pow. tarnobrzeski,18,podkarpackie,powiat ziemski,PL1820,50.52155,21.75787
+1821,leski,pow. leski,18,podkarpackie,powiat ziemski,PL1821,49.31537,22.37482
+1861,m. Krosno,m. Krosno,18,podkarpackie,miasto na prawach powiatu,PL1861,49.69128,21.7557
+1862,m. Przemyśl,m. Przemyśl,18,podkarpackie,miasto na prawach powiatu,PL1862,49.78061,22.77709
+1863,m. Rzeszów,m. Rzeszów,18,podkarpackie,miasto na prawach powiatu,PL1863,50.02314,21.9942
+1864,m. Tarnobrzeg,m. Tarnobrzeg,18,podkarpackie,miasto na prawach powiatu,PL1864,50.58463,21.70709
+2001,augustowski,pow. augustowski,20,podlaskie,powiat ziemski,PL2001,53.81415,23.10876
+2002,białostocki,pow. białostocki,20,podlaskie,powiat ziemski,PL2002,53.1179,23.55611
+2003,bielski,pow. bielski (podlaskie),20,podlaskie,powiat ziemski,PL2003,52.74805,23.05648
+2004,grajewski,pow. grajewski,20,podlaskie,powiat ziemski,PL2004,53.55774,22.48087
+2005,hajnowski,pow. hajnowski,20,podlaskie,powiat ziemski,PL2005,52.74799,23.58319
+2006,kolneński,pow. kolneński,20,podlaskie,powiat ziemski,PL2006,53.40028,21.97225
+2007,łomżyński,pow. łomżyński,20,podlaskie,powiat ziemski,PL2007,53.20745,22.27636
+2008,moniecki,pow. moniecki,20,podlaskie,powiat ziemski,PL2008,53.41042,22.79177
+2009,sejneński,pow. sejneński,20,podlaskie,powiat ziemski,PL2009,54.08702,23.30437
+2010,siemiatycki,pow. siemiatycki,20,podlaskie,powiat ziemski,PL2010,52.48318,22.89827
+2011,sokólski,pow. sokólski,20,podlaskie,powiat ziemski,PL2011,53.46238,23.42775
+2012,suwalski,pow. suwalski,20,podlaskie,powiat ziemski,PL2012,54.17338,22.85162
+2013,wysokomazowiecki,pow. wysokomazowiecki,20,podlaskie,powiat ziemski,PL2013,52.87629,22.5655
+2014,zambrowski,pow. zambrowski,20,podlaskie,powiat ziemski,PL2014,53.00708,22.26068
+2061,m. Białystok,m. Białystok,20,podlaskie,miasto na prawach powiatu,PL2061,53.13221,23.1588
+2062,m. Łomża,m. Łomża,20,podlaskie,miasto na prawach powiatu,PL2062,53.17424,22.05853
+2063,m. Suwałki,m. Suwałki,20,podlaskie,miasto na prawach powiatu,PL2063,54.10001,22.93189
+2201,bytowski,pow. bytowski,22,pomorskie,powiat ziemski,PL2201,54.1412,17.32298
+2202,chojnicki,pow. chojnicki,22,pomorskie,powiat ziemski,PL2202,53.80964,17.68655
+2203,człuchowski,pow. człuchowski,22,pomorskie,powiat ziemski,PL2203,53.72885,17.16902
+2204,gdański,pow. gdański,22,pomorskie,powiat ziemski,PL2204,54.22265,18.59963
+2205,kartuski,pow. kartuski,22,pomorskie,powiat ziemski,PL2205,54.31255,18.07687
+2206,kościerski,pow. kościerski,22,pomorskie,powiat ziemski,PL2206,54.04758,18.00387
+2207,kwidzyński,pow. kwidzyński,22,pomorskie,powiat ziemski,PL2207,53.72904,19.01865
+2208,lęborski,pow. lęborski,22,pomorskie,powiat ziemski,PL2208,54.58107,17.68831
+2209,malborski,pow. malborski,22,pomorskie,powiat ziemski,PL2209,54.07479,19.01391
+2210,nowodworski,pow. nowodworski (pomorskie),22,pomorskie,powiat ziemski,PL2210,54.30941,19.17386
+2211,pucki,pow. pucki,22,pomorskie,powiat ziemski,PL2211,54.70982,18.38731
+2212,słupski,pow. słupski,22,pomorskie,powiat ziemski,PL2212,54.46839,17.16699
+2213,starogardzki,pow. starogardzki,22,pomorskie,powiat ziemski,PL2213,53.87795,18.41207
+2214,tczewski,pow. tczewski,22,pomorskie,powiat ziemski,PL2214,53.93248,18.73387
+2215,wejherowski,pow. wejherowski,22,pomorskie,powiat ziemski,PL2215,54.59407,18.05999
+2216,sztumski,pow. sztumski,22,pomorskie,powiat ziemski,PL2216,53.9134,19.22997
+2261,m. Gdańsk,m. Gdańsk,22,pomorskie,miasto na prawach powiatu,PL2261,54.41678,18.77438
+2262,m. Gdynia,m. Gdynia,22,pomorskie,miasto na prawach powiatu,PL2262,54.52871,18.6174
+2263,m. Słupsk,m. Słupsk,22,pomorskie,miasto na prawach powiatu,PL2263,54.46679,17.02193
+2264,m. Sopot,m. Sopot,22,pomorskie,miasto na prawach powiatu,PL2264,54.4436,18.56278
+2401,będziński,pow. będziński,24,śląskie,powiat ziemski,PL2401,50.40703,19.15736
+2402,bielski,pow. bielski (śląskie),24,śląskie,powiat ziemski,PL2402,49.806,18.90907
+2403,cieszyński,pow. cieszyński,24,śląskie,powiat ziemski,PL2403,49.73946,18.80252
+2404,częstochowski,pow. częstochowski,24,śląskie,powiat ziemski,PL2404,50.80748,19.35781
+2405,gliwicki,pow. gliwicki,24,śląskie,powiat ziemski,PL2405,50.35835,18.5393
+2406,kłobucki,pow. kłobucki,24,śląskie,powiat ziemski,PL2406,50.93582,18.86147
+2407,lubliniecki,pow. lubliniecki,24,śląskie,powiat ziemski,PL2407,50.67914,18.77197
+2408,mikołowski,pow. mikołowski,24,śląskie,powiat ziemski,PL2408,50.14362,18.83157
+2409,myszkowski,pow. myszkowski,24,śląskie,powiat ziemski,PL2409,50.60996,19.30789
+2410,pszczyński,pow. pszczyński,24,śląskie,powiat ziemski,PL2410,49.99134,18.88429
+2411,raciborski,pow. raciborski,24,śląskie,powiat ziemski,PL2411,50.11485,18.24843
+2412,rybnicki,pow. rybnicki,24,śląskie,powiat ziemski,PL2412,50.1134,18.39267
+2413,tarnogórski,pow. tarnogórski,24,śląskie,powiat ziemski,PL2413,50.48444,18.82419
+2414,bieruńsko-lędziński,pow. bieruńsko-lędziński,24,śląskie,powiat ziemski,PL2414,50.09784,19.14143
+2415,wodzisławski,pow. wodzisławski,24,śląskie,powiat ziemski,PL2415,49.99703,18.42779
+2416,zawierciański,pow. zawierciański,24,śląskie,powiat ziemski,PL2416,50.52163,19.61151
+2417,żywiecki,pow. żywiecki,24,śląskie,powiat ziemski,PL2417,49.60819,19.19355
+2461,m. Bielsko-Biała,m. Bielsko-Biała,24,śląskie,miasto na prawach powiatu,PL2461,49.81294,19.03884
+2462,m. Bytom,m. Bytom,24,śląskie,miasto na prawach powiatu,PL2462,50.36357,18.87775
+2463,m. Chorzów,m. Chorzów,24,śląskie,miasto na prawach powiatu,PL2463,50.29488,18.96115
+2464,m. Częstochowa,m. Częstochowa,24,śląskie,miasto na prawach powiatu,PL2464,50.80523,19.11825
+2465,m. Dąbrowa Górnicza,m. Dąbrowa Górnicza,24,śląskie,miasto na prawach powiatu,PL2465,50.35429,19.29954
+2466,m. Gliwice,m. Gliwice,24,śląskie,miasto na prawach powiatu,PL2466,50.29928,18.65358
+2467,m. Jastrzębie-Zdrój,m. Jastrzębie-Zdrój,24,śląskie,miasto na prawach powiatu,PL2467,49.95506,18.61394
+2468,m. Jaworzno,m. Jaworzno,24,śląskie,miasto na prawach powiatu,PL2468,50.20425,19.29123
+2469,m. Katowice,m. Katowice,24,śląskie,miasto na prawach powiatu,PL2469,50.21807,19.02317
+2470,m. Mysłowice,m. Mysłowice,24,śląskie,miasto na prawach powiatu,PL2470,50.19803,19.14629
+2471,m. Piekary Śląskie,m. Piekary Śląskie,24,śląskie,miasto na prawach powiatu,PL2471,50.37366,18.96664
+2472,m. Ruda Śląska,m. Ruda Śląska,24,śląskie,miasto na prawach powiatu,PL2472,50.2663,18.86919
+2473,m. Rybnik,m. Rybnik,24,śląskie,miasto na prawach powiatu,PL2473,50.10568,18.54427
+2474,m. Siemianowice Śląskie,m. Siemianowice Śląskie,24,śląskie,miasto na prawach powiatu,PL2474,50.3134,19.02682
+2475,m. Sosnowiec,m. Sosnowiec,24,śląskie,miasto na prawach powiatu,PL2475,50.27617,19.19273
+2476,m. Świętochłowice,m. Świętochłowice,24,śląskie,miasto na prawach powiatu,PL2476,50.29842,18.91088
+2477,m. Tychy,m. Tychy,24,śląskie,miasto na prawach powiatu,PL2477,50.12312,19.00258
+2478,m. Zabrze,m. Zabrze,24,śląskie,miasto na prawach powiatu,PL2478,50.31553,18.78687
+2479,m. Żory,m. Żory,24,śląskie,miasto na prawach powiatu,PL2479,50.03702,18.69235
+2601,buski,pow. buski,26,świętokrzyskie,powiat ziemski,PL2601,50.43723,20.85735
+2602,jędrzejowski,pow. jędrzejowski,26,świętokrzyskie,powiat ziemski,PL2602,50.64144,20.22397
+2603,kazimierski,pow. kazimierski,26,świętokrzyskie,powiat ziemski,PL2603,50.27659,20.52147
+2604,kielecki,pow. kielecki,26,świętokrzyskie,powiat ziemski,PL2604,50.83187,20.70701
+2605,konecki,pow. konecki,26,świętokrzyskie,powiat ziemski,PL2605,51.13679,20.3379
+2606,opatowski,pow. opatowski,26,świętokrzyskie,powiat ziemski,PL2606,50.87865,21.66555
+2607,ostrowiecki,pow. ostrowiecki,26,świętokrzyskie,powiat ziemski,PL2607,50.94183,21.40291
+2608,pińczowski,pow. pińczowski,26,świętokrzyskie,powiat ziemski,PL2608,50.47858,20.49797
+2609,sandomierski,pow. sandomierski,26,świętokrzyskie,powiat ziemski,PL2609,50.68442,21.6283
+2610,skarżyski,pow. skarżyski,26,świętokrzyskie,powiat ziemski,PL2610,51.07895,20.80186
+2611,starachowicki,pow. starachowicki,26,świętokrzyskie,powiat ziemski,PL2611,51.03846,21.10859
+2612,staszowski,pow. staszowski,26,świętokrzyskie,powiat ziemski,PL2612,50.53898,21.21465
+2613,włoszczowski,pow. włoszczowski,26,świętokrzyskie,powiat ziemski,PL2613,50.8282,19.96385
+2661,m. Kielce,m. Kielce,26,świętokrzyskie,miasto na prawach powiatu,PL2661,50.86097,20.60883
+2801,bartoszycki,pow. bartoszycki,28,warmińsko-mazurskie,powiat ziemski,PL2801,54.24769,20.75782
+2802,braniewski,pow. braniewski,28,warmińsko-mazurskie,powiat ziemski,PL2802,54.29971,19.97311
+2803,działdowski,pow. działdowski,28,warmińsko-mazurskie,powiat ziemski,PL2803,53.27018,20.02271
+2804,elbląski,pow. elbląski,28,warmińsko-mazurskie,powiat ziemski,PL2804,54.1267,19.57765
+2805,ełcki,pow. ełcki,28,warmińsko-mazurskie,powiat ziemski,PL2805,53.82207,22.40026
+2806,giżycki,pow. giżycki,28,warmińsko-mazurskie,powiat ziemski,PL2806,53.99878,21.84401
+2807,iławski,pow. iławski,28,warmińsko-mazurskie,powiat ziemski,PL2807,53.65471,19.54743
+2808,kętrzyński,pow. kętrzyński,28,warmińsko-mazurskie,powiat ziemski,PL2808,54.14623,21.31483
+2809,lidzbarski,pow. lidzbarski,28,warmińsko-mazurskie,powiat ziemski,PL2809,54.11367,20.40768
+2810,mrągowski,pow. mrągowski,28,warmińsko-mazurskie,powiat ziemski,PL2810,53.81332,21.36545
+2811,nidzicki,pow. nidzicki,28,warmińsko-mazurskie,powiat ziemski,PL2811,53.36445,20.47391
+2812,nowomiejski,pow. nowomiejski,28,warmińsko-mazurskie,powiat ziemski,PL2812,53.43822,19.52645
+2813,olecki,pow. olecki,28,warmińsko-mazurskie,powiat ziemski,PL2813,54.05326,22.4143
+2814,olsztyński,pow. olsztyński,28,warmińsko-mazurskie,powiat ziemski,PL2814,53.80761,20.55464
+2815,ostródzki,pow. ostródzki,28,warmińsko-mazurskie,powiat ziemski,PL2815,53.74753,19.95957
+2816,piski,pow. piski,28,warmińsko-mazurskie,powiat ziemski,PL2816,53.66152,21.84157
+2817,szczycieński,pow. szczycieński,28,warmińsko-mazurskie,powiat ziemski,PL2817,53.54296,21.01739
+2818,gołdapski,pow. gołdapski,28,warmińsko-mazurskie,powiat ziemski,PL2818,54.27569,22.32538
+2819,węgorzewski,pow. węgorzewski,28,warmińsko-mazurskie,powiat ziemski,PL2819,54.21374,21.7701
+2861,m. Elbląg,m. Elbląg,28,warmińsko-mazurskie,miasto na prawach powiatu,PL2861,54.1906,19.4394
+2862,m. Olsztyn,m. Olsztyn,28,warmińsko-mazurskie,miasto na prawach powiatu,PL2862,53.78164,20.47448
+3001,chodzieski,pow. chodzieski,30,wielkopolskie,powiat ziemski,PL3001,52.96504,16.99175
+3002,czarnkowsko-trzcianecki,pow. czarnkowsko-trzcianecki,30,wielkopolskie,powiat ziemski,PL3002,52.91225,16.36756
+3003,gnieźnieński,pow. gnieźnieński,30,wielkopolskie,powiat ziemski,PL3003,52.5383,17.59748
+3004,gostyński,pow. gostyński,30,wielkopolskie,powiat ziemski,PL3004,51.8298,17.06223
+3005,grodziski,pow. grodziski (wielkopolskie),30,wielkopolskie,powiat ziemski,PL3005,52.17794,16.35915
+3006,jarociński,pow. jarociński,30,wielkopolskie,powiat ziemski,PL3006,51.99113,17.51576
+3007,kaliski,pow. kaliski,30,wielkopolskie,powiat ziemski,PL3007,51.79622,18.21758
+3008,kępiński,pow. kępiński,30,wielkopolskie,powiat ziemski,PL3008,51.2396,17.96313
+3009,kolski,pow. kolski,30,wielkopolskie,powiat ziemski,PL3009,52.2377,18.76644
+3010,koniński,pow. koniński,30,wielkopolskie,powiat ziemski,PL3010,52.25885,18.40873
+3011,kościański,pow. kościański,30,wielkopolskie,powiat ziemski,PL3011,52.05025,16.70452
+3012,krotoszyński,pow. krotoszyński,30,wielkopolskie,powiat ziemski,PL3012,51.74363,17.43066
+3013,leszczyński,pow. leszczyński,30,wielkopolskie,powiat ziemski,PL3013,51.84785,16.73588
+3014,międzychodzki,pow. międzychodzki,30,wielkopolskie,powiat ziemski,PL3014,52.60357,16.02716
+3015,nowotomyski,pow. nowotomyski,30,wielkopolskie,powiat ziemski,PL3015,52.3538,16.13963
+3016,obornicki,pow. obornicki,30,wielkopolskie,powiat ziemski,PL3016,52.70991,16.84249
+3017,ostrowski,pow. ostrowski (wielkopolskie),30,wielkopolskie,powiat ziemski,PL3017,51.61522,17.80296
+3018,ostrzeszowski,pow. ostrzeszowski,30,wielkopolskie,powiat ziemski,PL3018,51.45013,18.02454
+3019,pilski,pow. pilski,30,wielkopolskie,powiat ziemski,PL3019,53.16264,16.95716
+3020,pleszewski,pow. pleszewski,30,wielkopolskie,powiat ziemski,PL3020,51.91756,17.81086
+3021,poznański,pow. poznański,30,wielkopolskie,powiat ziemski,PL3021,52.41505,17.21336
+3022,rawicki,pow. rawicki,30,wielkopolskie,powiat ziemski,PL3022,51.64489,16.95693
+3023,słupecki,pow. słupecki,30,wielkopolskie,powiat ziemski,PL3023,52.30845,17.91787
+3024,szamotulski,pow. szamotulski,30,wielkopolskie,powiat ziemski,PL3024,52.60081,16.41491
+3025,średzki,pow. średzki (wielkopolskie),30,wielkopolskie,powiat ziemski,PL3025,52.17761,17.31816
+3026,śremski,pow. śremski,30,wielkopolskie,powiat ziemski,PL3026,52.06847,17.06113
+3027,turecki,pow. turecki,30,wielkopolskie,powiat ziemski,PL3027,52.00187,18.50885
+3028,wągrowiecki,pow. wągrowiecki,30,wielkopolskie,powiat ziemski,PL3028,52.81253,17.27083
+3029,wolsztyński,pow. wolsztyński,30,wielkopolskie,powiat ziemski,PL3029,52.07153,16.12567
+3030,wrzesiński,pow. wrzesiński,30,wielkopolskie,powiat ziemski,PL3030,52.25243,17.59153
+3031,złotowski,pow. złotowski,30,wielkopolskie,powiat ziemski,PL3031,53.41009,16.92267
+3061,m. Kalisz,m. Kalisz,30,wielkopolskie,miasto na prawach powiatu,PL3061,51.74393,18.07626
+3062,m. Konin,m. Konin,30,wielkopolskie,miasto na prawach powiatu,PL3062,52.25539,18.26217
+3063,m. Leszno,m. Leszno,30,wielkopolskie,miasto na prawach powiatu,PL3063,51.84294,16.57768
+3064,m. Poznań,m. Poznań,30,wielkopolskie,miasto na prawach powiatu,PL3064,52.40642,16.92312
+3201,białogardzki,pow. białogardzki,32,zachodniopomorskie,powiat ziemski,PL3201,53.97586,16.05993
+3202,choszczeński,pow. choszczeński,32,zachodniopomorskie,powiat ziemski,PL3202,53.13828,15.58198
+3203,drawski,pow. drawski,32,zachodniopomorskie,powiat ziemski,PL3203,53.4733,15.99353
+3204,goleniowski,pow. goleniowski,32,zachodniopomorskie,powiat ziemski,PL3204,53.63339,14.88447
+3205,gryficki,pow. gryficki,32,zachodniopomorskie,powiat ziemski,PL3205,53.95514,15.22727
+3206,gryfiński,pow. gryfiński,32,zachodniopomorskie,powiat ziemski,PL3206,53.02151,14.49961
+3207,kamieński,pow. kamieński,32,zachodniopomorskie,powiat ziemski,PL3207,53.89858,14.754
+3208,kołobrzeski,pow. kołobrzeski,32,zachodniopomorskie,powiat ziemski,PL3208,54.07056,15.60209
+3209,koszaliński,pow. koszaliński,32,zachodniopomorskie,powiat ziemski,PL3209,54.11429,16.37593
+3210,myśliborski,pow. myśliborski,32,zachodniopomorskie,powiat ziemski,PL3210,52.87071,14.8827
+3211,policki,pow. policki,32,zachodniopomorskie,powiat ziemski,PL3211,53.56565,14.42867
+3212,pyrzycki,pow. pyrzycki,32,zachodniopomorskie,powiat ziemski,PL3212,53.13385,14.93485
+3213,sławieński,pow. sławieński,32,zachodniopomorskie,powiat ziemski,PL3213,54.37489,16.5921
+3214,stargardzki,pow. stargardzki,32,zachodniopomorskie,powiat ziemski,PL3214,53.35209,15.21941
+3215,szczecinecki,pow. szczecinecki,32,zachodniopomorskie,powiat ziemski,PL3215,53.73512,16.58137
+3216,świdwiński,pow. świdwiński,32,zachodniopomorskie,powiat ziemski,PL3216,53.79789,15.87957
+3217,wałecki,pow. wałecki,32,zachodniopomorskie,powiat ziemski,PL3217,53.23634,16.27267
+3218,łobeski,pow. łobeski,32,zachodniopomorskie,powiat ziemski,PL3218,53.651,15.48403
+3261,m. Koszalin,m. Koszalin,32,zachodniopomorskie,miasto na prawach powiatu,PL3261,54.20022,16.20303
+3262,m. Szczecin,m. Szczecin,32,zachodniopomorskie,miasto na prawach powiatu,PL3262,53.43174,14.61427
+3263,m. Świnoujście,m. Świnoujście,32,zachodniopomorskie,miasto na prawach powiatu,PL3263,53.85037,14.32562

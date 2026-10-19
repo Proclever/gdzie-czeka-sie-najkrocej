@@ -1,0 +1,338 @@
+/// Miejsca udzielania świadczeń (komórka organizacyjna + adres).
+table DimPlacowka
+	lineageTag: 904e176d-6ed5-538d-bc15-7e95a1c013f1
+
+	column MiejsceKey
+		dataType: string
+		isHidden
+		isKey
+		lineageTag: 6c9cd0a5-6727-5072-ad2c-d5621d836e54
+		summarizeBy: none
+		sourceColumn: MiejsceKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Placówka'
+		dataType: string
+		lineageTag: 881ccc8e-2d70-5908-bfb3-4680818b6f78
+		summarizeBy: none
+		sourceColumn: Placówka
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Świadczeniodawca'
+		dataType: string
+		lineageTag: c059d149-6b44-516e-8a09-4d1e0aaa3a3f
+		summarizeBy: none
+		sourceColumn: Świadczeniodawca
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Kod świadczeniodawcy'
+		dataType: string
+		isHidden
+		lineageTag: 3643697d-3e44-5ed0-93d4-d99630a7a71f
+		summarizeBy: none
+		sourceColumn: Kod świadczeniodawcy
+
+		annotation SummarizationSetBy = Automatic
+
+	column Miejsce
+		dataType: string
+		lineageTag: a5a7ee53-a360-5fa8-b422-840845843ae8
+		summarizeBy: none
+		sourceColumn: Miejsce
+
+		annotation SummarizationSetBy = Automatic
+
+	column Adres
+		dataType: string
+		lineageTag: 86ccfa15-57c5-58c6-a5a1-3eb5f0c4b40c
+		summarizeBy: none
+		sourceColumn: Adres
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Miejscowość'
+		dataType: string
+		lineageTag: f1d75f43-c874-559b-9f35-130bfa43c213
+		summarizeBy: none
+		sourceColumn: Miejscowość
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Adres pełny'
+		dataType: string
+		lineageTag: bc24ca20-e7f7-5a11-884c-018ed37a0680
+		summarizeBy: none
+		sourceColumn: Adres pełny
+
+		annotation SummarizationSetBy = Automatic
+
+	column Telefon
+		dataType: string
+		lineageTag: 0da36044-4bdf-56e7-946e-6d9e693ac1eb
+		summarizeBy: none
+		sourceColumn: Telefon
+
+		annotation SummarizationSetBy = Automatic
+
+	column TerytMiejsca
+		dataType: string
+		isHidden
+		lineageTag: 6fea9647-fd5e-5dc9-9860-3a948acdfbba
+		summarizeBy: none
+		sourceColumn: TerytMiejsca
+
+		annotation SummarizationSetBy = Automatic
+
+	column TerytPowiat
+		dataType: string
+		isHidden
+		lineageTag: b108c64a-7260-5444-a9ec-21589c1d4779
+		summarizeBy: none
+		sourceColumn: TerytPowiat
+
+		annotation SummarizationSetBy = Automatic
+
+	column Powiat
+		dataType: string
+		lineageTag: 6ffeb0f3-fa3f-50ec-8fa3-98f21a7336c3
+		summarizeBy: none
+		sourceColumn: Powiat
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Województwo'
+		dataType: string
+		lineageTag: fd55f6d1-b964-55a4-ba81-324e3e690347
+		summarizeBy: none
+		sourceColumn: Województwo
+
+		annotation SummarizationSetBy = Automatic
+
+	column Oddzial
+		dataType: string
+		isHidden
+		lineageTag: bedfffec-4931-5db2-8fed-1572c09ab53b
+		summarizeBy: none
+		sourceColumn: Oddzial
+
+		annotation SummarizationSetBy = Automatic
+
+	column Toaleta
+		dataType: string
+		lineageTag: 2a5bf54e-e5c4-5752-b9ae-150fcd1fc4c8
+		summarizeBy: none
+		sourceColumn: Toaleta
+
+		annotation SummarizationSetBy = Automatic
+
+	column Podjazd
+		dataType: string
+		lineageTag: 5f2baeeb-09d2-58ab-82ec-dc090ee38542
+		summarizeBy: none
+		sourceColumn: Podjazd
+
+		annotation SummarizationSetBy = Automatic
+
+	column Parking
+		dataType: string
+		lineageTag: 78651435-102d-5213-bf05-064b6fc216b2
+		summarizeBy: none
+		sourceColumn: Parking
+
+		annotation SummarizationSetBy = Automatic
+
+	column Winda
+		dataType: string
+		lineageTag: 90339eb7-6044-5b57-aa61-3b3ce9932d53
+		summarizeBy: none
+		sourceColumn: Winda
+
+		annotation SummarizationSetBy = Automatic
+
+	column Klimatyzacja
+		dataType: string
+		lineageTag: a0992a1e-c366-524a-8057-c9ea83439a45
+		summarizeBy: none
+		sourceColumn: Klimatyzacja
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Drzwi automatyczne'
+		dataType: string
+		lineageTag: 4a3dedd9-3144-5dad-99b1-5517d12bbfe0
+		summarizeBy: none
+		sourceColumn: Drzwi automatyczne
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Wózki inwalidzkie'
+		dataType: string
+		lineageTag: 9c36b6e5-4090-5f9f-b589-6cfed3f57adc
+		summarizeBy: none
+		sourceColumn: Wózki inwalidzkie
+
+		annotation SummarizationSetBy = Automatic
+
+	column Korytarze
+		dataType: string
+		lineageTag: 90970e86-0800-5d5e-9f96-72db782825cb
+		summarizeBy: none
+		sourceColumn: Korytarze
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Komunikacja publiczna'
+		dataType: string
+		lineageTag: 923db45a-6293-5e9a-95bf-000ca6952fe7
+		summarizeBy: none
+		sourceColumn: Komunikacja publiczna
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Szerokość'
+		dataType: double
+		formatString: 0.00000
+		lineageTag: 50543454-884b-5d11-9fe1-08e7ef42fe79
+		dataCategory: Latitude
+		summarizeBy: none
+		sourceColumn: Szerokość
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Długość'
+		dataType: double
+		formatString: 0.00000
+		lineageTag: 7bfbcb2b-c789-5533-87a0-26eba6dab08a
+		dataCategory: Longitude
+		summarizeBy: none
+		sourceColumn: Długość
+
+		annotation SummarizationSetBy = Automatic
+
+	/// NFZ / NFZ (zamienione) / NFZ (API v1.3) / środek gminy / środek powiatu.
+	column 'Źródło lokalizacji'
+		dataType: string
+		lineageTag: 4224285c-0959-5612-a50e-6bacb086a18a
+		summarizeBy: none
+		sourceColumn: Źródło lokalizacji
+
+		annotation SummarizationSetBy = Automatic
+
+	column LokalizacjaDokladna
+		dataType: boolean
+		isHidden
+		lineageTag: d8f6a6df-1ceb-5247-ac17-c389a7155a60
+		summarizeBy: none
+		sourceColumn: LokalizacjaDokladna
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Pierwszy raz w danych'
+		dataType: dateTime
+		formatString: dd.mm.yyyy
+		lineageTag: 1f5a8aaf-f5ac-50fb-ba9c-b66593926c97
+		summarizeBy: none
+		sourceColumn: Pierwszy raz w danych
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ostatnio w danych'
+		dataType: dateTime
+		formatString: dd.mm.yyyy
+		lineageTag: 88a40739-d135-580c-8060-7bb7db33f8a4
+		summarizeBy: none
+		sourceColumn: Ostatnio w danych
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimPlacowka = m
+		mode: import
+		queryGroup: Dane
+		source =
+				let
+				    Prefiks = GitHubWlasciciel & "/" & GitHubRepozytorium & "/" & GitHubGalaz & "/",
+				    Pobierz = (sciezka as text) as nullable binary =>
+				        let
+				            Odpowiedz = Web.Contents(
+				                "https://raw.githubusercontent.com",
+				                [RelativePath = Prefiks & sciezka, ManualStatusHandling = {404}]
+				            ),
+				            Status = Value.Metadata(Odpowiedz)[Response.Status],
+				            Tresc =
+				                if Status = 404 then null
+				                else if Text.EndsWith(sciezka, ".gz") then Binary.Decompress(Odpowiedz, Compression.GZip)
+				                else Odpowiedz
+				        in
+				            Tresc,
+				    CzytajCsv = (sciezka as text, kolumny as list) as table =>
+				        let
+				            Plik = Pobierz(sciezka),
+				            Surowa =
+				                if Plik = null then #table(kolumny, {})
+				                else Table.PromoteHeaders(
+				                    Csv.Document(Plik, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				                    [PromoteAllScalars = true]
+				                )
+				        in
+				            Table.SelectColumns(Surowa, kolumny, MissingField.UseNull),
+				    Kolumny = {
+				        "MiejsceKey", "Swiadczeniodawca", "KodSwiadczeniodawcy", "Miejsce", "Adres", "Miejscowosc", "Telefon",
+				        "TerytMiejsca", "TerytPowiat", "Oddzial", "Toaleta", "Podjazd", "Parking", "Winda", "Klimatyzacja",
+				        "DrzwiAutomatyczne", "WozkiInwalidzkie", "Korytarze", "KomunikacjaPubliczna", "Szerokosc", "Dlugosc",
+				        "ZrodloLokalizacji", "PierwszyRaz", "OstatnioWidziane"
+				    },
+				    Miejsca = Table.Distinct(CzytajCsv("data/nfz/miejsca.csv.gz", Kolumny), {"MiejsceKey"}),
+				    Powiaty = CzytajCsv("data/geo/powiaty.csv", {"TerytPowiat", "Powiat", "Wojewodztwo"}),
+				    ZPowiatem = Table.ExpandTableColumn(
+				        Table.NestedJoin(Miejsca, {"TerytPowiat"}, Powiaty, {"TerytPowiat"}, "P", JoinKind.LeftOuter),
+				        "P", {"Powiat", "Wojewodztwo"}
+				    ),
+				    BezPustych = Table.ReplaceValue(
+				        ZPowiatem, "", null, Replacer.ReplaceValue,
+				        {"Szerokosc", "Dlugosc", "PierwszyRaz", "OstatnioWidziane", "TerytPowiat", "Telefon", "KomunikacjaPubliczna"}
+				    ),
+				    Typy = Table.TransformColumnTypes(
+				        BezPustych,
+				        {{"Szerokosc", type number}, {"Dlugosc", type number}, {"PierwszyRaz", type date}, {"OstatnioWidziane", type date}},
+				        "en-US"
+				    ),
+				    Udogodnienia = {"Toaleta", "Podjazd", "Parking", "Winda", "Klimatyzacja", "DrzwiAutomatyczne", "WozkiInwalidzkie", "Korytarze"},
+				    TakNie = Table.TransformColumns(
+				        Typy,
+				        List.Transform(Udogodnienia, (k) => {k, each if _ = "Y" then "Tak" else if _ = "N" then "Nie" else "brak danych", type text})
+				    ),
+				    Miejscowosc = Table.TransformColumns(TakNie, {{"Miejscowosc", each if _ = null then null else Text.Proper(_), type text}}),
+				    Placowka = Table.AddColumn(
+				        Miejscowosc, "Placowka",
+				        each Text.Combine(List.Select({[Swiadczeniodawca], [Miejsce]}, each _ <> null and _ <> ""), " – "),
+				        type text
+				    ),
+				    Adres = Table.AddColumn(
+				        Placowka, "AdresPelny",
+				        each Text.Combine(List.Select({[Adres], [Miejscowosc]}, each _ <> null and _ <> ""), ", "),
+				        type text
+				    ),
+				    Dokladna = Table.AddColumn(
+				        Adres, "LokalizacjaDokladna",
+				        each [ZrodloLokalizacji] <> null and Text.StartsWith([ZrodloLokalizacji], "NFZ"),
+				        type logical
+				    ),
+				    BezPowiatu = Table.ReplaceValue(Dokladna, null, "nieustalony", Replacer.ReplaceValue, {"Powiat", "Wojewodztwo"}),
+				    Wynik = Table.RenameColumns(
+				        BezPowiatu,
+				        {
+				            {"Swiadczeniodawca", "Świadczeniodawca"}, {"KodSwiadczeniodawcy", "Kod świadczeniodawcy"},
+				            {"Miejscowosc", "Miejscowość"}, {"Wojewodztwo", "Województwo"}, {"Placowka", "Placówka"},
+				            {"AdresPelny", "Adres pełny"}, {"DrzwiAutomatyczne", "Drzwi automatyczne"},
+				            {"WozkiInwalidzkie", "Wózki inwalidzkie"}, {"KomunikacjaPubliczna", "Komunikacja publiczna"},
+				            {"Szerokosc", "Szerokość"}, {"Dlugosc", "Długość"}, {"ZrodloLokalizacji", "Źródło lokalizacji"},
+				            {"PierwszyRaz", "Pierwszy raz w danych"}, {"OstatnioWidziane", "Ostatnio w danych"}
+				        }
+				    )
+				in
+				    Wynik
+
+	annotation PBI_ResultType = Table

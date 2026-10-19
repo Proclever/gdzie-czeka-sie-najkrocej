@@ -1,0 +1,211 @@
+/// Wszystkie 380 powiatów (PRG) z danymi GUS BDL – również te bez placówek.
+table DimPowiat
+	lineageTag: c5557427-d5da-5eaf-ae76-c646074951e7
+
+	/// Kod TERYT powiatu (4 znaki).
+	column TerytPowiat
+		dataType: string
+		isKey
+		lineageTag: 668a0bd3-d354-5d9b-9a09-1ad938887873
+		summarizeBy: none
+		sourceColumn: TerytPowiat
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Unikalna etykieta powiatu.
+	column Powiat
+		dataType: string
+		lineageTag: c58d37c0-56a1-5239-9d72-5d42b3e9f759
+		summarizeBy: none
+		sourceColumn: Powiat
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Nazwa powiatu'
+		dataType: string
+		lineageTag: 7e58014a-ff41-5af8-a75c-18e0c48fcd5f
+		summarizeBy: none
+		sourceColumn: Nazwa powiatu
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Województwo'
+		dataType: string
+		lineageTag: b2e628c7-9d4f-5f97-9a48-ab9619d4eec7
+		summarizeBy: none
+		sourceColumn: Województwo
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Typ powiatu'
+		dataType: string
+		lineageTag: 4b5a13da-c687-5faf-b151-87abcb5df97c
+		summarizeBy: none
+		sourceColumn: Typ powiatu
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Klucz kształtu w pliku TopoJSON (PL + TERYT).
+	column KluczMapy
+		dataType: string
+		isHidden
+		lineageTag: 28c1045f-0cdc-5432-bb15-be92756f9366
+		summarizeBy: none
+		sourceColumn: KluczMapy
+
+		annotation SummarizationSetBy = Automatic
+
+	column SzerokoscSrodka
+		dataType: double
+		isHidden
+		lineageTag: 24fb22b1-e6be-5dc1-9ae2-d9fa66fd7d0a
+		summarizeBy: none
+		sourceColumn: SzerokoscSrodka
+
+		annotation SummarizationSetBy = Automatic
+
+	column DlugoscSrodka
+		dataType: double
+		isHidden
+		lineageTag: f30f2742-aaa5-59ed-9519-7dcb4bcee4cd
+		summarizeBy: none
+		sourceColumn: DlugoscSrodka
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ludność'
+		dataType: int64
+		formatString: #,0
+		lineageTag: f084bae2-bc1e-59be-aaea-010fb67d7018
+		summarizeBy: sum
+		sourceColumn: Ludność
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ludność 65+'
+		dataType: int64
+		formatString: #,0
+		lineageTag: 70d6037b-3c8c-5cab-8fe2-80fa4f8c50ae
+		summarizeBy: sum
+		sourceColumn: Ludność 65+
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Rok danych o ludności'
+		dataType: int64
+		formatString: 0
+		lineageTag: a3004b20-60bf-5c45-8eca-5b3a9f367b81
+		summarizeBy: none
+		sourceColumn: Rok danych o ludności
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Przeciętne wynagrodzenie'
+		dataType: double
+		formatString: #,0 "zł"
+		lineageTag: 7ae9d9a3-31e7-5707-944d-3dfb038250ce
+		summarizeBy: none
+		sourceColumn: Przeciętne wynagrodzenie
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Wynagrodzenie – indeks PL 100'
+		dataType: double
+		formatString: 0.0
+		lineageTag: f26f5142-fda1-5108-98bf-ec3c6ad6a3cf
+		summarizeBy: none
+		sourceColumn: Wynagrodzenie – indeks PL 100
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Rok danych o wynagrodzeniach'
+		dataType: int64
+		formatString: 0
+		lineageTag: c86c29ad-c1fc-5514-95c8-98114314833f
+		summarizeBy: none
+		sourceColumn: Rok danych o wynagrodzeniach
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Udział 65+'
+		dataType: double
+		formatString: 0.0%
+		lineageTag: 364b7dc0-1d5e-54be-a3d4-e14730722428
+		summarizeBy: none
+		sourceColumn: Udział 65+
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DimPowiat = m
+		mode: import
+		queryGroup: Dane
+		source =
+				let
+				    Prefiks = GitHubWlasciciel & "/" & GitHubRepozytorium & "/" & GitHubGalaz & "/",
+				    Pobierz = (sciezka as text) as nullable binary =>
+				        let
+				            Odpowiedz = Web.Contents(
+				                "https://raw.githubusercontent.com",
+				                [RelativePath = Prefiks & sciezka, ManualStatusHandling = {404}]
+				            ),
+				            Status = Value.Metadata(Odpowiedz)[Response.Status],
+				            Tresc =
+				                if Status = 404 then null
+				                else if Text.EndsWith(sciezka, ".gz") then Binary.Decompress(Odpowiedz, Compression.GZip)
+				                else Odpowiedz
+				        in
+				            Tresc,
+				    CzytajCsv = (sciezka as text, kolumny as list) as table =>
+				        let
+				            Plik = Pobierz(sciezka),
+				            Surowa =
+				                if Plik = null then #table(kolumny, {})
+				                else Table.PromoteHeaders(
+				                    Csv.Document(Plik, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				                    [PromoteAllScalars = true]
+				                )
+				        in
+				            Table.SelectColumns(Surowa, kolumny, MissingField.UseNull),
+				    Powiaty = CzytajCsv(
+				        "data/geo/powiaty.csv",
+				        {"TerytPowiat", "NazwaPowiatu", "Powiat", "Wojewodztwo", "TypPowiatu", "KluczMapy", "SzerokoscSrodka", "DlugoscSrodka"}
+				    ),
+				    Gus = CzytajCsv(
+				        "data/gus/powiaty_gus.csv",
+				        {"TerytPowiat", "Ludnosc", "Ludnosc65plus", "RokLudnosci", "Wynagrodzenie", "WynagrodzenieIndeksPL100", "RokWynagrodzenia"}
+				    ),
+				    Polaczone = Table.ExpandTableColumn(
+				        Table.NestedJoin(Powiaty, {"TerytPowiat"}, Gus, {"TerytPowiat"}, "G", JoinKind.LeftOuter),
+				        "G", {"Ludnosc", "Ludnosc65plus", "RokLudnosci", "Wynagrodzenie", "WynagrodzenieIndeksPL100", "RokWynagrodzenia"}
+				    ),
+				    BezPustych = Table.ReplaceValue(
+				        Polaczone, "", null, Replacer.ReplaceValue,
+				        {"Ludnosc", "Ludnosc65plus", "RokLudnosci", "Wynagrodzenie", "WynagrodzenieIndeksPL100", "RokWynagrodzenia", "SzerokoscSrodka", "DlugoscSrodka"}
+				    ),
+				    Typy = Table.TransformColumnTypes(
+				        BezPustych,
+				        {
+				            {"Ludnosc", Int64.Type}, {"Ludnosc65plus", Int64.Type}, {"RokLudnosci", Int64.Type},
+				            {"Wynagrodzenie", type number}, {"WynagrodzenieIndeksPL100", type number}, {"RokWynagrodzenia", Int64.Type},
+				            {"SzerokoscSrodka", type number}, {"DlugoscSrodka", type number}
+				        },
+				        "en-US"
+				    ),
+				    Udzial = Table.AddColumn(
+				        Typy, "Udzial65plus",
+				        each if [Ludnosc] = null or [Ludnosc] = 0 or [Ludnosc65plus] = null then null else [Ludnosc65plus] / [Ludnosc],
+				        type number
+				    ),
+				    Wynik = Table.RenameColumns(
+				        Udzial,
+				        {
+				            {"NazwaPowiatu", "Nazwa powiatu"}, {"Wojewodztwo", "Województwo"}, {"TypPowiatu", "Typ powiatu"},
+				            {"Ludnosc", "Ludność"}, {"Ludnosc65plus", "Ludność 65+"}, {"RokLudnosci", "Rok danych o ludności"},
+				            {"Wynagrodzenie", "Przeciętne wynagrodzenie"}, {"WynagrodzenieIndeksPL100", "Wynagrodzenie – indeks PL 100"},
+				            {"RokWynagrodzenia", "Rok danych o wynagrodzeniach"}, {"Udzial65plus", "Udział 65+"}
+				        }
+				    )
+				in
+				    Wynik
+
+	annotation PBI_ResultType = Table
