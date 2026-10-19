@@ -1,0 +1,73 @@
+name: Snapshot kolejek NFZ
+
+on:
+  schedule:
+    # poniedziałki 04:17 UTC (6:17 czasu letniego w Polsce); placówki raportują dane co tydzień
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+    inputs:
+      gus:
+        description: "Odśwież też dane GUS BDL (ludność, ludność 65+, wynagrodzenia)"
+        type: boolean
+        default: false
+      wspolrzedne_v13:
+        description: "Odśwież współrzędne placówek z API NFZ v1.3"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: snapshot-nfz
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Zależności
+        run: pip install -r requirements.txt
+
+      - name: Testy
+        run: python -m unittest discover -s tests
+
+      - name: Czy pierwszy tydzień miesiąca?
+        id: kalendarz
+        run: |
+          if [ "$(date -u +%d)" -le 7 ]; then echo "pierwszy_tydzien=true" >> "$GITHUB_OUTPUT"; else echo "pierwszy_tydzien=false" >> "$GITHUB_OUTPUT"; fi
+
+      - name: GUS BDL – powiaty
+        if: ${{ inputs.gus == true || hashFiles('data/gus/powiaty_gus.csv') == '' }}
+        continue-on-error: true
+        env:
+          BDL_API_KEY: ${{ secrets.BDL_API_KEY }}
+        run: python scripts/gus_powiaty.py
+
+      - name: Współrzędne placówek z API v1.3 (raz w miesiącu)
+        if: ${{ inputs.wspolrzedne_v13 == true || steps.kalendarz.outputs.pierwszy_tydzien == 'true' || hashFiles('data/nfz/wspolrzedne_v13.csv.gz') == '' }}
+        continue-on-error: true
+        run: python scripts/nfz_wspolrzedne_v13.py
+
+      - name: Snapshot NFZ (API v1.4)
+        run: python scripts/nfz_snapshot.py
+
+      - name: Zapis danych w repozytorium
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "Brak zmian w danych."
+            exit 0
+          fi
+          git commit -m "Snapshot NFZ $(TZ=Europe/Warsaw date +%F)"
+          git push
