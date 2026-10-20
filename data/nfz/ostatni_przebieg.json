@@ -1,12 +1,12 @@
 {
   "data_snapshotu": "2026-10-20",
   "api": "https://apinfz.nfz.gov.pl/app-itl-api-pcus/queues",
-  "czas_s": 6890.4,
+  "czas_s": 6596.9,
   "limit_na_strone": 25,
   "strony": 5936,
-  "zapytania": 5946,
-  "http_429": 2,
-  "ponowienia": 6,
+  "zapytania": 5938,
+  "http_429": 0,
+  "ponowienia": 0,
   "tempo_koncowe_zapytan_na_s": 0.9,
   "wiersze": 148012,
   "wiersze_z_pcus": 135422,
@@ -89,10 +89,12 @@
   "brakujace_strony_szczegoly": [],
   "zapisany": true,
   "zrodla_lokalizacji": {
-    "NFZ (API v1.3)": 21180,
-    "środek gminy": 22984,
+    "NFZ (API v1.3)": 34672,
+    "NFZ (API v1.3, ta sama komórka)": 728,
+    "NFZ (API v1.3, ten sam adres)": 3525,
+    "środek gminy": 5276,
     "NFZ": 5673,
-    "środek powiatu": 42,
+    "środek powiatu": 5,
     "środek powiatu (siedziba świadczeniodawcy)": 1
   },
   "miejsca_bez_powiatu": 0
