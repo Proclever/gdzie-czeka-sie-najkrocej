@@ -2,9 +2,13 @@
 
 W API v1.4 większość rekordów nie ma szerokości i długości geograficznej, a API
 v1.3 (oznaczone przez NFZ jako nieaktualne, ale nadal działające) je podaje.
-Skrypt pobiera v1.3 i zapisuje słownik MiejsceKey -> współrzędne:
+Skrypt pobiera v1.3 i zapisuje współrzędne z trzema kluczami dopasowania:
 
   data/nfz/wspolrzedne_v13.csv.gz
+    MiejsceKey    – klucz miejsca liczony jak w v1.4 (v1.3 dodaje do adresu cechę ulicy, np. „UL.”,
+                    dlatego snapshot sprawdza też warianty klucza z cechą)
+    KluczAdres    – ten sam adres (bez cechy ulicy) w tej samej gminie
+    KluczKomorka  – ta sama komórka organizacyjna świadczeniodawcy (kody resortowe VII i VIII)
 
 Wystarczy przypadek 1 (stabilny). W przebiegu z 19.10.2026 v1.3 zwróciło dla obu
 przypadków identyczne liczby rekordów we wszystkich 16 oddziałach, czyli te same
@@ -23,10 +27,19 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import NFZ_DIR, ODDZIALY_NFZ, dzis_w_polsce, wczytaj_csv, zapisz_csv  # noqa: E402
-from nfz_api import API_V13, TEMPO_V13, KlientNfz, pobierz_bloki, splaszcz, ustal_limit  # noqa: E402
+from nfz_api import (  # noqa: E402
+    API_V13,
+    TEMPO_V13,
+    KlientNfz,
+    klucz_adresu,
+    klucz_komorki,
+    pobierz_bloki,
+    splaszcz,
+    ustal_limit,
+)
 
 log = logging.getLogger("nfz")
-KOLUMNY = ["MiejsceKey", "Szerokosc", "Dlugosc", "DataPobrania"]
+KOLUMNY = ["MiejsceKey", "KluczAdres", "KluczKomorka", "Szerokosc", "Dlugosc", "DataPobrania"]
 
 
 def main(argv: list[str] | None = None, klient: KlientNfz | None = None, katalog: Path = NFZ_DIR) -> int:
@@ -51,6 +64,8 @@ def main(argv: list[str] | None = None, klient: KlientNfz | None = None, katalog
             if m["SzerokoscNFZ"] is not None:
                 znalezione[m["MiejsceKey"]] = {
                     "MiejsceKey": m["MiejsceKey"],
+                    "KluczAdres": klucz_adresu(m),
+                    "KluczKomorka": klucz_komorki(m),
                     "Szerokosc": m["SzerokoscNFZ"],
                     "Dlugosc": m["DlugoscNFZ"],
                     "DataPobrania": dzis,

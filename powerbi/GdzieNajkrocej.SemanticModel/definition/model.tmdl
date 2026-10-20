@@ -4,6 +4,7 @@ model Model
 	discourageImplicitMeasures
 	sourceQueryCulture: pl-PL
 	dataAccessOptions
+		fastCombine
 		legacyRedirects
 		returnErrorValuesAsNull
 
@@ -19,6 +20,8 @@ annotation __PBI_TimeIntelligenceEnabled = 0
 
 annotation PBI_QueryOrder = ["GitHubWlasciciel","GitHubRepozytorium","GitHubGalaz","FactKolejki","DimSwiadczenie","DimPlacowka","DimPowiat","DimData","ParamStart"]
 
+annotation PBI_ProTooling = ["DevMode"]
+
 ref table FactKolejki
 ref table DimSwiadczenie
 ref table DimPlacowka
@@ -28,3 +31,6 @@ ref table ParamStart
 ref table ParamPromien
 ref table ParamMetryka
 ref table Miary
+
+ref cultureInfo pl-PL
+

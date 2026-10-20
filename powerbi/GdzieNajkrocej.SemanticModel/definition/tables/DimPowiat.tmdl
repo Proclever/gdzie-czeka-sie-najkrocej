@@ -29,7 +29,7 @@ table DimPowiat
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Województwo'
+	column Województwo
 		dataType: string
 		lineageTag: b2e628c7-9d4f-5f97-9a48-ab9619d4eec7
 		summarizeBy: none
@@ -73,7 +73,7 @@ table DimPowiat
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Ludność'
+	column Ludność
 		dataType: int64
 		formatString: #,0
 		lineageTag: f084bae2-bc1e-59be-aaea-010fb67d7018
@@ -208,4 +208,5 @@ table DimPowiat
 				in
 				    Wynik
 
-	annotation PBI_ResultType = Table
+	annotation PBI_ResultType = Exception
+

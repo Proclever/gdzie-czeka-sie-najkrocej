@@ -1,9 +1,9 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "mapa_sl_metryka",
   "position": {
     "x": 16,
-    "y": 162,
+    "y": 176,
     "z": 1700,
     "height": 236,
     "width": 268,
@@ -73,7 +73,7 @@
                                   "Source": "p"
                                 }
                               },
-                              "Property": "Metryka"
+                              "Property": "Metryka pola"
                             }
                           }
                         ],
@@ -81,10 +81,60 @@
                           [
                             {
                               "Literal": {
-                                "Value": "'Prognozowany czas oczekiwania – mediana (dni)'"
+                                "Value": "'''Miary''[Mediana PCUŚ (aktualnie)]'"
                               }
                             }
                           ]
+                        ]
+                      }
+                    },
+                    "Annotations": {
+                      "filterExpressionMetadata": {
+                        "expressions": [
+                          {
+                            "Column": {
+                              "Expression": {
+                                "SourceRef": {
+                                  "Entity": "ParamMetryka"
+                                }
+                              },
+                              "Property": "Metryka"
+                            }
+                          }
+                        ],
+                        "decomposedIdentities": {
+                          "values": [
+                            [
+                              {
+                                "0": [
+                                  {
+                                    "Literal": {
+                                      "Value": "'''Miary''[Mediana PCUŚ (aktualnie)]'"
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          ],
+                          "columns": [
+                            {
+                              "value": {
+                                "Column": {
+                                  "Expression": {
+                                    "SourceRef": {
+                                      "Entity": "ParamMetryka"
+                                    }
+                                  },
+                                  "Property": "Metryka pola"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "valueMap": [
+                          {
+                            "0": "Prognoza NFZ – mediana (dni)"
+                          }
                         ]
                       }
                     }

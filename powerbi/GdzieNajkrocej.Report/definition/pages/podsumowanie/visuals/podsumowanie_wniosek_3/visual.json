@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "podsumowanie_wniosek_3",
   "position": {
-    "x": 856.0,
-    "y": 274,
+    "x": 856,
+    "y": 288,
     "z": 2200,
     "height": 92,
-    "width": 408.0,
+    "width": 408,
     "tabOrder": 1100
   },
   "visual": {

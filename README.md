@@ -23,7 +23,8 @@ Plan z pliku `założenia.md` powstał przy założeniu, że API zwraca **pierws
 |---|---|---|
 | `api.nfz.gov.pl/app-itl-api` (v1.3) | NFZ oznaczył v1.3 jako nieaktualne; od 10.07.2026 działa **v1.4** (`apinfz.nfz.gov.pl/app-itl-api-pcus`) | Snapshot pobierany z v1.4 |
 | `DniDoTerminu = PierwszyTermin − StanNaDzien` | pole `dates.date` jest puste; v1.4 podaje `dates.pcus`, np. „1 mies. 3 tyg.” | Główna miara to **PCUŚ w dniach** (miesiąc = 30 dni, tydzień = 7). Dodatkowe metryki: średni czas deklarowany przez placówki i czas rozładowania kolejki |
-| Szer./dł. geogr. z rekordu | w v1.4 większość rekordów nie ma współrzędnych, a część ma je zamienione | Walidacja i zamiana; uzupełnianie z API v1.3 (raz w miesiącu), a w ostateczności środkiem gminy wg TERYT. Źródło lokalizacji jest widoczne w raporcie |
+| Szer./dł. geogr. z rekordu | w v1.4 większość rekordów nie ma współrzędnych, a część ma je zamienione | Walidacja i zamiana; uzupełnianie z API v1.3 (raz w miesiącu), a w ostateczności środkiem gminy wg TERYT. v1.3 poprzedza adres cechą ulicy („UL. DŁUGA 5”), więc dopasowanie sprawdza też taki wariant klucza miejsca, a potem ten sam adres w gminie i tę samą komórkę świadczeniodawcy (kody resortowe VII i VIII). Źródło lokalizacji jest widoczne w raporcie |
+| PCUŚ opisuje czas oczekiwania w każdej kolejce | ok. 30% kolejek stabilnych i ponad połowa pilnych nie ma pacjentów (0 oczekujących i 0 obsłużonych w ostatnim miesiącu), a NFZ podaje dla nich PCUŚ 0 dni | Flaga `KolejkaAktywna`. Mediany, mapa i rankingi pomijają puste kolejki (mediana dla przypadków stabilnych w październiku 2026: 51 dni zamiast 21). Strona „Dla pacjenta” pokazuje wszystkie placówki |
 | Wszystkie kolejki mają termin | kolejki w **centralnej e-rejestracji** (`queue-in-cer = Y`) nie mają PCUŚ ani statystyk | Flaga `WCeR`; udział takich kolejek na stronie „O danych” |
 | Wymiary przez `Table.Distinct` z zapytań referencyjnych | w usłudze każde zapytanie referencyjne ponownie pobiera wszystkie snapshoty, a łączenie zapytań z dostępem do sieci uruchamia zaporę prywatności | Wymiary (`miejsca.csv.gz`, `swiadczenia.csv`) buduje skrypt. Power Query czyta każdy plik w jednym samodzielnym zapytaniu, a kategoria świadczenia nadal powstaje w Power Query |
 | Miary w filtrach `CALCULATE` | DAX nie pozwala na miarę w filtrze logicznym, a `[W promieniu]` traktowało brak odległości jak 0 km | Miary przepisane na zmienne, a filtr promienia pomija brak współrzędnych |
@@ -79,7 +80,7 @@ powerbi/
 
 Schemat gwiazdy (import):
 
-- **FactKolejki** – ziarno: snapshot × miejsce × świadczenie × przypadek. Zawiera PCUŚ (tekst i dni), oczekujących, skreślonych, średni czas, czas rozładowania oraz flagi `BrakPCUS`, `DaneNieaktualne`, `WCeR` i `WieleMiejsc`.
+- **FactKolejki** – ziarno: snapshot × miejsce × świadczenie × przypadek. Zawiera PCUŚ (tekst i dni), oczekujących, skreślonych, średni czas, czas rozładowania oraz flagi `BrakPCUS`, `DaneNieaktualne`, `WCeR`, `WieleMiejsc` i `KolejkaAktywna` (FAŁSZ = kolejka bez pacjentów, pomijana w miarach porównawczych).
 - **DimData** – kalendarz oznaczony jako tabela dat.
 - **DimPlacowka** – świadczeniodawca i miejsce, adres, telefon, udogodnienia, współrzędne ze źródłem lokalizacji, powiat i województwo.
 - **DimSwiadczenie** – nazwa, kategoria (z początku nazwy, w Power Query) i flaga „dla dzieci”.
@@ -116,6 +117,7 @@ python scripts/geo_build.py          # wymaga: pip install shapely, Node.js (map
 ## Ograniczenia
 
 - PCUŚ to prognoza NFZ, a nie gwarantowany termin. Wartości powyżej 30 dni NFZ podaje w miesiącach i tygodniach, więc dokładność wynosi około tygodnia.
+- Ok. 80% miejsc ma dokładne współrzędne z API NFZ (v1.4 lub v1.3). Pozostałe dostają środek gminy, więc odległości na stronie „Dla pacjenta” są dla nich przybliżone.
 - Oczekujący są przypisani do powiatu placówki. Duże miasta obsługują też pacjentów z okolicy, co zawyża ich wskaźniki na 10 tys. mieszkańców.
 - API NFZ v1.4 ma limit 10 zapytań na 10 sekund, a pełny snapshot to ok. 6 tys. zapytań. Skrypt trzyma równe tempo 0,9 zapytania na sekundę. Po odpowiedzi HTTP 429 wszystkie wątki robią wspólną pauzę, a strony, których nie udało się pobrać, są ponawiane na końcu. Snapshot jest zapisywany, gdy brakuje najwyżej 1% stron. Braki opisuje `data/nfz/ostatni_przebieg.json`.
 - Snapshoty przyrastają o kilka MB tygodniowo. Po roku warto rozważyć archiwizację starszych plików albo odświeżanie przyrostowe.

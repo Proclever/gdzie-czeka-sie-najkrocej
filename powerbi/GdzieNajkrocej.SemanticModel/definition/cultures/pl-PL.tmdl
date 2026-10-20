@@ -1,0 +1,940 @@
+cultureInfo pl-PL
+
+	linguisticMetadata =
+			{
+			  "Version": "2.0.0",
+			  "Language": "en-US",
+			  "Entities": {
+			    "miary.mediana_pcuś_aktualnie": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Mediana PCUŚ (aktualnie)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Mediana prognozowanego czasu oczekiwania (dni)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Mediana PCUŚ (dni)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Prognoza NFZ – mediana (dni)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "PCUŚ (dni)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Teraz (dni)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Mediana (dni)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.oczekujący_aktualnie": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Oczekujący (aktualnie)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Oczekujący w kolejkach (koniec miesiąca)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Oczekujący": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.liczba_placówek": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Liczba placówek"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Placówki udzielające świadczeń": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Placówki": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.mediana_pcuś_min__10_kolejek": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Mediana PCUŚ (min. 10 kolejek)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Mediana PCUŚ (dni)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.liczba_kolejek_aktualnie": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Liczba kolejek (aktualnie)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Liczba kolejek": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.start_miejscowość": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Start: miejscowość"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Punkt startowy": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.placówki_w_promieniu": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Placówki w promieniu"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Placówki z kolejką w promieniu": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.najkrótszy_pcuś_w_promieniu_dni": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Najkrótszy PCUŚ w promieniu (dni)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Najkrótszy prognozowany czas (dni)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.odległość_km": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Odległość (km)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Odległość (km)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.pcuś_wg_nfz": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "PCUŚ wg NFZ"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "PCUŚ wg NFZ": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.pcuś_placówki_dni": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "PCUŚ placówki (dni)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "PCUŚ (dni)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.oczekujący_na_10_tys__65": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Oczekujący na 10 tys. 65+"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Oczek. / 10 tys. 65+": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.powiaty_bez_placówki": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Powiaty bez placówki"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Powiaty bez żadnej placówki („pustynie”)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.ludność_65_suma": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Ludność 65+ (suma)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Ludność 65+": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.indeks_luki": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Indeks luki"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Indeks luki": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.wynagrodzenie_średnie": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Wynagrodzenie (średnie)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Wynagrodzenie": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        },
+			        {
+			          "Przeciętne wynagrodzenie": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.liczba_snapshotów": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Liczba snapshotów"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Liczba snapshotów w modelu": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.mediana_pcuś_dni": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Mediana PCUŚ (dni)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Mediana PCUŚ (dni)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.mediana_pcuś_4_tyg__temu": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Mediana PCUŚ (4 tyg. temu)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "4 tyg. temu": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.zmiana_m_m_dni": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Zmiana m/m (dni)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Zmiana m/m": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.kolejek_bez_pcuś": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "% kolejek bez PCUŚ"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Kolejki bez prognozy (PCUŚ)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.kolejek_w_erejestracji": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "% kolejek w e-rejestracji"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Kolejki w centralnej e-rejestracji": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.kolejek_z_nieaktualnymi_danymi": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "% kolejek z nieaktualnymi danymi"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Kolejki z nieaktualnymi danymi": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.kolejek_z_pierwszym_wolnym_terminem": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "% kolejek z pierwszym wolnym terminem"
+			        }
+			      },
+			      "State": "Generated"
+			    },
+			    "miary.placówek_z_przybliżoną_lokalizacją": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "% placówek z przybliżoną lokalizacją"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Placówki z przybliżoną lokalizacją": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.powiaty_bez_danych_gus": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Powiaty bez danych GUS"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Powiaty bez danych GUS": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.średnia_pcuś_aktualnie": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Średnia PCUŚ (aktualnie)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Średnia (dni)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.ludność_suma": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Ludność (suma)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Ludność": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "factkolejki.przedzialpcus": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "FactKolejki",
+			          "ConceptualProperty": "PrzedzialPCUS"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Przedział PCUŚ": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "factkolejki.przypadek": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "FactKolejki",
+			          "ConceptualProperty": "Przypadek"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Przypadek": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "dimpowiat.powiat": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "DimPowiat",
+			          "ConceptualProperty": "Powiat"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Powiat": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "dimpowiat.województwo": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "DimPowiat",
+			          "ConceptualProperty": "Województwo"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Województwo": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "dimplacowka.szerokość": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "DimPlacowka",
+			          "ConceptualProperty": "Szerokość"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Szerokość": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "dimplacowka.długość": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "DimPlacowka",
+			          "ConceptualProperty": "Długość"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Długość": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "dimplacowka.placówka": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "DimPlacowka",
+			          "ConceptualProperty": "Placówka"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Placówka": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "dimplacowka.adres_pełny": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "DimPlacowka",
+			          "ConceptualProperty": "Adres pełny"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Adres": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "dimplacowka.telefon": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "DimPlacowka",
+			          "ConceptualProperty": "Telefon"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Telefon": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "dimdata.data": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "DimData",
+			          "ConceptualProperty": "Data"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Data snapshotu": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "dimswiadczenie.świadczenie": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "DimSwiadczenie",
+			          "ConceptualProperty": "Świadczenie"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Świadczenie": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.wartość_metryki_mapa": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "Wartość metryki (mapa)"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Wartość wybranej metryki": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "miary.kolejek_bez_pacjentów": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "Miary",
+			          "ConceptualProperty": "% kolejek bez pacjentów"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "Kolejki bez pacjentów (pomijane)": {
+			            "State": "Suggested",
+			            "Source": {
+			              "Type": "External",
+			              "Agent": "PowerBI.VisualColumnRename"
+			            },
+			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    }
+			  }
+			}
+		contentType: json
+

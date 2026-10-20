@@ -13,7 +13,10 @@ table ParamPromien
 		summarizeBy: none
 		sourceColumn: [Value]
 
-		extendedProperty ParameterMetadata = {"version":0}
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 0
+				}
 
 		annotation SummarizationSetBy = User
 
@@ -22,3 +25,4 @@ table ParamPromien
 		source = GENERATESERIES ( 5, 200, 5 )
 
 	annotation PBI_Id = b53e4ced79e35e57ab43dfaabfb7a2b5
+

@@ -20,7 +20,11 @@ table ParamMetryka
 		sourceColumn: [Value2]
 		sortByColumn: 'Metryka kolejność'
 
-		extendedProperty ParameterMetadata = {"version":3,"kind":2}
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
 
 		annotation SummarizationSetBy = Automatic
 
@@ -37,12 +41,13 @@ table ParamMetryka
 		mode: import
 		source =
 				{
-				    ( "Prognozowany czas oczekiwania – mediana (dni)", NAMEOF ( 'Miary'[Mediana PCUŚ (aktualnie)] ), 0 ),
-				    ( "Prognozowany czas – 90. percentyl (dni)", NAMEOF ( 'Miary'[P90 PCUŚ (aktualnie)] ), 1 ),
-				    ( "Średni czas oczekiwania wg placówek (dni)", NAMEOF ( 'Miary'[Mediana średniego czasu (aktualnie)] ), 2 ),
+				    ( "Prognoza NFZ – mediana (dni)", NAMEOF ( 'Miary'[Mediana PCUŚ (aktualnie)] ), 0 ),
+				    ( "Prognoza NFZ – 90. percentyl", NAMEOF ( 'Miary'[P90 PCUŚ (aktualnie)] ), 1 ),
+				    ( "Średni czas wg placówek (dni)", NAMEOF ( 'Miary'[Mediana średniego czasu (aktualnie)] ), 2 ),
 				    ( "Czas rozładowania kolejki (dni)", NAMEOF ( 'Miary'[Czas rozładowania kolejki (aktualnie)] ), 3 ),
 				    ( "Oczekujący na 10 tys. osób 65+", NAMEOF ( 'Miary'[Oczekujący na 10 tys. 65+] ), 4 ),
 				    ( "Placówki na 100 tys. mieszkańców", NAMEOF ( 'Miary'[Placówki na 100 tys.] ), 5 )
 				}
 
 	annotation PBI_Id = 48186eb3371e58cb9fd8d8346e3c0a11
+

@@ -8,21 +8,21 @@ table Miary
 		displayFolder: 1. Czas oczekiwania
 		lineageTag: 6c400139-f0b1-50ea-902c-a9f1103f3ad1
 
-	/// Mediana prognozowanego czasu oczekiwania (PCUŚ, dni) w bieżącym kontekście – używana na stronie Trend.
-	measure 'Mediana PCUŚ (dni)' = MEDIAN ( FactKolejki[PCUSDni] )
+	/// Mediana prognozowanego czasu oczekiwania (PCUŚ, dni) w bieżącym kontekście. Pomija kolejki bez pacjentów (0 oczekujących i 0 obsłużonych w ostatnim miesiącu), dla których NFZ podaje PCUŚ 0 dni.
+	measure 'Mediana PCUŚ (dni)' = CALCULATE ( MEDIAN ( FactKolejki[PCUSDni] ), FactKolejki[KolejkaAktywna] = TRUE () )
 		formatString: #,0
 		displayFolder: 1. Czas oczekiwania
 		lineageTag: 0dbebdf6-3a2f-5771-b231-9720bc850983
 
-	/// Średnia PCUŚ w bieżącym kontekście – tylko do porównania z medianą (strona O danych).
-	measure 'Średnia PCUŚ (dni)' = AVERAGE ( FactKolejki[PCUSDni] )
+	/// Średnia PCUŚ w bieżącym kontekście – tylko do porównania z medianą (strona O danych). Pomija kolejki bez pacjentów (0 oczekujących i 0 obsłużonych w ostatnim miesiącu), dla których NFZ podaje PCUŚ 0 dni.
+	measure 'Średnia PCUŚ (dni)' = CALCULATE ( AVERAGE ( FactKolejki[PCUSDni] ), FactKolejki[KolejkaAktywna] = TRUE () )
 		formatString: #,0
 		displayFolder: 1. Czas oczekiwania
 		lineageTag: 74bb2fb4-dd89-5ec8-91f6-17bd9626f923
 
-	/// 90. percentyl PCUŚ w bieżącym kontekście.
+	/// 90. percentyl PCUŚ w bieżącym kontekście. Pomija kolejki bez pacjentów (0 oczekujących i 0 obsłużonych w ostatnim miesiącu), dla których NFZ podaje PCUŚ 0 dni.
 	measure 'P90 PCUŚ (dni)' =
-			VAR _t = FILTER ( FactKolejki, NOT ISBLANK ( FactKolejki[PCUSDni] ) )
+			VAR _t = FILTER ( FactKolejki, NOT ISBLANK ( FactKolejki[PCUSDni] ) && FactKolejki[KolejkaAktywna] )
 			RETURN
 			    IF ( NOT ISEMPTY ( _t ), PERCENTILEX.INC ( _t, FactKolejki[PCUSDni], 0.9 ) )
 		formatString: #,0
@@ -151,7 +151,7 @@ table Miary
 		displayFolder: 2. Popyt i dostępność
 		lineageTag: 4ea59a19-045d-5638-9329-1e285c22ba69
 
-	/// Liczba kolejek z prognozowanym czasem oczekiwania w najnowszym snapshocie.
+	/// Liczba aktywnych kolejek (z pacjentami w ostatnim miesiącu) z prognozowanym czasem oczekiwania w najnowszym snapshocie – podstawa median.
 	measure 'Liczba kolejek z PCUŚ (aktualnie)' =
 			VAR _ostatni = [Data ostatniego snapshotu]
 			RETURN
@@ -159,7 +159,8 @@ table Miary
 			        COUNTROWS ( FactKolejki ),
 			        FactKolejki[DataSnapshotu] = _ostatni,
 			        REMOVEFILTERS ( DimData ),
-			        FactKolejki[BrakPCUS] = FALSE ()
+			        FactKolejki[BrakPCUS] = FALSE (),
+			        FactKolejki[KolejkaAktywna] = TRUE ()
 			    )
 		formatString: #,0
 		displayFolder: 2. Popyt i dostępność
@@ -184,7 +185,7 @@ table Miary
 
 	/// Oczekujący w placówkach z danego obszaru na 10 tys. mieszkańców w wieku 65+ (GUS BDL).
 	measure 'Oczekujący na 10 tys. 65+' = DIVIDE ( [Oczekujący (aktualnie)], SUM ( DimPowiat[Ludność 65+] ) ) * 10000
-		formatString: #,0.0
+		formatString: #,0
 		displayFolder: 2. Popyt i dostępność
 		lineageTag: 6bfd3e8a-729f-5fc9-b5b5-6f61f74457de
 
@@ -501,7 +502,7 @@ table Miary
 			RETURN
 			    IF (
 			        ISBLANK ( _zmiana ),
-			        "Trend pojawi się po zebraniu snapshotów z co najmniej 4 tygodni",
+			        "Pojawi się po 4 tygodniach zbierania danych",
 			        CONCATENATEX ( _top, DimSwiadczenie[Świadczenie], ", " ) & ": "
 			            & IF ( _zmiana > 0, "+", "" ) & FORMAT ( _zmiana, "0" ) & " dni m/m"
 			    )
@@ -600,6 +601,38 @@ table Miary
 		displayFolder: 7. Jakość danych
 		lineageTag: 4a1a044f-fd05-5326-b9f1-fcef749b26dc
 
+	/// Wartość metryki wybranej we fragmentatorze „Metryka na mapie” – podstawa koloru powiatów na kartogramie.
+	measure 'Wartość metryki (mapa)' =
+			SWITCH (
+			    SELECTEDVALUE ( ParamMetryka[Metryka kolejność], 0 ),
+			    0, [Mediana PCUŚ (aktualnie)],
+			    1, [P90 PCUŚ (aktualnie)],
+			    2, [Mediana średniego czasu (aktualnie)],
+			    3, [Czas rozładowania kolejki (aktualnie)],
+			    4, [Oczekujący na 10 tys. 65+],
+			    5, [Placówki na 100 tys.]
+			)
+		formatString: #,0
+		displayFolder: 6. Wnioski i tytuły
+		lineageTag: f781ca3e-d6d0-4276-9447-76fcdb369966
+
+	/// Udział kolejek bez pacjentów (0 oczekujących i 0 obsłużonych w ostatnim miesiącu). NFZ podaje dla nich PCUŚ 0 dni, dlatego miary porównawcze je pomijają.
+	measure '% kolejek bez pacjentów' =
+			VAR _ostatni = [Data ostatniego snapshotu]
+			RETURN
+			    DIVIDE (
+			        CALCULATE (
+			            COUNTROWS ( FactKolejki ),
+			            FactKolejki[DataSnapshotu] = _ostatni,
+			            FactKolejki[KolejkaAktywna] = FALSE (),
+			            REMOVEFILTERS ( DimData )
+			        ),
+			        [Liczba kolejek (aktualnie)]
+			    )
+		formatString: 0.0%
+		displayFolder: 7. Jakość danych
+		lineageTag: 78820f43-b1e2-4b9b-bd20-5093c97cbe41
+
 	column Value
 		isHidden
 		lineageTag: 3e50a489-0d35-5090-9df6-835348f178bb
@@ -614,3 +647,4 @@ table Miary
 		source = {1}
 
 	annotation PBI_Id = 55e18dc4213750a6a20cfb18e10c5489
+

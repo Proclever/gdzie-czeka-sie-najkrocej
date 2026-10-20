@@ -1,12 +1,12 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "podsumowanie_wojewodztwa",
   "position": {
-    "x": 646.0,
-    "y": 378,
+    "x": 646,
+    "y": 392,
     "z": 2400,
-    "height": 326,
-    "width": 618.0,
+    "height": 312,
+    "width": 618,
     "tabOrder": 1300
   },
   "visual": {
@@ -67,8 +67,7 @@
             },
             "direction": "Descending"
           }
-        ],
-        "isDefaultSort": false
+        ]
       }
     },
     "objects": {
@@ -116,6 +115,13 @@
         {
           "properties": {
             "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "showAxisTitle": {
               "expr": {
                 "Literal": {
                   "Value": "false"

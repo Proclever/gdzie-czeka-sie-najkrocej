@@ -13,3 +13,4 @@ relationship 8707d07e-4242-5d37-9bf0-16b72a818e23
 relationship b693acdc-8390-525b-add5-667264414fa5
 	fromColumn: DimPlacowka.TerytPowiat
 	toColumn: DimPowiat.TerytPowiat
+

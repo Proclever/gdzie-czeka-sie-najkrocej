@@ -2,7 +2,7 @@
 table ParamStart
 	lineageTag: 5bebfae0-ff5c-5542-a455-71f1cb87aa36
 
-	column 'Miejscowość'
+	column Miejscowość
 		dataType: string
 		lineageTag: 7b757693-cffb-50b9-b2ae-5b5b1fb469db
 		summarizeBy: none
@@ -10,7 +10,7 @@ table ParamStart
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Szerokość'
+	column Szerokość
 		dataType: double
 		isHidden
 		formatString: 0.00000
@@ -20,7 +20,7 @@ table ParamStart
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Długość'
+	column Długość
 		dataType: double
 		isHidden
 		formatString: 0.00000
@@ -100,3 +100,4 @@ table ParamStart
 				    Wynik
 
 	annotation PBI_ResultType = Table
+

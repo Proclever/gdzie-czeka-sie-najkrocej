@@ -12,7 +12,7 @@ table DimPlacowka
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Placówka'
+	column Placówka
 		dataType: string
 		lineageTag: 881ccc8e-2d70-5908-bfb3-4680818b6f78
 		summarizeBy: none
@@ -20,7 +20,7 @@ table DimPlacowka
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Świadczeniodawca'
+	column Świadczeniodawca
 		dataType: string
 		lineageTag: c059d149-6b44-516e-8a09-4d1e0aaa3a3f
 		summarizeBy: none
@@ -53,7 +53,7 @@ table DimPlacowka
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Miejscowość'
+	column Miejscowość
 		dataType: string
 		lineageTag: f1d75f43-c874-559b-9f35-130bfa43c213
 		summarizeBy: none
@@ -103,7 +103,7 @@ table DimPlacowka
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Województwo'
+	column Województwo
 		dataType: string
 		lineageTag: fd55f6d1-b964-55a4-ba81-324e3e690347
 		summarizeBy: none
@@ -192,7 +192,7 @@ table DimPlacowka
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Szerokość'
+	column Szerokość
 		dataType: double
 		formatString: 0.00000
 		lineageTag: 50543454-884b-5d11-9fe1-08e7ef42fe79
@@ -202,7 +202,7 @@ table DimPlacowka
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Długość'
+	column Długość
 		dataType: double
 		formatString: 0.00000
 		lineageTag: 7bfbcb2b-c789-5533-87a0-26eba6dab08a
@@ -212,7 +212,7 @@ table DimPlacowka
 
 		annotation SummarizationSetBy = Automatic
 
-	/// NFZ / NFZ (zamienione) / NFZ (API v1.3) / środek gminy / środek powiatu.
+	/// NFZ (współrzędne z API v1.4) / NFZ (API v1.3) / NFZ (API v1.3, ten sam adres) / NFZ (API v1.3, ta sama komórka) / środek gminy / środek powiatu. Wartości zaczynające się od „NFZ” to lokalizacja dokładna.
 	column 'Źródło lokalizacji'
 		dataType: string
 		lineageTag: 4224285c-0959-5612-a50e-6bacb086a18a
@@ -239,6 +239,8 @@ table DimPlacowka
 
 		annotation SummarizationSetBy = Automatic
 
+		annotation UnderlyingDateTimeDataType = Date
+
 	column 'Ostatnio w danych'
 		dataType: dateTime
 		formatString: dd.mm.yyyy
@@ -247,6 +249,8 @@ table DimPlacowka
 		sourceColumn: Ostatnio w danych
 
 		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
 
 	partition DimPlacowka = m
 		mode: import
@@ -336,3 +340,4 @@ table DimPlacowka
 				    Wynik
 
 	annotation PBI_ResultType = Table
+

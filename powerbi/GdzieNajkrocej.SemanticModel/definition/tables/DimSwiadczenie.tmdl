@@ -12,7 +12,7 @@ table DimSwiadczenie
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Świadczenie'
+	column Świadczenie
 		dataType: string
 		lineageTag: 4ba8be11-309e-54a0-88a1-fa6ba3603505
 		summarizeBy: none
@@ -124,3 +124,4 @@ table DimSwiadczenie
 				    Wynik
 
 	annotation PBI_ResultType = Table
+

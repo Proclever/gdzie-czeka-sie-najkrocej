@@ -213,6 +213,105 @@ class TestLokalizator(unittest.TestCase):
         self.assertEqual(m["ZrodloLokalizacji"], "NFZ")
 
 
+class TestDopasowanieV13(unittest.TestCase):
+    """API v1.3 podaje adres z cechą ulicy („UL. ZEGRZYŃSKA 8”), a v1.4 bez niej („ZEGRZYŃSKA 8”)."""
+
+    def setUp(self):
+        self.v14 = wczytaj_fixture("nfz_v14_rekordy.json")
+        self.tmp = Path(tempfile.mkdtemp())
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp)
+
+    def miejsce(self, i: int, **zmiany) -> dict:
+        r = copy.deepcopy(self.v14[i])
+        r["attributes"].update(zmiany)
+        return nfz_api.splaszcz(r, "2026-10-20", "07")[1]
+
+    def lokalizator(self, wiersze_v13: list[dict], kolumny=None) -> nfz_snapshot.Lokalizator:
+        common.zapisz_csv(self.tmp / "wspolrzedne_v13.csv.gz", wiersze_v13, kolumny or nfz_wspolrzedne_v13.KOLUMNY)
+        return nfz_snapshot.Lokalizator(ROOT / "data" / "geo", self.tmp)
+
+    @staticmethod
+    def wiersz_v13(m: dict, lat: float, lon: float, data: str = "2026-10-20") -> dict:
+        return {"MiejsceKey": m["MiejsceKey"], "KluczAdres": nfz_api.klucz_adresu(m),
+                "KluczKomorka": nfz_api.klucz_komorki(m), "Szerokosc": lat, "Dlugosc": lon, "DataPobrania": data}
+
+    def test_normalizacja_adresu_i_miejscowosci(self):
+        self.assertEqual(nfz_api.norm_adres("UL. DŁUGA 5"), "DŁUGA 5")
+        self.assertEqual(nfz_api.norm_adres("Długa  5"), "DŁUGA 5")
+        self.assertEqual(nfz_api.norm_adres("ul. Gen. Józefa Bema 5"), "GEN JÓZEFA BEMA 5")
+        self.assertEqual(nfz_api.norm_adres("PL. PLAC WOLNOŚCI 1"), nfz_api.norm_adres("PLAC WOLNOŚCI 1"))
+        self.assertEqual(nfz_api.norm_adres("RYNEK"), "RYNEK")
+        self.assertEqual(nfz_api.norm_miejscowosc("KRAKÓW-KROWODRZA"), "KRAKÓW")
+        self.assertEqual(nfz_api.norm_miejscowosc("Warszawa Śródmieście"), "WARSZAWA")
+        self.assertEqual(nfz_api.norm_miejscowosc(None), "")
+
+    def test_klucz_z_wiersza_miejsca_jak_z_api(self):
+        m = self.miejsce(0)
+        pola = [m[p] for p in nfz_api._POLA_KLUCZA_MIEJSCA]
+        self.assertEqual(common.hash_klucz(*pola, dlugosc=16), m["MiejsceKey"])
+
+    def test_wariant_klucza_z_cecha_ulicy(self):
+        m14 = self.miejsce(0)
+        m13 = self.miejsce(0, address="UL. ZEGRZYŃSKA 8")
+        self.assertNotEqual(m13["MiejsceKey"], m14["MiejsceKey"])
+        self.assertIn(m13["MiejsceKey"], set(nfz_api.warianty_klucza_v13(m14)))
+
+    def test_klucze_zapasowe(self):
+        m14 = self.miejsce(3)  # WARSZAWA MOKOTÓW, PUŁAWSKA 100
+        m13 = self.miejsce(3, address="UL. PUŁAWSKA 100", locality="WARSZAWA")
+        self.assertEqual(nfz_api.klucz_adresu(m13), nfz_api.klucz_adresu(m14))
+        self.assertEqual(nfz_api.klucz_komorki(m13), nfz_api.klucz_komorki(m14))
+        self.assertNotEqual(nfz_api.klucz_adresu(self.miejsce(3, **{"teryt-place": "1465011"})), nfz_api.klucz_adresu(m14))
+        self.assertEqual(nfz_api.klucz_adresu(self.miejsce(3, **{"teryt-place": None})), "")
+        self.assertEqual(nfz_api.klucz_komorki(self.miejsce(3, **{"id-resort-part-VII": None})), "")
+
+    def test_stary_plik_dopasowanie_po_wariancie_klucza(self):
+        # plik sprzed 20.10.2026: tylko MiejsceKey, liczony z adresu „UL. …”
+        m13 = self.miejsce(0, address="UL. ZEGRZYŃSKA 8")
+        lok = self.lokalizator([{"MiejsceKey": m13["MiejsceKey"], "Szerokosc": 52.4012, "Dlugosc": 20.9265,
+                                 "DataPobrania": "2026-10-19"}], ["MiejsceKey", "Szerokosc", "Dlugosc", "DataPobrania"])
+        m = lok.uzupelnij(self.miejsce(0))
+        self.assertEqual(m["ZrodloLokalizacji"], "NFZ (API v1.3)")
+        self.assertAlmostEqual(m["Szerokosc"], 52.4012)
+
+    def test_ten_sam_adres_innej_komorki(self):
+        inna = self.miejsce(3, address="UL. PUŁAWSKA 100", locality="WARSZAWA",
+                            **{"id-resort-part-VII": "099", "id-resort-part-VIII": "1300"})
+        lok = self.lokalizator([self.wiersz_v13(inna, 52.1937, 21.0207)])
+        m = lok.uzupelnij(self.miejsce(3))
+        self.assertEqual(m["ZrodloLokalizacji"], "NFZ (API v1.3, ten sam adres)")
+        self.assertAlmostEqual(m["Dlugosc"], 21.0207)
+        self.assertEqual(m["TerytPowiat"], "1465")
+
+    def test_ta_sama_komorka_przy_innym_zapisie_adresu(self):
+        m13 = self.miejsce(3, address="PUŁAWSKA 100/102")
+        lok = self.lokalizator([self.wiersz_v13(m13, 52.1937, 21.0207)])
+        self.assertEqual(lok.uzupelnij(self.miejsce(3))["ZrodloLokalizacji"], "NFZ (API v1.3, ta sama komórka)")
+
+    def test_niejednoznaczny_adres_pominiety(self):
+        # ten sam adres, ale punkty 5 km od siebie -> nie zgadujemy
+        a = self.miejsce(3, **{"id-resort-part-VII": "098"})
+        b = self.miejsce(3, **{"id-resort-part-VII": "099"})
+        lok = self.lokalizator([self.wiersz_v13(a, 52.1937, 21.0207), self.wiersz_v13(b, 52.2387, 21.0207)])
+        m = lok.uzupelnij(self.miejsce(3, **{"id-resort-part-VII": "097"}))
+        self.assertEqual(m["ZrodloLokalizacji"], "środek gminy")
+
+    def test_najnowsze_pobranie_wygrywa(self):
+        a = self.miejsce(3, **{"id-resort-part-VII": "098"})
+        b = self.miejsce(3, **{"id-resort-part-VII": "099"})
+        lok = self.lokalizator([self.wiersz_v13(a, 52.1937, 21.0207, data="2026-09-01"),
+                                self.wiersz_v13(b, 52.2387, 21.0207, data="2026-10-20")])
+        m = lok.uzupelnij(self.miejsce(3, **{"id-resort-part-VII": "097"}))
+        self.assertEqual(m["ZrodloLokalizacji"], "NFZ (API v1.3, ten sam adres)")
+        self.assertAlmostEqual(m["Szerokosc"], 52.2387)
+
+    def test_wspolrzedne_v13_daleko_od_gminy_odrzucone(self):
+        lok = self.lokalizator([self.wiersz_v13(self.miejsce(0), 50.06, 19.94)])  # Kraków przy TERYT Legionowa
+        self.assertEqual(lok.uzupelnij(self.miejsce(0))["ZrodloLokalizacji"], "środek gminy")
+
+
 class TestKlient(unittest.TestCase):
     def test_ponawianie_429_i_stronicowanie(self):
         sesja = FakeSession({("07", 1): rekordy_testowe(60)}, bledy_429=2)
@@ -377,6 +476,8 @@ class TestWspolrzedneV13(unittest.TestCase):
             wiersze = common.wczytaj_csv(tmp / "wspolrzedne_v13.csv.gz")
             self.assertEqual(len(wiersze), 1)
             self.assertAlmostEqual(float(wiersze[0]["Szerokosc"]), 50.3539, places=4)
+            self.assertEqual(list(wiersze[0].keys()), nfz_wspolrzedne_v13.KOLUMNY)
+            self.assertTrue(wiersze[0]["KluczAdres"] and wiersze[0]["KluczKomorka"])
         finally:
             shutil.rmtree(tmp)
 
@@ -440,6 +541,18 @@ class TestSnapshotEndToEnd(unittest.TestCase):
         # pierwsze wystąpienie miejsca zachowane po kolejnych przebiegach
         miejsca = self.czytaj("data/nfz/miejsca.csv.gz")
         self.assertTrue(all(m["PierwszyRaz"] == "2026-10-19" for m in miejsca))
+
+    def test_wspolrzedne_z_v13_mimo_cechy_ulicy_w_adresie(self):
+        r = copy.deepcopy(wczytaj_fixture("nfz_v14_rekordy.json")[0])
+        r["attributes"]["address"] = "UL. " + r["attributes"]["address"]
+        _, m13, _ = nfz_api.splaszcz(r, "2026-10-19", "07")
+        common.zapisz_csv(self.tmp / "data/nfz/wspolrzedne_v13.csv.gz",
+                          [{"MiejsceKey": m13["MiejsceKey"], "Szerokosc": 52.4012, "Dlugosc": 20.9265,
+                            "DataPobrania": "2026-10-19"}], ["MiejsceKey", "Szerokosc", "Dlugosc", "DataPobrania"])
+        self.assertEqual(self.uruchom("2026-10-20"), 0)
+        legionowo = next(m for m in self.czytaj("data/nfz/miejsca.csv.gz") if m["Miejscowosc"] == "LEGIONOWO")
+        self.assertEqual(legionowo["ZrodloLokalizacji"], "NFZ (API v1.3)")
+        self.assertEqual(self.raport()["zrodla_lokalizacji"]["NFZ (API v1.3)"], 1)
 
     def test_gzip_deterministyczny(self):
         self.uruchom("2026-10-19")

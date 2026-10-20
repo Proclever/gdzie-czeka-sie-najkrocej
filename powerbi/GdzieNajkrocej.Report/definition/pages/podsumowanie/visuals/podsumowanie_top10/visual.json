@@ -1,12 +1,12 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "podsumowanie_top10",
   "position": {
     "x": 16,
-    "y": 378,
+    "y": 392,
     "z": 2300,
-    "height": 326,
-    "width": 618.0,
+    "height": 312,
+    "width": 618,
     "tabOrder": 1200
   },
   "visual": {
@@ -67,8 +67,7 @@
             },
             "direction": "Descending"
           }
-        ],
-        "isDefaultSort": false
+        ]
       }
     },
     "objects": {
@@ -121,6 +120,13 @@
                   "Value": "false"
                 }
               }
+            },
+            "showAxisTitle": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
             }
           }
         }
@@ -132,6 +138,13 @@
               "expr": {
                 "Literal": {
                   "Value": "9D"
+                }
+              }
+            },
+            "maxMarginFactor": {
+              "expr": {
+                "Literal": {
+                  "Value": "45D"
                 }
               }
             }

@@ -13,6 +13,8 @@ table DimData
 
 		annotation SummarizationSetBy = Automatic
 
+		annotation UnderlyingDateTimeDataType = Date
+
 	column Rok
 		dataType: int64
 		formatString: 0
@@ -22,7 +24,7 @@ table DimData
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Miesiąc'
+	column Miesiąc
 		dataType: int64
 		isHidden
 		formatString: 0
@@ -37,11 +39,11 @@ table DimData
 		lineageTag: d2c97f09-9b23-5ea4-97c4-b4d1b67abfdb
 		summarizeBy: none
 		sourceColumn: Nazwa miesiąca
-		sortByColumn: 'Miesiąc'
+		sortByColumn: Miesiąc
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'Rok-miesiąc'
+	column Rok-miesiąc
 		dataType: string
 		lineageTag: 39659a78-e23a-5c94-9931-cc3e81507b20
 		summarizeBy: none
@@ -57,6 +59,8 @@ table DimData
 		sourceColumn: Początek tygodnia
 
 		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
 
 	partition DimData = m
 		mode: import
@@ -80,3 +84,4 @@ table DimData
 				    Tydzien
 
 	annotation PBI_ResultType = Table
+

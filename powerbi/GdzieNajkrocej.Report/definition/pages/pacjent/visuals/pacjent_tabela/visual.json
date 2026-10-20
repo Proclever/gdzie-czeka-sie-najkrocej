@@ -1,11 +1,11 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "pacjent_tabela",
   "position": {
     "x": 16,
-    "y": 258,
+    "y": 272,
     "z": 2100,
-    "height": 446,
+    "height": 432,
     "width": 760,
     "tabOrder": 1000
   },
@@ -137,9 +137,21 @@
               }
             },
             "direction": "Ascending"
+          },
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Miary"
+                  }
+                },
+                "Property": "Odległość (km)"
+              }
+            },
+            "direction": "Ascending"
           }
-        ],
-        "isDefaultSort": false
+        ]
       }
     },
     "objects": {
@@ -176,7 +188,7 @@
             "wordWrap": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
                 }
               }
             }
@@ -200,6 +212,119 @@
                 }
               }
             }
+          }
+        }
+      ],
+      "total": [
+        {
+          "properties": {
+            "totals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "230D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "DimPlacowka.Placówka"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "160D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "DimPlacowka.Adres pełny"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "95D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "DimPlacowka.Telefon"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "58D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Miary.Odległość (km)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "78D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Miary.PCUŚ wg NFZ"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "50D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Miary.PCUŚ placówki (dni)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "64D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Miary.Oczekujący (aktualnie)"
           }
         }
       ]
@@ -238,7 +363,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'PCUŚ = prognozowany czas oczekiwania wg NFZ; odległość w linii prostej; kolejki bez prognozy (np. e-rejestracja) widać tylko na mapie'"
+                  "Value": "'Przy równej prognozie wyżej jest bliższa placówka. Odległość w linii prostej. 0 oczekujących = w ostatnim miesiącu nikt nie czekał w tej kolejce.'"
                 }
               }
             }

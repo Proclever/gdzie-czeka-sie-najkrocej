@@ -5,7 +5,7 @@
     "x": 1052,
     "y": 98,
     "z": 1700,
-    "height": 52,
+    "height": 68,
     "width": 212,
     "tabOrder": 600
   },
@@ -41,7 +41,7 @@
             "mode": {
               "expr": {
                 "Literal": {
-                  "Value": "'Single'"
+                  "Value": "'Dropdown'"
                 }
               }
             }
@@ -64,23 +64,28 @@
                 "Where": [
                   {
                     "Condition": {
-                      "Comparison": {
-                        "ComparisonKind": 0,
-                        "Left": {
-                          "Column": {
-                            "Expression": {
-                              "SourceRef": {
-                                "Source": "r"
+                      "In": {
+                        "Expressions": [
+                          {
+                            "Column": {
+                              "Expression": {
+                                "SourceRef": {
+                                  "Source": "r"
+                                }
+                              },
+                              "Property": "Promień"
+                            }
+                          }
+                        ],
+                        "Values": [
+                          [
+                            {
+                              "Literal": {
+                                "Value": "50L"
                               }
-                            },
-                            "Property": "Promień"
-                          }
-                        },
-                        "Right": {
-                          "Literal": {
-                            "Value": "50L"
-                          }
-                        }
+                            }
+                          ]
+                        ]
                       }
                     }
                   }
@@ -104,6 +109,26 @@
               "expr": {
                 "Literal": {
                   "Value": "'Promień (km)'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "selection": [
+        {
+          "properties": {
+            "singleSelect": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "strictSingleSelect": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
                 }
               }
             }

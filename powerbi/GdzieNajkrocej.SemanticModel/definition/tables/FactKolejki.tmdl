@@ -12,6 +12,8 @@ table FactKolejki
 
 		annotation SummarizationSetBy = Automatic
 
+		annotation UnderlyingDateTimeDataType = Date
+
 	column MiejsceKey
 		dataType: string
 		isHidden
@@ -118,12 +120,14 @@ table FactKolejki
 	column OkresStatystyk
 		dataType: dateTime
 		isHidden
-		formatString: yyyy-mm
+		formatString: Long Date
 		lineageTag: 17bb5b43-fb4a-51f7-9449-c19330c93790
 		summarizeBy: none
 		sourceColumn: OkresStatystyk
 
 		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
 
 	/// PCUŚ w brzmieniu NFZ.
 	column PCUS
@@ -155,6 +159,8 @@ table FactKolejki
 
 		annotation SummarizationSetBy = Automatic
 
+		annotation UnderlyingDateTimeDataType = Date
+
 	/// Pierwszy wolny termin – NFZ przestał go publikować 1.07.2026.
 	column PierwszyTermin
 		dataType: dateTime
@@ -165,6 +171,8 @@ table FactKolejki
 		sourceColumn: PierwszyTermin
 
 		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
 
 	column PrognozaNFZDni
 		dataType: int64
@@ -219,6 +227,16 @@ table FactKolejki
 		lineageTag: 40bffce6-cdad-5133-80b3-73977343d9da
 		summarizeBy: none
 		sourceColumn: PrzedzialPCUSSort
+
+		annotation SummarizationSetBy = Automatic
+
+	/// FAŁSZ dla kolejki bez pacjentów: 0 oczekujących i 0 obsłużonych w ostatnim miesiącu. NFZ podaje dla nich PCUŚ 0 dni, więc miary porównawcze (mediany, mapa, rankingi) je pomijają.
+	column KolejkaAktywna
+		dataType: boolean
+		isHidden
+		lineageTag: e2fb5cbc-9855-4add-9e14-0db6a2cdd2d7
+		summarizeBy: none
+		sourceColumn: KolejkaAktywna
 
 		annotation SummarizationSetBy = Automatic
 
@@ -306,30 +324,36 @@ table FactKolejki
 				            or (if [OkresStatystyk] <> null then [OkresStatystyk] < Date.AddMonths(Date.StartOfMonth([DataSnapshotu]), -2) else false),
 				        type logical
 				    ),
-				    Przedzialy = {"0–7 dni", "8–14 dni", "15–30 dni", "31–60 dni", "61–90 dni", "91–180 dni", "181–365 dni", "ponad rok", "brak PCUŚ"},
+				    Przedzialy = {"0–7", "8–14", "15–30", "31–60", "61–90", "91–180", "181–365", "> 365", "brak PCUŚ"},
 				    Przedzial = Table.AddColumn(
 				        Nieaktualne, "PrzedzialPCUS",
 				        each
 				            if [PCUSDni] = null then "brak PCUŚ"
-				            else if [PCUSDni] <= 7 then "0–7 dni"
-				            else if [PCUSDni] <= 14 then "8–14 dni"
-				            else if [PCUSDni] <= 30 then "15–30 dni"
-				            else if [PCUSDni] <= 60 then "31–60 dni"
-				            else if [PCUSDni] <= 90 then "61–90 dni"
-				            else if [PCUSDni] <= 180 then "91–180 dni"
-				            else if [PCUSDni] <= 365 then "181–365 dni"
-				            else "ponad rok",
+				            else if [PCUSDni] <= 7 then "0–7"
+				            else if [PCUSDni] <= 14 then "8–14"
+				            else if [PCUSDni] <= 30 then "15–30"
+				            else if [PCUSDni] <= 60 then "31–60"
+				            else if [PCUSDni] <= 90 then "61–90"
+				            else if [PCUSDni] <= 180 then "91–180"
+				            else if [PCUSDni] <= 365 then "181–365"
+				            else "> 365",
 				        type text
 				    ),
 				    PrzedzialSort = Table.AddColumn(Przedzial, "PrzedzialPCUSSort", each List.PositionOf(Przedzialy, [PrzedzialPCUS]) + 1, Int64.Type),
+				    Aktywna = Table.AddColumn(
+				        PrzedzialSort, "KolejkaAktywna",
+				        each not ([Oczekujacy] = 0 and ([Skresleni] = null or [Skresleni] = 0)),
+				        type logical
+				    ),
 				    Wynik = Table.SelectColumns(
-				        PrzedzialSort,
+				        Aktywna,
 				        {"DataSnapshotu", "MiejsceKey", "SwiadczenieKey", "Przypadek", "Oddzial", "WieleMiejsc", "WCeR",
 				         "Znieczulenie", "PrzedzialWieku", "Oczekujacy", "Skresleni", "SredniCzasDni", "OkresStatystyk",
 				         "PCUS", "PCUSDni", "PCUSStanNa", "PierwszyTermin", "PrognozaNFZDni", "CzasRozladowaniaDni",
-				         "BrakPCUS", "DaneNieaktualne", "PrzedzialPCUS", "PrzedzialPCUSSort"}
+				         "BrakPCUS", "DaneNieaktualne", "PrzedzialPCUS", "PrzedzialPCUSSort", "KolejkaAktywna"}
 				    )
 				in
 				    Wynik
 
 	annotation PBI_ResultType = Table
+

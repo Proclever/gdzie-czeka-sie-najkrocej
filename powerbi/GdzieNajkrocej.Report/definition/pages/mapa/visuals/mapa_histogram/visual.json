@@ -1,11 +1,11 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "mapa_histogram",
   "position": {
     "x": 868,
-    "y": 474,
+    "y": 488,
     "z": 2100,
-    "height": 230,
+    "height": 216,
     "width": 396,
     "tabOrder": 1000
   },
@@ -28,8 +28,8 @@
               },
               "queryRef": "FactKolejki.PrzedzialPCUS",
               "nativeQueryRef": "PrzedzialPCUS",
-              "displayName": "Przedział PCUŚ",
-              "active": true
+              "active": true,
+              "displayName": "Przedział PCUŚ"
             }
           ]
         },
@@ -68,8 +68,7 @@
             },
             "direction": "Ascending"
           }
-        ],
-        "isDefaultSort": false
+        ]
       }
     },
     "objects": {
@@ -117,6 +116,13 @@
         {
           "properties": {
             "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "showAxisTitle": {
               "expr": {
                 "Literal": {
                   "Value": "false"
@@ -174,7 +180,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Liczba kolejek w przedziałach PCUŚ'"
+                  "Value": "'Liczba kolejek z pacjentami w przedziałach PCUŚ (dni)'"
                 }
               }
             }
@@ -229,6 +235,61 @@
                       {
                         "Literal": {
                           "Value": "false"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User",
+        "isHiddenInViewMode": true
+      },
+      {
+        "name": "hist_aktywne",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "FactKolejki"
+              }
+            },
+            "Property": "KolejkaAktywna"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "f",
+              "Entity": "FactKolejki",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "f"
+                          }
+                        },
+                        "Property": "KolejkaAktywna"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "true"
                         }
                       }
                     ]

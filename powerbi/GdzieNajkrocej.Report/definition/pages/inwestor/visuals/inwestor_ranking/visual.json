@@ -1,11 +1,11 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "inwestor_ranking",
   "position": {
     "x": 16,
-    "y": 162,
+    "y": 176,
     "z": 1700,
-    "height": 542,
+    "height": 528,
     "width": 820,
     "tabOrder": 600
   },
@@ -138,8 +138,7 @@
             },
             "direction": "Descending"
           }
-        ],
-        "isDefaultSort": false
+        ]
       }
     },
     "objects": {
@@ -258,6 +257,19 @@
           },
           "selector": {
             "metadata": "Miary.Indeks luki"
+          }
+        }
+      ],
+      "total": [
+        {
+          "properties": {
+            "totals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
           }
         }
       ]

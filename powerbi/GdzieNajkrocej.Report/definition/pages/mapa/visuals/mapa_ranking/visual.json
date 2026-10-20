@@ -1,9 +1,9 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "mapa_ranking",
   "position": {
     "x": 868,
-    "y": 162,
+    "y": 176,
     "z": 2000,
     "height": 300,
     "width": 396,
@@ -57,7 +57,8 @@
                 }
               },
               "queryRef": "Miary.Mediana PCUŚ (aktualnie)",
-              "nativeQueryRef": "Mediana PCUŚ (aktualnie)"
+              "nativeQueryRef": "Prognoza NFZ – mediana (dni)",
+              "displayName": "Prognoza NFZ – mediana (dni)"
             }
           ],
           "fieldParameters": [
@@ -78,6 +79,23 @@
             }
           ]
         }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Miary"
+                  }
+                },
+                "Property": "Mediana PCUŚ (aktualnie)"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
       }
     },
     "objects": {
@@ -138,6 +156,56 @@
                 }
               }
             }
+          }
+        }
+      ],
+      "total": [
+        {
+          "properties": {
+            "totals": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "label": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Polska'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "170D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "DimPowiat.Powiat"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "105D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "DimPowiat.Województwo"
           }
         }
       ]

@@ -24,3 +24,4 @@ expression GitHubGalaz = "main" meta [IsParameterQuery=true, Type="Text", IsPara
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Text
+

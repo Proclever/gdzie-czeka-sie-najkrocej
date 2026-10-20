@@ -9,6 +9,8 @@ API v1.4 (od 10.07.2026): https://apinfz.nfz.gov.pl/app-itl-api-pcus/queues
     zapytaniach serwer odpowiada HTTP 429 z nagłówkiem Retry-After (do 8 s)
 API v1.3 (nieaktualne, ale nadal dostępne): https://api.nfz.gov.pl/app-itl-api/queues
   - używane wyłącznie do uzupełnienia współrzędnych placówek
+  - adres poprzedzony cechą ulicy („UL. DŁUGA 5”), więc klucz miejsca bywa inny niż w v1.4
+    (dopasowanie: warianty_klucza_v13, klucz_adresu, klucz_komorki)
 """
 
 from __future__ import annotations
@@ -419,6 +421,70 @@ def klucz_miejsca(a: dict) -> str:
         a.get("id-resort-part-VIII"), a.get("teryt-place"), a.get("address"), a.get("locality"),
         dlugosc=16,
     )
+
+
+# ---------------------------------------------------------------------------
+# Dopasowanie miejsc z API v1.3 (współrzędne) do miejsc z v1.4
+# ---------------------------------------------------------------------------
+# API v1.3 poprzedza adres cechą ulicy z TERYT („UL. DŁUGA 5”), a v1.4 nie („DŁUGA 5”). Klucz miejsca
+# z obu wersji różni się wtedy, choć to ta sama placówka – w danych z 19–20.10.2026 dotyczyło to
+# ok. 17 tys. z 50 tys. miejsc. Część miejsc v1.3 podaje też samo miasto zamiast dzielnicy
+# („WROCŁAW” zamiast „WROCŁAW-KRZYKI”).
+PREFIKSY_ADRESU_V13 = ("UL.", "AL.", "PL.", "OS.", "WYB.", "BULW.", "RONDO", "PARK", "DROGA", "SKWER", "RYNEK", "SZOSA")
+_CECHY_ULIC = {
+    "UL", "ULICA", "AL", "ALEJA", "ALEJE", "PL", "PLAC", "OS", "OSIEDLE", "WYB", "WYBRZEŻE", "BULW", "BULWAR",
+    "RONDO", "PARK", "DROGA", "SKWER", "RYNEK", "SZOSA", "OGRÓD", "WYSPA",
+}
+_POLA_KLUCZA_MIEJSCA = (
+    "KodSwiadczeniodawcy", "NrKsiegiRejestrowej", "KodResortowyVII", "KodResortowyVIII",
+    "TerytMiejsca", "Adres", "Miejscowosc",
+)  # te same pola i ta sama kolejność co w klucz_miejsca()
+
+
+def norm_adres(adres: str | None) -> str:
+    """Adres do porównań między wersjami API: bez cechy ulicy na początku i bez kropek.
+
+    'UL. GEN. JÓZEFA BEMA 5' -> 'GEN JÓZEFA BEMA 5'; 'PL. PLAC WOLNOŚCI 1' -> 'WOLNOŚCI 1'.
+    """
+    tokeny = klucz_tekstowy(adres).replace(".", " ").replace(",", " ").split()
+    while len(tokeny) > 1 and tokeny[0] in _CECHY_ULIC:
+        tokeny = tokeny[1:]
+    return " ".join(tokeny)
+
+
+def norm_miejscowosc(miejscowosc: str | None) -> str:
+    """Pierwszy człon nazwy: 'KRAKÓW-KROWODRZA' -> 'KRAKÓW', 'WARSZAWA ŚRÓDMIEŚCIE' -> 'WARSZAWA'."""
+    czlony = klucz_tekstowy(miejscowosc).replace("-", " ").split()
+    return czlony[0] if czlony else ""
+
+
+def klucz_adresu(m: dict) -> str:
+    """Zapasowy klucz: ten sam adres w tej samej gminie (TERYT bez cyfry rodzaju gminy). Pusty, gdy brak danych."""
+    gmina = (m.get("TerytMiejsca") or "")[:6]
+    adres = norm_adres(m.get("Adres"))
+    if len(gmina) < 6 or not adres:
+        return ""
+    return hash_klucz("ADRES", gmina, norm_miejscowosc(m.get("Miejscowosc")), adres, dlugosc=12)
+
+
+def klucz_komorki(m: dict) -> str:
+    """Zapasowy klucz: ta sama komórka organizacyjna świadczeniodawcy (kody resortowe VII i VIII) w tej samej gminie."""
+    gmina = (m.get("TerytMiejsca") or "")[:6]
+    if not m.get("KodSwiadczeniodawcy") or not m.get("KodResortowyVII") or len(gmina) < 6:
+        return ""
+    return hash_klucz("KOMORKA", m.get("KodSwiadczeniodawcy"), m.get("NrKsiegiRejestrowej"),
+                      m.get("KodResortowyVII"), m.get("KodResortowyVIII"), gmina, dlugosc=12)
+
+
+def warianty_klucza_v13(m: dict) -> Iterator[str]:
+    """Klucze, jakie to samo miejsce dostałoby w API v1.3 (adres poprzedzony cechą ulicy)."""
+    adres = m.get("Adres") or ""
+    if not adres:
+        return
+    pola = [m.get(p) or "" for p in _POLA_KLUCZA_MIEJSCA]
+    for prefiks in PREFIKSY_ADRESU_V13:
+        pola[5] = f"{prefiks} {adres}"
+        yield hash_klucz(*pola, dlugosc=16)
 
 
 def dla_dzieci(a: dict) -> str:

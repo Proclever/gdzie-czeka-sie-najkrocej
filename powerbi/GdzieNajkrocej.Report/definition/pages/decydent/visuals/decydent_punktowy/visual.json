@@ -1,11 +1,11 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "decydent_punktowy",
   "position": {
     "x": 16,
-    "y": 162,
+    "y": 176,
     "z": 1700,
-    "height": 542,
+    "height": 528,
     "width": 800,
     "tabOrder": 600
   },
@@ -32,6 +32,24 @@
             }
           ]
         },
+        "Size": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Miary"
+                    }
+                  },
+                  "Property": "Liczba placówek"
+                }
+              },
+              "queryRef": "Miary.Liczba placówek",
+              "nativeQueryRef": "Liczba placówek"
+            }
+          ]
+        },
         "X": {
           "projections": [
             {
@@ -46,7 +64,8 @@
                 }
               },
               "queryRef": "Miary.Oczekujący na 10 tys. 65+",
-              "nativeQueryRef": "Oczekujący na 10 tys. 65+"
+              "nativeQueryRef": "Oczekujący na 10 tys. 65+",
+              "active": true
             }
           ]
         },
@@ -66,24 +85,6 @@
               "queryRef": "Miary.Mediana PCUŚ (aktualnie)",
               "nativeQueryRef": "Mediana PCUŚ (aktualnie)",
               "displayName": "Mediana PCUŚ (dni)"
-            }
-          ]
-        },
-        "Size": {
-          "projections": [
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Miary"
-                    }
-                  },
-                  "Property": "Liczba placówek"
-                }
-              },
-              "queryRef": "Miary.Liczba placówek",
-              "nativeQueryRef": "Liczba placówek"
             }
           ]
         }

@@ -48,9 +48,12 @@ from nfz_api import (  # noqa: E402
     TEMPO_V14,
     KlientNfz,
     WynikPobierania,
+    klucz_adresu,
+    klucz_komorki,
     pobierz_bloki,
     splaszcz,
     ustal_limit,
+    warianty_klucza_v13,
 )
 
 log = logging.getLogger("nfz")
@@ -72,20 +75,58 @@ KOLUMNY_SWIADCZENIA = ["SwiadczenieKey", "Swiadczenie", "SwiadczenieKlucz", "Dla
 KOLUMNY_MANIFESTU = ["DataSnapshotu", "Plik", "Wiersze", "WierszeZPCUS", "WierszeWCeR", "WersjaApi"]
 
 MAKS_ODLEGLOSC_OD_GMINY_KM = 60.0
+MAKS_ROZRZUT_KLUCZA_KM = 1.0  # klucz zapasowy wskazujący punkty odległe o więcej niż 1 km jest niejednoznaczny
+ZRODLO_V13 = "NFZ (API v1.3)"
+ZRODLO_V13_ADRES = "NFZ (API v1.3, ten sam adres)"
+ZRODLO_V13_KOMORKA = "NFZ (API v1.3, ta sama komórka)"
 
 
 # ---------------------------------------------------------------------------
 # Lokalizacja placówek
 # ---------------------------------------------------------------------------
+def indeks_v13(wiersze: list[dict], pole: str) -> dict[str, tuple[float, float]]:
+    """Klucz -> (szerokość, długość) z najświeższego pobrania v1.3.
+
+    Klucz, który w tym samym pobraniu wskazuje punkty odległe o ponad MAKS_ROZRZUT_KLUCZA_KM,
+    jest pomijany (np. dwie różne placówki pod tym samym adresem w dwóch miejscowościach gminy).
+    """
+    grupy: dict[str, list[tuple[str, tuple[float, float]]]] = defaultdict(list)
+    for w in wiersze:
+        klucz = w.get(pole) or ""
+        if not klucz:
+            continue
+        try:
+            punkt = (float(w["Szerokosc"]), float(w["Dlugosc"]))
+        except (KeyError, TypeError, ValueError):
+            continue
+        grupy[klucz].append((w.get("DataPobrania") or "", punkt))
+    indeks = {}
+    for klucz, lista in grupy.items():
+        najnowsze = max(data for data, _ in lista)
+        punkty = [p for data, p in lista if data == najnowsze]
+        lat0, lon0 = punkty[0]
+        if all(odleglosc_km(lat0, lon0, lat, lon) <= MAKS_ROZRZUT_KLUCZA_KM for lat, lon in punkty[1:]):
+            indeks[klucz] = punkty[0]
+    return indeks
+
+
 class Lokalizator:
     """Ustala współrzędne i powiat miejsca na podstawie (kolejno):
-    1) współrzędnych z NFZ v1.4 (po walidacji), 2) współrzędnych z NFZ v1.3 (plik
-    wspolrzedne_v13.csv.gz), 3) środka gminy wg TERYT, 4) środka powiatu."""
+    1) współrzędnych z NFZ v1.4 (po walidacji),
+    2) współrzędnych z NFZ v1.3 (plik wspolrzedne_v13.csv.gz) dla tego samego miejsca – po kluczu
+       miejsca, także w wariantach z cechą ulicy w adresie („UL. DŁUGA 5”), którą dodaje v1.3,
+    3) współrzędnych z v1.3 dla tego samego adresu w tej samej gminie,
+    4) współrzędnych z v1.3 dla tej samej komórki organizacyjnej świadczeniodawcy w tej samej gminie,
+    5) środka gminy wg TERYT, 6) środka powiatu.
+    Współrzędne z NFZ odległe o ponad 60 km od środka gminy z TERYT są odrzucane."""
 
     def __init__(self, katalog_geo: Path = GEO_DIR, katalog_nfz: Path = NFZ_DIR) -> None:
         self.powiaty = {w["TerytPowiat"]: w for w in wczytaj_csv(katalog_geo / "powiaty.csv")}
         self.gminy = {w["TerytGminy"]: w for w in wczytaj_csv(katalog_geo / "gminy_centroidy.csv")}
-        self.v13 = {w["MiejsceKey"]: w for w in wczytaj_csv(katalog_nfz / "wspolrzedne_v13.csv.gz")}
+        v13 = wczytaj_csv(katalog_nfz / "wspolrzedne_v13.csv.gz")
+        self.v13 = indeks_v13(v13, "MiejsceKey")
+        self.v13_adres = indeks_v13(v13, "KluczAdres")      # puste dla pliku sprzed 20.10.2026
+        self.v13_komorka = indeks_v13(v13, "KluczKomorka")
         self._ksztalty = None
         self._sciezka_geojson = katalog_geo / "powiaty_uproszczone.geojson"
 
@@ -113,6 +154,27 @@ class Lokalizator:
                 return teryt
         return ""
 
+    @staticmethod
+    def _zgodne_z_gmina(lat: float, lon: float, gmina: dict | None) -> bool:
+        if gmina is None:
+            return True
+        return odleglosc_km(lat, lon, float(gmina["Szerokosc"]), float(gmina["Dlugosc"])) <= MAKS_ODLEGLOSC_OD_GMINY_KM
+
+    def _z_v13(self, m: dict, gmina: dict | None) -> tuple[float, float, str] | None:
+        """Współrzędne z API v1.3 dla miejsca z v1.4: (szerokość, długość, źródło) albo None."""
+        def kandydaci():
+            yield m["MiejsceKey"], self.v13, ZRODLO_V13
+            for klucz in warianty_klucza_v13(m):
+                yield klucz, self.v13, ZRODLO_V13
+            yield klucz_adresu(m), self.v13_adres, ZRODLO_V13_ADRES
+            yield klucz_komorki(m), self.v13_komorka, ZRODLO_V13_KOMORKA
+
+        for klucz, indeks, zrodlo in kandydaci():
+            punkt = indeks.get(klucz) if klucz else None
+            if punkt is not None and self._zgodne_z_gmina(punkt[0], punkt[1], gmina):
+                return punkt[0], punkt[1], zrodlo
+        return None
+
     def uzupelnij(self, m: dict) -> dict:
         teryt7 = m.get("TerytMiejsca", "")
         gmina = self._gmina(teryt7)
@@ -122,14 +184,13 @@ class Lokalizator:
         lon = float(lon) if lon not in (None, "") else None
         zrodlo = "NFZ" if lat is not None else ""
 
-        if lat is not None and gmina is not None:
-            d = odleglosc_km(lat, lon, float(gmina["Szerokosc"]), float(gmina["Dlugosc"]))
-            if d > MAKS_ODLEGLOSC_OD_GMINY_KM:  # współrzędne niezgodne z TERYT – nie ufamy im
-                lat = lon = None
-                zrodlo = ""
-        if lat is None and m["MiejsceKey"] in self.v13:
-            w = self.v13[m["MiejsceKey"]]
-            lat, lon, zrodlo = float(w["Szerokosc"]), float(w["Dlugosc"]), "NFZ (API v1.3)"
+        if lat is not None and not self._zgodne_z_gmina(lat, lon, gmina):
+            lat = lon = None  # współrzędne niezgodne z TERYT – nie ufamy im
+            zrodlo = ""
+        if lat is None:
+            z_v13 = self._z_v13(m, gmina)
+            if z_v13 is not None:
+                lat, lon, zrodlo = z_v13
         if lat is None and gmina is not None:
             lat, lon, zrodlo = float(gmina["Szerokosc"]), float(gmina["Dlugosc"]), "środek gminy"
 

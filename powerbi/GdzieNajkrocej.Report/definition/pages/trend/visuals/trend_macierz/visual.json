@@ -1,11 +1,11 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "trend_macierz",
   "position": {
     "x": 828,
-    "y": 162,
+    "y": 176,
     "z": 1800,
-    "height": 542,
+    "height": 528,
     "width": 436,
     "tabOrder": 700
   },
@@ -28,8 +28,8 @@
               },
               "queryRef": "DimPowiat.Województwo",
               "nativeQueryRef": "Województwo",
-              "displayName": "Województwo",
-              "active": true
+              "active": true,
+              "displayName": "Województwo"
             }
           ]
         },
@@ -98,8 +98,7 @@
             },
             "direction": "Descending"
           }
-        ],
-        "isDefaultSort": false
+        ]
       }
     },
     "objects": {
@@ -130,6 +129,26 @@
               "expr": {
                 "Literal": {
                   "Value": "9D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTotals": [
+        {
+          "properties": {
+            "rowSubtotals": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "rowSubtotalsLabel": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Polska'"
                 }
               }
             }
@@ -171,7 +190,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Porównanie z najbliższym snapshotem sprzed ≥ 4 tygodni'"
+                  "Value": "'Przypadki stabilne; porównanie z najbliższym snapshotem sprzed ≥ 4 tygodni'"
                 }
               }
             }
@@ -180,5 +199,63 @@
       ]
     },
     "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "macierz_stabilne",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "FactKolejki"
+              }
+            },
+            "Property": "Przypadek"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "f",
+              "Entity": "FactKolejki",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "f"
+                          }
+                        },
+                        "Property": "Przypadek"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'Stabilny'"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "howCreated": "User"
+      }
+    ]
   }
 }

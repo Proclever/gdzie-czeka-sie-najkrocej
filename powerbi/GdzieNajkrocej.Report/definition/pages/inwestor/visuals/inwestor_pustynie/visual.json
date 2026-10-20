@@ -1,11 +1,11 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "inwestor_pustynie",
   "position": {
     "x": 848,
-    "y": 270,
+    "y": 284,
     "z": 1900,
-    "height": 434,
+    "height": 420,
     "width": 416,
     "tabOrder": 800
   },
@@ -78,8 +78,7 @@
             },
             "direction": "Descending"
           }
-        ],
-        "isDefaultSort": false
+        ]
       }
     },
     "objects": {
@@ -137,6 +136,19 @@
               "expr": {
                 "Literal": {
                   "Value": "3D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "total": [
+        {
+          "properties": {
+            "totals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
                 }
               }
             }

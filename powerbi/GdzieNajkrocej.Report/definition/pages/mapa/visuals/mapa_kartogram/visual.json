@@ -1,11 +1,11 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "mapa_kartogram",
   "position": {
     "x": 296,
-    "y": 162,
+    "y": 176,
     "z": 1900,
-    "height": 542,
+    "height": 528,
     "width": 560,
     "tabOrder": 800
   },
@@ -32,7 +32,7 @@
             }
           ]
         },
-        "Value": {
+        "Tooltips": {
           "projections": [
             {
               "field": {
@@ -42,32 +42,13 @@
                       "Entity": "Miary"
                     }
                   },
-                  "Property": "Mediana PCUŚ (aktualnie)"
+                  "Property": "Wartość metryki (mapa)"
                 }
               },
-              "queryRef": "Miary.Mediana PCUŚ (aktualnie)",
-              "nativeQueryRef": "Mediana PCUŚ (aktualnie)"
-            }
-          ],
-          "fieldParameters": [
-            {
-              "parameterExpr": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "ParamMetryka"
-                    }
-                  },
-                  "Property": "Metryka"
-                }
-              },
-              "index": 0,
-              "length": 1
-            }
-          ]
-        },
-        "Tooltips": {
-          "projections": [
+              "queryRef": "Miary.Wartość metryki (mapa)",
+              "nativeQueryRef": "Wartość metryki (mapa)",
+              "displayName": "Wartość wybranej metryki"
+            },
             {
               "field": {
                 "Measure": {
@@ -214,6 +195,71 @@
                 }
               }
             }
+          }
+        }
+      ],
+      "dataPoint": [
+        {
+          "properties": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "FillRule": {
+                      "Input": {
+                        "Measure": {
+                          "Expression": {
+                            "SourceRef": {
+                              "Entity": "Miary"
+                            }
+                          },
+                          "Property": "Wartość metryki (mapa)"
+                        }
+                      },
+                      "FillRule": {
+                        "linearGradient2": {
+                          "min": {
+                            "color": {
+                              "Literal": {
+                                "Value": "'#DDEFF1'"
+                              }
+                            }
+                          },
+                          "max": {
+                            "color": {
+                              "Literal": {
+                                "Value": "'#0B4F57'"
+                              }
+                            }
+                          },
+                          "nullColoringStrategy": {
+                            "strategy": {
+                              "Literal": {
+                                "Value": "'specificColor'"
+                              }
+                            },
+                            "color": {
+                              "Literal": {
+                                "Value": "'#C3C9D2'"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 1
+                }
+              }
+            ]
           }
         }
       ]

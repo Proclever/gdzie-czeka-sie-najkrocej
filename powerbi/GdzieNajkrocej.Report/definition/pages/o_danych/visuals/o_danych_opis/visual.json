@@ -32,7 +32,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "• NFZ, API „Terminy leczenia” v1.4 (apinfz.nfz.gov.pl/app-itl-api-pcus) – kolejki, PCUŚ, statystyki placówek. Współrzędne placówek uzupełniane z API v1.3, a gdy ich brak – środkiem gminy wg TERYT.",
+                    "value": "• NFZ, API „Terminy leczenia” v1.4 (apinfz.nfz.gov.pl/app-itl-api-pcus) – kolejki, PCUŚ, statystyki placówek. Współrzędne placówek uzupełniane z API v1.3 (dopasowanie po kluczu miejsca, adresie w gminie i kodach komórki), a gdy ich brak – środkiem gminy wg TERYT.",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "9pt",
@@ -119,6 +119,18 @@
                 "textRuns": [
                   {
                     "value": "• Mediana, nie średnia – pojedyncze placówki mają prognozy rzędu roku i więcej i zawyżają średnią (wykres obok).",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "9pt",
+                      "color": "#1F2937"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "• Kolejki bez pacjentów – 0 oczekujących i 0 obsłużonych w ostatnim miesiącu; NFZ podaje dla nich PCUŚ 0 dni. To ok. 30% kolejek stabilnych i ponad połowa pilnych, więc mediany, mapa i rankingi je pomijają (inaczej zaniżałyby czas oczekiwania). Strona „Dla pacjenta” pokazuje wszystkie placówki.",
                     "textStyle": {
                       "fontFamily": "Segoe UI",
                       "fontSize": "9pt",
