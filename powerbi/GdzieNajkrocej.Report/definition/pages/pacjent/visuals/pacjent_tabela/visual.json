@@ -73,7 +73,7 @@
               },
               "queryRef": "Miary.Odległość (km)",
               "nativeQueryRef": "Odległość (km)",
-              "displayName": "Odległość (km)"
+              "displayName": "Odl. (km)"
             },
             {
               "field": {
@@ -234,7 +234,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "230D"
+                  "Value": "220D"
                 }
               }
             }
@@ -248,7 +248,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "160D"
+                  "Value": "150D"
                 }
               }
             }
@@ -262,7 +262,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "95D"
+                  "Value": "88D"
                 }
               }
             }
@@ -276,7 +276,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "58D"
+                  "Value": "54D"
                 }
               }
             }
@@ -290,7 +290,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "78D"
+                  "Value": "74D"
                 }
               }
             }
@@ -304,7 +304,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "50D"
+                  "Value": "52D"
                 }
               }
             }
@@ -318,7 +318,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "64D"
+                  "Value": "74D"
                 }
               }
             }
@@ -363,7 +363,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Przy równej prognozie wyżej jest bliższa placówka. Odległość w linii prostej. 0 oczekujących = w ostatnim miesiącu nikt nie czekał w tej kolejce.'"
+                  "Value": "'Przy równym czasie wyżej bliższa placówka (w linii prostej). 0 oczekujących = nikt nie czekał w ostatnim miesiącu.'"
                 }
               }
             }

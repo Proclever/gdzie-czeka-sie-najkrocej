@@ -1,5 +1,5 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
   "name": "pacjent_mapa",
   "position": {
     "x": 788,
@@ -13,44 +13,6 @@
     "visualType": "azureMap",
     "query": {
       "queryState": {
-        "Y": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "DimPlacowka"
-                    }
-                  },
-                  "Property": "Szerokość"
-                }
-              },
-              "queryRef": "DimPlacowka.Szerokość",
-              "nativeQueryRef": "Szerokość",
-              "displayName": "Szerokość"
-            }
-          ]
-        },
-        "X": {
-          "projections": [
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "DimPlacowka"
-                    }
-                  },
-                  "Property": "Długość"
-                }
-              },
-              "queryRef": "DimPlacowka.Długość",
-              "nativeQueryRef": "Długość",
-              "displayName": "Długość"
-            }
-          ]
-        },
         "Size": {
           "projections": [
             {
@@ -115,6 +77,44 @@
               "nativeQueryRef": "Odległość (km)"
             }
           ]
+        },
+        "X": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimPlacowka"
+                    }
+                  },
+                  "Property": "Długość"
+                }
+              },
+              "queryRef": "DimPlacowka.Długość",
+              "nativeQueryRef": "Długość",
+              "displayName": "Długość"
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "DimPlacowka"
+                    }
+                  },
+                  "Property": "Szerokość"
+                }
+              },
+              "queryRef": "DimPlacowka.Szerokość",
+              "nativeQueryRef": "Szerokość",
+              "displayName": "Szerokość"
+            }
+          ]
         }
       }
     },
@@ -140,6 +140,27 @@
               "expr": {
                 "Literal": {
                   "Value": "true"
+                }
+              }
+            },
+            "zoom": {
+              "expr": {
+                "Literal": {
+                  "Value": "7.36D"
+                }
+              }
+            },
+            "centerLatitude": {
+              "expr": {
+                "Literal": {
+                  "Value": "52.1972529248539D"
+                }
+              }
+            },
+            "centerLongitude": {
+              "expr": {
+                "Literal": {
+                  "Value": "20.987839500000007D"
                 }
               }
             }

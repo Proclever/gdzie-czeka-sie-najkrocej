@@ -253,7 +253,7 @@ cultureInfo pl-PL
 			      "State": "Generated",
 			      "Terms": [
 			        {
-			          "Odległość (km)": {
+			          "Odl. (km)": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",

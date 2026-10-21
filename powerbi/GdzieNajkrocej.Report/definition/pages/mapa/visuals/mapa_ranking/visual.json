@@ -185,7 +185,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "170D"
+                  "Value": "130D"
                 }
               }
             }
@@ -206,6 +206,90 @@
           },
           "selector": {
             "metadata": "DimPowiat.Województwo"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "100D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Miary.Mediana PCUŚ (aktualnie)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "100D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Miary.P90 PCUŚ (aktualnie)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "100D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Miary.Mediana średniego czasu (aktualnie)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "100D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Miary.Czas rozładowania kolejki (aktualnie)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "100D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Miary.Oczekujący na 10 tys. 65+"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "100D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Miary.Placówki na 100 tys."
           }
         }
       ]

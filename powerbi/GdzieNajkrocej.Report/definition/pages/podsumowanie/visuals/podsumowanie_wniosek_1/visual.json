@@ -106,7 +106,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Najdłużej czeka się na'"
+                  "Value": "'Najdłużej czeka się na (mediana PCUŚ)'"
                 }
               }
             }

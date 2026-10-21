@@ -452,7 +452,8 @@ table Miary
 		displayFolder: 5. Trend
 		lineageTag: 27f485c6-83b1-599a-8cbe-8f1856c992fb
 
-	/// Świadczenie z najdłuższą medianą PCUŚ (min. 10 kolejek z prognozą).
+	/// Świadczenie z najdłuższą medianą PCUŚ (min. 10 kolejek z prognozą). Przy remisie: pierwsze alfabetycznie
+	/// i liczba pozostałych; nazwa skracana do długości mieszczącej się w karcie (mediana jest w tytule karty).
 	measure 'Wniosek: najdłuższa kolejka' =
 			VAR _kandydaci =
 			    FILTER (
@@ -461,16 +462,36 @@ table Miary
 			    )
 			VAR _top = TOPN ( 1, _kandydaci, [Mediana PCUŚ (aktualnie)], DESC )
 			VAR _dni = MAXX ( _top, [Mediana PCUŚ (aktualnie)] )
+			VAR _nazwa = CONCATENATEX ( TOPN ( 1, _top, DimSwiadczenie[Świadczenie], ASC ), DimSwiadczenie[Świadczenie] )
+			VAR _reszta = COUNTROWS ( _top ) - 1
+			VAR _dopisek =
+			    IF (
+			        _reszta > 0,
+			        " i " & _reszta & " "
+			            & IF (
+			                _reszta = 1,
+			                "inne",
+			                IF (
+			                    MOD ( _reszta, 10 ) IN { 2, 3, 4 } && NOT ( MOD ( _reszta, 100 ) IN { 12, 13, 14 } ),
+			                    "inne",
+			                    "innych"
+			                )
+			            ),
+			        ""
+			    )
+			VAR _koniec = " – " & FORMAT ( _dni, "0" ) & " dni"
+			VAR _limit = 46 - LEN ( _dopisek ) - LEN ( _koniec )
 			RETURN
 			    IF (
 			        ISBLANK ( _dni ),
 			        "Za mało danych dla wybranych filtrów",
-			        CONCATENATEX ( _top, DimSwiadczenie[Świadczenie], ", " ) & " – mediana " & FORMAT ( _dni, "0" ) & " dni"
+			        IF ( LEN ( _nazwa ) > _limit, LEFT ( _nazwa, _limit - 1 ) & "…", _nazwa ) & _dopisek & _koniec
 			    )
 		displayFolder: 6. Wnioski i tytuły
 		lineageTag: f8baeb9e-340c-57bf-ae1e-848ff9b7f4b2
 
-	/// Powiat z najdłuższą medianą PCUŚ (min. 5 kolejek z prognozą).
+	/// Powiat z najdłuższą medianą PCUŚ (min. 5 kolejek z prognozą). Przy remisie: pierwszy alfabetycznie
+	/// i liczba pozostałych (mediana jest w tytule karty).
 	measure 'Wniosek: powiat z najdłuższą kolejką' =
 			VAR _kandydaci =
 			    FILTER (
@@ -479,16 +500,35 @@ table Miary
 			    )
 			VAR _top = TOPN ( 1, _kandydaci, [Mediana PCUŚ (aktualnie)], DESC )
 			VAR _dni = MAXX ( _top, [Mediana PCUŚ (aktualnie)] )
+			VAR _nazwa = CONCATENATEX ( TOPN ( 1, _top, DimPowiat[Powiat], ASC ), DimPowiat[Powiat] )
+			VAR _reszta = COUNTROWS ( _top ) - 1
+			VAR _dopisek =
+			    IF (
+			        _reszta > 0,
+			        " i " & _reszta & " "
+			            & IF (
+			                _reszta = 1,
+			                "inny",
+			                IF (
+			                    MOD ( _reszta, 10 ) IN { 2, 3, 4 } && NOT ( MOD ( _reszta, 100 ) IN { 12, 13, 14 } ),
+			                    "inne",
+			                    "innych"
+			                )
+			            ),
+			        ""
+			    )
+			VAR _koniec = " – " & FORMAT ( _dni, "0" ) & " dni"
+			VAR _limit = 46 - LEN ( _dopisek ) - LEN ( _koniec )
 			RETURN
 			    IF (
 			        ISBLANK ( _dni ),
 			        "Za mało danych dla wybranych filtrów",
-			        CONCATENATEX ( _top, DimPowiat[Powiat], ", " ) & " – mediana " & FORMAT ( _dni, "0" ) & " dni"
+			        IF ( LEN ( _nazwa ) > _limit, LEFT ( _nazwa, _limit - 1 ) & "…", _nazwa ) & _dopisek & _koniec
 			    )
 		displayFolder: 6. Wnioski i tytuły
 		lineageTag: 93ef0cc1-23a3-51d2-afed-68bf571c59af
 
-	/// Świadczenie z największą zmianą mediany PCUŚ względem snapshotu sprzed 4 tygodni.
+	/// Świadczenie z największą zmianą mediany PCUŚ względem snapshotu sprzed 4 tygodni (remisy jak w pozostałych wnioskach).
 	measure 'Wniosek: największa zmiana' =
 			VAR _kandydaci =
 			    FILTER (
@@ -498,13 +538,32 @@ table Miary
 			            && NOT ISBLANK ( [Zmiana m/m (dni)] )
 			    )
 			VAR _top = TOPN ( 1, _kandydaci, ABS ( [Zmiana m/m (dni)] ), DESC )
-			VAR _zmiana = MAXX ( _top, [Zmiana m/m (dni)] )
+			VAR _pierwsze = TOPN ( 1, _top, DimSwiadczenie[Świadczenie], ASC )
+			VAR _zmiana = MAXX ( _pierwsze, [Zmiana m/m (dni)] )
+			VAR _nazwa = CONCATENATEX ( _pierwsze, DimSwiadczenie[Świadczenie] )
+			VAR _reszta = COUNTROWS ( _top ) - 1
+			VAR _dopisek =
+			    IF (
+			        _reszta > 0,
+			        " i " & _reszta & " "
+			            & IF (
+			                _reszta = 1,
+			                "inne",
+			                IF (
+			                    MOD ( _reszta, 10 ) IN { 2, 3, 4 } && NOT ( MOD ( _reszta, 100 ) IN { 12, 13, 14 } ),
+			                    "inne",
+			                    "innych"
+			                )
+			            ),
+			        ""
+			    )
+			VAR _koniec = ": " & IF ( _zmiana > 0, "+", "" ) & FORMAT ( _zmiana, "0" ) & " dni m/m"
+			VAR _limit = 46 - LEN ( _dopisek ) - LEN ( _koniec )
 			RETURN
 			    IF (
 			        ISBLANK ( _zmiana ),
 			        "Pojawi się po 4 tygodniach zbierania danych",
-			        CONCATENATEX ( _top, DimSwiadczenie[Świadczenie], ", " ) & ": "
-			            & IF ( _zmiana > 0, "+", "" ) & FORMAT ( _zmiana, "0" ) & " dni m/m"
+			        IF ( LEN ( _nazwa ) > _limit, LEFT ( _nazwa, _limit - 1 ) & "…", _nazwa ) & _dopisek & _koniec
 			    )
 		displayFolder: 6. Wnioski i tytuły
 		lineageTag: 1efd6364-2bed-57d3-bfa6-1b71a0552427
