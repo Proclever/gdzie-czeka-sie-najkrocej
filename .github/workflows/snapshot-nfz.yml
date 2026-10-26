@@ -3,7 +3,7 @@ name: Snapshot kolejek NFZ
 on:
   schedule:
     # poniedziałki 04:17 UTC (6:17 czasu letniego, 5:17 zimowego w Polsce); placówki raportują dane co tydzień
-    - cron: "17 4 * * 1"
+    - cron: "23 4 * * 1"
   workflow_dispatch:
     inputs:
       gus:
